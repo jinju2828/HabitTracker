@@ -1,44 +1,43 @@
-import { useState } from 'react'
-import { createHabit } from '@/api/habitApi' // axios로 POST 호출
+// src/components/HabitForm/HabitForm.tsx
+import React, { useState } from 'react';
+import { createHabit } from '@/api/habitApi';
+import { useHabits } from '@/hooks/useHabits';
 
-type Props = {
-  onHabitCreated: () => void // 새 습관 생성 후 목록 갱신 콜백
-}
-
-export function HabitForm({ onHabitCreated }: Props) {
-  const [habitName, setHabitName] = useState('') // 입력 상태 관리
-  const [loading, setLoading] = useState(false) // 요청 중 로딩 상태
-  const [error, setError] = useState('') // 에러 메시지 상태
+export const HabitForm: React.FC = () => {
+  const [name, setName] = useState('');
+  const { habits, fetchHabits } = useHabits();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!habitName.trim()) return // 빈 값 방지
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    if (!name.trim()) return;
 
     try {
-      await createHabit(habitName) // 백엔드 POST 호출
-      setHabitName('') // 폼 초기화
-      onHabitCreated() // 부모에게 갱신 알림
-    } catch (err: any) {
-      setError(err.message || '습관 생성 실패')
-    } finally {
-      setLoading(false)
+      await createHabit({ name });
+      setName('');
+      fetchHabits();
+    } catch (err) {
+      console.error('Failed to create habit:', err);
     }
-  }
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={habitName}
-        onChange={(e) => setHabitName(e.target.value)}
-        placeholder="새 습관 이름"
-      />
-      <button type="submit" disabled={loading}>
-        {loading ? '추가 중...' : '추가'}
-      </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </form>
-  )
-}
+    <div>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="New Habit"
+          required
+        />
+        <button type="submit">Add Habit</button>
+      </form>
+
+      <ul>
+        {habits.map((habit) => (
+          <li key={habit.id}>{habit.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};

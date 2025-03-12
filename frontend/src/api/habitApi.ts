@@ -4,8 +4,8 @@ import axios from 'axios'
 const BASE_URL = 'http://localhost:3000'
 
 // 새 습관 생성
-export async function createHabit(name: string) {
-  const response = await axios.post(`${BASE_URL}/habits`, { name })
+export async function createHabit(data: { name: string }) {
+  const response = await axios.post(`${BASE_URL}/habits`, data)
   return response.data
 }
 
