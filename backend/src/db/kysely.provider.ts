@@ -12,6 +12,12 @@ interface Database {
     name: string;
     created_at: Date;
   };
+  habit_logs: {
+    id?: number;           // SERIAL PK이므로 optional
+    habit_id: number;      // 연결된 habit ID
+    log_date: string;      // DATE 컬럼은 string으로 매핑
+    completed: boolean;
+  };
 }
 
 // DB 인스턴스 생성
