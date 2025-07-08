@@ -1,19 +1,24 @@
-import { Injectable } from '@nestjs/common'; 
-// @Injectable: 이 클래스가 의존성 주입(DI) 가능한 서비스라는 표시
+import { Injectable } from '@nestjs/common';
+import { db } from '../db/kysely.provider';
 
 @Injectable()
 export class HabitsService {
-  private habits: string[] = ['Exercise', 'Read']; 
-  // 임시로 메모리 안에 저장할 습관 목록
-
-  // 모든 습관 반환
-  getAll() {
-    return this.habits;
+  async getAll() {
+    // SELECT * FROM habits ORDER BY id ASC
+    const habits = await db.selectFrom('habits')
+      .selectAll()
+      .orderBy('id')
+      .execute();
+    return habits;
   }
 
-  // 새 습관 추가
-  create(name: string) {
-    this.habits.push(name); // 새 항목 배열에 추가
+  async create(name: string) {
+    // INSERT INTO habits (name, created_at) VALUES (...)
+    await db.insertInto('habits').values({
+      name,
+      created_at: new Date(),
+    }).execute();
+
     return { message: `Habit "${name}" added!` };
   }
 }
