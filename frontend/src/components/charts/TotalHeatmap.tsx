@@ -38,19 +38,25 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
     return map; // { "2025-11-01": 2, ... }
   }, [allLogs]);
 
-  // 3) 주 단위로 그룹화
+  // 3) 주 단위로 그룹화 (달력식)
   const weeks = useMemo(() => {
-    const map: Record<number, dayjs.Dayjs[]> = {};
     const firstDayOfMonth = dayjs().month(selectedMonth).startOf("month").startOf("week");
+    const lastDayOfMonth = dayjs().month(selectedMonth).endOf("month").endOf("week");
 
-    monthDays.forEach((day) => {
-      const weekIndex = day.startOf("week").diff(firstDayOfMonth, "week");
-      if (!map[weekIndex]) map[weekIndex] = [];
-      map[weekIndex].push(day);
-    });
+    const days: dayjs.Dayjs[] = [];
+    let curr = firstDayOfMonth;
+    while (curr.isBefore(lastDayOfMonth) || curr.isSame(lastDayOfMonth, "day")) {
+      days.push(curr);
+      curr = curr.add(1, "day");
+    }
 
-    return map;
-  }, [monthDays, selectedMonth]);
+    const weekMap: dayjs.Dayjs[][] = [];
+    for (let i = 0; i < days.length; i += 7) {
+      weekMap.push(days.slice(i, i + 7));
+    }
+
+    return weekMap;
+  }, [selectedMonth]);
 
   // 4) 색상 단계 (GitHub style)
   const getColor = (count: number) => {
@@ -83,35 +89,38 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
         </select>
       </div>
 
-      {/* Heatmap */}
-      <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(7, 30px)" }}>
-        {/* 요일 헤더 */}
+      {/* 요일 헤더 */}
+      <div className="grid grid-cols-7 gap-1 mb-1" style={{ fontSize: 12 }}>
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <div key={d} style={{ fontSize: 12, textAlign: "center" }}>
+          <div key={d} className="text-center">
             {d}
           </div>
         ))}
+      </div>
 
-        {/* 날짜 칸 */}
-        {Object.values(weeks).map((week) =>
-          week.map((day) => {
-            const dateKey = day.format("YYYY-MM-DD");
-            const count = dailyCount[dateKey] || 0;
-            return (
-              <div
-                key={dateKey}
-                title={`${dateKey} — ${count} habits`}
-                style={{
-                  width: 30,
-                  height: 30,
-                  backgroundColor: getColor(count),
-                  borderRadius: 4,
-                  border: "1px solid #fff",
-                }}
-              />
-            );
-          })
-        )}
+      {/* Heatmap */}
+      <div className="flex flex-col gap-1">
+        {weeks.map((week, wi) => (
+          <div key={wi} className="grid grid-cols-7 gap-1">
+            {week.map((day) => {
+              const dateKey = day.format("YYYY-MM-DD");
+              const count = dailyCount[dateKey] || 0;
+              return (
+                <div
+                  key={dateKey}
+                  title={`${dateKey} — ${count} habits`}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    backgroundColor: getColor(count),
+                    borderRadius: 4,
+                    border: "1px solid #fff",
+                  }}
+                />
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );
