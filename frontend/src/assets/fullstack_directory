@@ -1,0 +1,59 @@
+HabitTracker/
+├── frontend/                     # React + TypeScript + Kysley
+│   ├── public/
+│   │   └── index.html
+│   ├── src/
+│   │   ├── api/                  # Axios 또는 fetch API 호출
+│   │   │   └── habitApi.ts
+│   │   ├── assets/               # 이미지, 아이콘
+│   │   ├── components/           # 재사용 UI 컴포넌트
+│   │   │   ├── HabitCard/
+│   │   │   ├── HabitForm/
+│   │   │   ├── ProgressChart/
+│   │   │   └── Navbar/
+│   │   ├── context/              # Kysley 상태 관리
+│   │   │   └── HabitContext.ts
+│   │   ├── hooks/                # 커스텀 훅
+│   │   │   └── useHabits.ts
+│   │   ├── pages/                # 페이지 단위 라우팅
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── Login.tsx
+│   │   │   ├── SignUp.tsx
+│   │   │   └── HabitDetail.tsx
+│   │   ├── styles/               # 글로벌 스타일
+│   │   │   └── index.css
+│   │   ├── utils/                # 유틸 함수
+│   │   │   └── dateUtils.ts
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── package.json
+│   └── tsconfig.json
+│
+├── backend/                      # NestJS + Kysely + PostgreSQL
+│   ├── src/
+│   │   ├── app.module.ts
+│   │   ├── main.ts
+│   │   ├── db/                   # Kysely DB provider + 마이그레이션
+│   │   │   ├── kysely.provider.ts
+│   │   │   └── migrations.sql
+│   │   ├── auth/                 # JWT 로그인/회원가입
+│   │   │   ├── auth.module.ts
+│   │   │   ├── auth.service.ts
+│   │   │   └── auth.controller.ts
+│   │   ├── users/                # 사용자 CRUD
+│   │   │   ├── users.module.ts
+│   │   │   ├── users.service.ts
+│   │   │   └── users.controller.ts
+│   │   ├── habits/               # 습관 CRUD
+│   │   │   ├── habits.module.ts
+│   │   │   ├── habits.service.ts
+│   │   │   └── habits.controller.ts
+│   │   └── habit-logs/           # 습관 기록 CRUD
+│   │       ├── habit-logs.module.ts
+│   │       ├── habit-logs.service.ts
+│   │       └── habit-logs.controller.ts
+│   ├── package.json
+│   └── .env
+│
+├── .gitignore
+└── README.md
