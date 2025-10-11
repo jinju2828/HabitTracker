@@ -1,5 +1,5 @@
 export class CreateHabitLogDto {
-  habitId: number;
-  date: string;
+  habitId!: number;
+  date!: string;
   completed?: boolean;
 }
