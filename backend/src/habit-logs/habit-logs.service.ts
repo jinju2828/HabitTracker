@@ -5,6 +5,7 @@ import { db } from '../db/kysely.provider';
 export class HabitLogsService {
   // 특정 habit의 모든 로그 조회
   async getLogsByHabit(habitId: number) {
+    console.log('Fetching logs for habitId:', habitId)
     return await db.selectFrom('habit_logs')
       .selectAll()
       .where('habit_id', '=', habitId)
