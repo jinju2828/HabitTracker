@@ -16,6 +16,7 @@ interface Habit {
   name: string
 }
 
+// 선택한 습관의 진행 로그 시각화 (Recharts)
 export default function HabiCthart() {
   const [habits, setHabits] = useState<Habit[]>([])
   const [selectedHabit, setSelectedHabit] = useState<number | null>(null)

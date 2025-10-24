@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { createHabit } from '@/api/habitApi';
 import { useHabits } from '@/hooks/useHabits';
 
+// 새 습관 추가
 export const HabitForm: React.FC = () => {
   const [name, setName] = useState('');
   const { habits, fetchHabits } = useHabits();
