@@ -10,6 +10,8 @@ interface HabitCardProps {
 
 export const HabitCard: React.FC<HabitCardProps> = ({ id, name }) => {
   const [isCompleted, setIsCompleted] = useState(false);
+  const [todayLogId, setTodayLogId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
   const today = new Date().toISOString().slice(0, 10);
 
   useEffect(() => {
@@ -21,39 +23,63 @@ export const HabitCard: React.FC<HabitCardProps> = ({ id, name }) => {
       .catch((err) => console.error(err));
   }, [id]);
 
-  const toggleCompletion = async () => {
+  
+  // 오늘 로그 가져와서 상태 설정
+  const loadToday = async () => {
     try {
       const logs = await getHabitLogs(id);
-      const todayLog = logs.find((log) => log.log_date.startsWith(today));
-
+      // normalize: log_date may be "2025-10-08T07:00:00.000Z" -> slice(0,10)
+      const todayLog = logs.find((l) => l.log_date.slice(0, 10) === today);
       if (todayLog) {
-        await updateHabitLog(todayLog.id, !todayLog.completed);
+        setIsCompleted(Boolean(todayLog.completed));
+        setTodayLogId(todayLog.id);
       } else {
-        await createHabitLog(id, today, true);
+        setIsCompleted(false);
+        setTodayLogId(null);
       }
-
-      setIsCompleted(!isCompleted);
     } catch (err) {
-      console.error('Error updating habit log:', err);
+      console.error('loadToday error', err);
     }
   };
 
+  useEffect(() => {
+    loadToday();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  
+  const toggle = async () => {
+    setLoading(true);
+    try {
+      if (todayLogId) {
+        // 이미 있을 때 -> update
+        await updateHabitLog(todayLogId, !isCompleted);
+        setIsCompleted((v) => !v);
+      } else {
+        // 없으면 생성 (완료=true)
+        await createHabitLog(id, today, true);
+        // 생성 직후 다시 로드해서 id 확보
+        await loadToday();
+      }
+    } catch (err) {
+      console.error('toggle error', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
   return (
     <div style={{
-      border: '1px solid #ccc',
-      padding: '12px',
-      borderRadius: '8px',
-      marginBottom: '8px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center'
+      border: '1px solid #ddd', padding: 12, borderRadius: 6, marginBottom: 8,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between'
     }}>
-      <span>{name}</span>
-      <input
-        type="checkbox"
-        checked={isCompleted}
-        onChange={toggleCompletion}
-      />
+      <div>{name}</div>
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <input type="checkbox" checked={isCompleted} onChange={toggle} disabled={loading} />
+        <span>{isCompleted ? 'Done' : 'Mark'}</span>
+      </label>
     </div>
   );
+  
 };
