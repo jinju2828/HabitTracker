@@ -21,7 +21,7 @@ function App() {
       <h2 style={{ marginTop: 30 }}>Progress Chart</h2>
       <HabitChart />
 
-      <h2 style={{ marginTop: 30 }}>All Habits Progress</h2>
+      <h2 style={{ marginTop: 30 }}>Each Habit Progress</h2>
       <HabitProgressChart />
     </div>
   );
