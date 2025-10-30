@@ -2,23 +2,18 @@ import React from 'react';
 import {
   ResponsiveContainer, ComposedChart, XAxis, YAxis, Tooltip, Legend, Bar
 } from 'recharts';
-import type { HabitLog } from '../../utils/types';
+import type { ChartPoint } from '../../utils/types';
 
 interface HeatmapChartViewProps {
-  habitLogs?: HabitLog[];
+  chartData: ChartPoint[];
 }
 
-export const HeatmapChartView: React.FC<HeatmapChartViewProps> = ({ habitLogs = [] }) => {
-  const data = habitLogs.map(log => ({
-    date: log.log_date.slice(0, 10),
-    completed: log.completed ? 1 : 0,
-  }));
-
+export const HeatmapChartView: React.FC<HeatmapChartViewProps> = ({ chartData }) => {
   return (
     <div style={{ width: '100%', height: 300 }}>
       <h3>🔥 Heatmap Chart View</h3>
       <ResponsiveContainer>
-        <ComposedChart data={data}>
+        <ComposedChart data={chartData}>
           <XAxis dataKey="date" />
           <YAxis domain={[0, 1]} ticks={[0, 1]} />
           <Tooltip formatter={(val: number) => val === 1 ? 'Completed' : 'Not done'} />

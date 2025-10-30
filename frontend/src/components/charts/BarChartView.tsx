@@ -2,23 +2,18 @@ import React from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
-import type { HabitLog } from '../../utils/types';
+import type { ChartPoint } from '../../utils/types';
 
 interface BarChartViewProps {
-  habitLogs?: HabitLog[];
+  chartData: ChartPoint[];
 }
 
-export const BarChartView: React.FC<BarChartViewProps> = ({ habitLogs = [] }) => {
-  const data = habitLogs.map(log => ({
-    date: log.log_date.slice(0, 10),
-    completed: log.completed ? 1 : 0,
-  }));
-
+export const BarChartView: React.FC<BarChartViewProps> = ({ chartData }) => {
   return (
     <div style={{ width: '100%', height: 300 }}>
       <h3>📦 Bar Chart View</h3>
       <ResponsiveContainer>
-        <BarChart data={data}>
+        <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="date" />
           <YAxis domain={[0, 1]} ticks={[0, 1]} tickFormatter={v => v === 1 ? '✅' : '❌'} />

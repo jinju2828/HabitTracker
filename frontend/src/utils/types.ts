@@ -8,3 +8,9 @@ export interface HabitLog {
   log_date: string;
   completed: boolean;
 }
+
+// 차트 전용 타입
+export interface ChartPoint {
+  date: string;
+  completed: number;
+}
