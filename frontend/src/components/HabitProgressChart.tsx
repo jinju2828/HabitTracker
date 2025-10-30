@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { ResponsiveContainer } from 'recharts';
 import { HabitChartType } from './HabitChartType';
-import type { Habit, HabitLog } from '../types'; // 타입만 import
+import type { Habit, HabitLog } from '../utils/types'; // 타입만 import
 
 export const HabitProgressChart: React.FC = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
