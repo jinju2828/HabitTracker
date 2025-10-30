@@ -1,35 +1,32 @@
 import React, { useState } from 'react';
+import { LineDotChartView } from './charts/LineDotChartView';
 import { BarChartView } from './charts/BarChartView';
 import { HeatmapChartView } from './charts/HeatmapChartView';
-import { LineDotChartView } from './charts/LineDotChartView';
+import type { HabitLog } from '../utils/types';
 
-type ChartType = 'line' | 'bar' | 'heatmap';
+interface Props {
+  habitLogs: HabitLog[];
+}
 
-export const HabitChartType: React.FC = () => {
-  const [chartType, setChartType] = useState<ChartType>('line');
+export const HabitChartType: React.FC<Props> = ({ habitLogs }) => {
+  const [chartType, setChartType] = useState<'line' | 'bar' | 'heatmap'>('line');
 
   return (
-    <div style={{ marginTop: 40 }}>
-      <h2>📊 Choose your chart view</h2>
+    <div>
+      <label>
+        Chart Type:{' '}
+        <select value={chartType} onChange={(e) => setChartType(e.target.value as any)}>
+          <option value="line">Line & Dot</option>
+          <option value="bar">Bar</option>
+          <option value="heatmap">Heatmap</option>
+        </select>
+      </label>
 
-      <select
-        value={chartType}
-        onChange={(e) => setChartType(e.target.value as ChartType)}
-        style={{
-          padding: '8px',
-          marginBottom: '20px',
-          borderRadius: '8px',
-        }}
-      >
-        <option value="line">✅ Line / Dot Chart</option>
-        <option value="bar">📦 Bar Chart</option>
-        <option value="heatmap">🔥 Heatmap (experimental)</option>
-      </select>
-
-      {/* 조건부 렌더링 */}
-      {chartType === 'line' && <LineDotChartView />}
-      {chartType === 'bar' && <BarChartView />}
-      {chartType === 'heatmap' && <HeatmapChartView />}
+      <div style={{ marginTop: 20, height: 300 }}>
+        {chartType === 'line' && <LineDotChartView habitLogs={habitLogs} />}
+        {chartType === 'bar' && <BarChartView habitLogs={habitLogs} />}
+        {chartType === 'heatmap' && <HeatmapChartView habitLogs={habitLogs} />}
+      </div>
     </div>
   );
 };
