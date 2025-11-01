@@ -1,37 +1,61 @@
-// HeatmapChartView.tsx
-import React from 'react';
-import type { ChartPoint } from '../../utils/types';
-import dayjs from 'dayjs';
+import React from "react";
+import { ResponsiveHeatMap } from "@nivo/heatmap";
 
-interface Props {
-  chartData: ChartPoint[];
+interface HeatmapChartViewProps {
+  data: {
+    id: string;
+    data: {
+      x: string;
+      y: number;
+    }[];
+  }[];
 }
 
-export const HeatmapChartView: React.FC<Props> = ({ chartData }) => {
-  if (!chartData.length) return <p>No data</p>;
-
+export const HeatmapChartView: React.FC<HeatmapChartViewProps> = ({ data }) => {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(7, 1fr)',
-        gap: '4px',
-        width: 'fit-content',
-        margin: '0 auto',
-      }}
-    >
-      {chartData.map((log, idx) => (
-        <div
-          key={idx}
-          title={dayjs(log.date).format('MMM D')}
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: 3,
-            backgroundColor: log.completed ? '#22c55e' : '#e5e7eb', // green / gray
-          }}
-        />
-      ))}
+    <div style={{ height: 400 }}>
+      <ResponsiveHeatMap
+        data={data}
+        margin={{ top: 40, right: 60, bottom: 60, left: 60 }}
+        valueFormat=">-.2f"
+        colors={{
+          type: "sequential",
+          scheme: "greens",
+        }}
+        emptyColor="#f5f5f5"
+        borderColor={{
+          from: "color",
+          modifiers: [["darker", 0.8]],
+        }}
+        axisTop={{
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: -45,
+        }}
+        axisRight={null}
+        axisBottom={{
+          tickSize: 5,
+          tickPadding: 5,
+          tickRotation: -45,
+        }}
+        axisLeft={{
+          tickSize: 5,
+          tickPadding: 5,
+        }}
+        tooltip={({ cell }) => (
+          <div
+            style={{
+              background: "white",
+              padding: "6px 9px",
+              border: "1px solid #ccc",
+            }}
+          >
+            <strong>
+              {cell.serieId} / {cell.data.x}: {cell.data.y}
+            </strong>
+          </div>
+        )}
+      />
     </div>
   );
 };
