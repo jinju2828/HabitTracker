@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LineDotChartView } from './charts/LineDotChartView';
 import { BarChartView } from './charts/BarChartView';
 import { HeatmapChartView } from './charts/HeatmapChartView';
-import type { HabitLog, ChartPoint } from '../utils/types';
+import type { HabitLog, ChartPoint, HeatmapRow } from '../utils/types';
 
 interface Props {
   habitLogs: HabitLog[];
@@ -41,30 +41,26 @@ export const HabitChartType: React.FC<Props> = ({ habitLogs }) => {
   const chartData: ChartPoint[] = generateChartData(habitLogs);
 
   // ✅ 2. Nivo Heatmap용 데이터 변환
-  const transformToHeatmapData = (chartData: ChartPoint[]) => {
+  // transformToHeatmapData -> HeatmapRow[]
+  const transformToHeatmapData = (chartData: ChartPoint[]): HeatmapRow[] => {
     if (!chartData.length) return [];
 
     const weeks: Record<string, { x: string; y: number }[]> = {};
 
     chartData.forEach(({ date, completed }) => {
       const d = new Date(date);
-      const weekNumber = Math.ceil(d.getDate() / 7); // 같은 달 내 주차
-      const weekKey = `${d.toLocaleString('default', {
-        month: 'short',
-      })} W${weekNumber}`; // 예: "Oct W1"
-      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' }); // Mon, Tue...
+      const weekNumber = Math.ceil(d.getDate() / 7);
+      const weekKey = `${d.toLocaleString('default', { month: 'short' })} W${weekNumber}`;
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
 
       if (!weeks[weekKey]) weeks[weekKey] = [];
       weeks[weekKey].push({ x: dayName, y: completed });
     });
 
-    return Object.entries(weeks).map(([id, data]) => ({
-      id,
-      data,
-    }));
+    return Object.entries(weeks).map(([id, data]) => ({ id, data }));
   };
 
-  const heatmapData = transformToHeatmapData(chartData);
+  const heatmapData: HeatmapRow[] = transformToHeatmapData(chartData);
 
   return (
     <div>
@@ -83,7 +79,7 @@ export const HabitChartType: React.FC<Props> = ({ habitLogs }) => {
       <div style={{ marginTop: 20, height: 350 }}>
         {chartType === 'line' && <LineDotChartView chartData={chartData} />}
         {chartType === 'bar' && <BarChartView chartData={chartData} />}
-        {chartType === 'heatmap' && <HeatmapChartView data={heatmapData} />}
+        {chartType === 'heatmap' && <HeatmapChartView chartData={heatmapData} />}
       </div>
     </div>
   );

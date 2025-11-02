@@ -14,3 +14,9 @@ export interface ChartPoint {
   date: string;
   completed: number;
 }
+
+// heatmap용 타입 (Nivo 포맷)
+export interface HeatmapRow {
+  id: string;
+  data: { x: string; y: number }[]; // x: label (e.g. date or weekday), y: value (0/1)
+}
