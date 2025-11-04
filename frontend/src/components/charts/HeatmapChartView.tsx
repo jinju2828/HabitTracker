@@ -70,6 +70,7 @@ export const HeatmapChartView: React.FC<HeatmapChartViewProps> = ({ chartData })
               padding: '6px 8px',
               borderRadius: 4,
               boxShadow: '0 2px 10px rgba(0,0,0,0.12)',
+              color: '#333333',
             }}
           >
             <div><strong>{`${date} – ${x}`}</strong></div>
