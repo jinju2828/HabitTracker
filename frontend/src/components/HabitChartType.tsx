@@ -4,6 +4,34 @@ import { BarChartView } from './charts/BarChartView';
 import { HeatmapChartView } from './charts/HeatmapChartView';
 import type { HabitLog, ChartPoint, HeatmapRow } from '../utils/types';
 
+import { eachDayOfInterval, format, parseISO } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+
+const timeZone = 'America/Los_Angeles';
+
+function generateHeatmapData(habitStartDate: string, logs: { log_date: string; completed: boolean }[]) {
+  const start = toZonedTime(parseISO(habitStartDate), timeZone);
+  const today = toZonedTime(new Date(), timeZone);
+
+  const dateRange = eachDayOfInterval({ start, end: today });
+
+  const logMap = new Map(
+    logs.map(log => {
+      const zoned = toZonedTime(parseISO(log.log_date), timeZone);
+      const key = format(zoned, 'yyyy-MM-dd');
+      return [key, log.completed ? 1 : 0];
+    })
+  );
+
+  return dateRange.map(date => {
+    const key = format(date, 'yyyy-MM-dd');
+    return {
+      date: key,
+      completed: logMap.get(key) ?? 0,
+    };
+  });
+}
+
 interface Props {
   habitLogs: HabitLog[];
 }
@@ -11,11 +39,11 @@ interface Props {
 export const HabitChartType: React.FC<Props> = ({ habitLogs }) => {
   const [chartType, setChartType] = useState<'line' | 'bar' | 'heatmap'>('line');
 
-  // ✅ 1. 모든 날짜 포함, 체크 안한 날은 completed=0 처리
-  const generateChartData = (logs: HabitLog[]): ChartPoint[] => {
-    if (!logs.length) return [];
+  if (!habitLogs || habitLogs.length === 0) {
+    return <p>No logs available.</p>;
+  }
 
-    // 날짜 순으로 정렬
+  const generateChartData = (logs: HabitLog[]): ChartPoint[] => {
     const sortedLogs = [...logs].sort(
       (a, b) => new Date(a.log_date).getTime() - new Date(b.log_date).getTime()
     );
@@ -38,29 +66,12 @@ export const HabitChartType: React.FC<Props> = ({ habitLogs }) => {
     }));
   };
 
-  const chartData: ChartPoint[] = generateChartData(habitLogs);
+  const chartData = generateChartData(habitLogs);
 
-  // ✅ 2. Nivo Heatmap용 데이터 변환
-  // transformToHeatmapData -> HeatmapRow[]
-  const transformToHeatmapData = (chartData: ChartPoint[]): HeatmapRow[] => {
-    if (!chartData.length) return [];
+  // ✅ Heatmap 데이터 생성 시 첫 로그 날짜를 habit 시작일로 간주
+  const habitStartDate = habitLogs[0]?.log_date ?? new Date().toISOString();
 
-    const weeks: Record<string, { x: string; y: number }[]> = {};
-
-    chartData.forEach(({ date, completed }) => {
-      const d = new Date(date);
-      const weekNumber = Math.ceil(d.getDate() / 7);
-      const weekKey = `${d.toLocaleString('default', { month: 'short' })} W${weekNumber}`;
-      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
-
-      if (!weeks[weekKey]) weeks[weekKey] = [];
-      weeks[weekKey].push({ x: dayName, y: completed });
-    });
-
-    return Object.entries(weeks).map(([id, data]) => ({ id, data }));
-  };
-
-  const heatmapData: HeatmapRow[] = transformToHeatmapData(chartData);
+  const heatmapChartData = generateHeatmapData(habitStartDate, habitLogs);
 
   return (
     <div>
@@ -79,7 +90,7 @@ export const HabitChartType: React.FC<Props> = ({ habitLogs }) => {
       <div style={{ marginTop: 20, height: 350 }}>
         {chartType === 'line' && <LineDotChartView chartData={chartData} />}
         {chartType === 'bar' && <BarChartView chartData={chartData} />}
-        {chartType === 'heatmap' && <HeatmapChartView chartData={heatmapData} />}
+        {chartType === 'heatmap' && <HeatmapChartView chartData={heatmapChartData} />}
       </div>
     </div>
   );
