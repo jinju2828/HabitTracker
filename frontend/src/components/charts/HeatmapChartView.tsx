@@ -10,18 +10,19 @@ interface HeatmapChartViewProps {
 }
 
 /**
- * ✅ 주별 히트맵 데이터 변환
+ * ✅ 주별 히트맵 데이터 변환 (fullDate 포함)
  */
 const groupByWeek = (chartData: { date: string; completed: number }[]) => {
-  const weeks: Record<string, { x: string; y: number }[]> = {};
+  const weeks: Record<string, { x: string; y: number; fullDate: string }[]> = {};
 
   chartData.forEach(({ date, completed }) => {
     const zoned = toZonedTime(parseISO(date), timeZone);
     const weekKey = format(zoned, "'W'w"); // 예: W40
-    const dayName = format(zoned, 'EEE'); // Mon, Tue 등
+    const dayName = format(zoned, 'EEE');  // Mon, Tue 등
+    const fullDate = format(zoned, 'MM/dd'); // ✅ 실제 날짜
 
     if (!weeks[weekKey]) weeks[weekKey] = [];
-    weeks[weekKey].push({ x: dayName, y: completed });
+    weeks[weekKey].push({ x: dayName, y: completed, fullDate });
   });
 
   return Object.entries(weeks).map(([id, data]) => ({ id, data }));
@@ -59,10 +60,8 @@ export const HeatmapChartView: React.FC<HeatmapChartViewProps> = ({ chartData })
       emptyColor="#eeeeee"
       borderWidth={1}
       borderColor="#ffffff"
-      // ✅ 올바른 tooltip 타입
       tooltip={({ cell }) => {
-        const { x, y } = cell.data; // y: completed (0 or 1)
-        const date = cell.serieId; // week id (ex: W40)
+        const { fullDate, y } = cell.data as { fullDate: string; y: number };
         return (
           <div
             style={{
@@ -70,10 +69,10 @@ export const HeatmapChartView: React.FC<HeatmapChartViewProps> = ({ chartData })
               padding: '6px 8px',
               borderRadius: 4,
               boxShadow: '0 2px 10px rgba(0,0,0,0.12)',
-              color: '#333333',
+              color: '#111',
             }}
           >
-            <div><strong>{`${date} – ${x}`}</strong></div>
+            <div><strong>{fullDate}</strong></div>
             <div>{y === 1 ? '✅ Completed' : '❌ Missed'}</div>
           </div>
         );
