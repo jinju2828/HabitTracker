@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LineDotChartView } from './charts/LineDotChartView';
 import { BarChartView } from './charts/BarChartView';
 import { HeatmapChartView } from './charts/HeatmapChartView';
+import { Heatmap } from './charts/Heatmap';
 import type { HabitLog, ChartPoint, HeatmapRow } from '../utils/types';
 
 import { eachDayOfInterval, format, parseISO } from 'date-fns';
@@ -90,7 +91,8 @@ export const HabitChartType: React.FC<Props> = ({ habitLogs }) => {
       <div style={{ marginTop: 20, height: 350 }}>
         {chartType === 'line' && <LineDotChartView chartData={chartData} />}
         {chartType === 'bar' && <BarChartView chartData={chartData} />}
-        {chartType === 'heatmap' && <HeatmapChartView chartData={heatmapChartData} />}
+        {/* {chartType === 'heatmap' && <HeatmapChartView chartData={heatmapChartData} />} */}
+        {chartType === 'heatmap' && <Heatmap chartData={heatmapChartData} />}
       </div>
     </div>
   );
