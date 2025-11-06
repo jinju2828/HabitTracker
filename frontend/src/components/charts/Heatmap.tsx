@@ -70,6 +70,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
                 padding: '6px 8px',
                 borderRadius: 4,
                 boxShadow: '0 2px 10px rgba(0,0,0,0.12)',
+                color: '#333',
               }}
             >
               <div><strong>{fullDate}</strong></div>
