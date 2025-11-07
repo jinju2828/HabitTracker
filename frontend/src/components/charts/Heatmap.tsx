@@ -1,23 +1,23 @@
 import React from 'react'
 import { ResponsiveHeatMap } from '@nivo/heatmap'
-import { eachDayOfInterval, format, parseISO, startOfWeek, addDays } from 'date-fns'
+import { eachDayOfInterval, format, parseISO, startOfWeek } from 'date-fns'
 
 export interface HeatmapProps {
   chartData: { date: string; completed: number }[]
 }
 
 /**
- * 주 단위 + 월요일 시작
+ * 주 단위 + 일요일 시작
  */
 const groupByWeek = (chartData: { date: string; completed: number }[]) => {
   if (!chartData.length) return []
 
   // 전체 기간: chartData의 최소/최대 날짜
   const sortedDates = chartData.map(d => parseISO(d.date)).sort((a, b) => a.getTime() - b.getTime())
-  const start = startOfWeek(sortedDates[0], { weekStartsOn: 1 }) // 월요일 기준
+  const start = startOfWeek(sortedDates[0], { weekStartsOn: 0 }) // ✅ 일요일 기준
   const end = sortedDates[sortedDates.length - 1]
 
-  // 월요일 기준 모든 날짜 배열
+  // 일요일 기준 모든 날짜 배열
   const allDates = eachDayOfInterval({ start, end })
 
   // 날짜별 completed map
@@ -27,15 +27,16 @@ const groupByWeek = (chartData: { date: string; completed: number }[]) => {
   const weeks: Record<string, { x: string; y: number; fullDate: string }[]> = {}
 
   allDates.forEach(date => {
-    const weekKey = format(date, "'W'w yyyy") // ex: W41 2025
-    const dayName = format(date, 'EEE')      // Mon, Tue 등
+    const weekNumber = format(date, "'W'w") // ex: W41
+    const dayName = format(date, 'EEE')     // Sun, Mon, Tue, ...
     const iso = format(date, 'yyyy-MM-dd')
     const completed = logMap.get(iso) ?? 0
 
-    if (!weeks[weekKey]) weeks[weekKey] = []
-    weeks[weekKey].push({ x: dayName, y: completed, fullDate: iso })
+    if (!weeks[weekNumber]) weeks[weekNumber] = []
+    weeks[weekNumber].push({ x: dayName, y: completed, fullDate: iso })
   })
 
+  // ✅ Nivo가 기대하는 형식: [{ id: weekNumber, data: [ { x, y }, ... ] }]
   return Object.entries(weeks).map(([id, data]) => ({ id, data }))
 }
 
@@ -46,16 +47,22 @@ export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
     <div style={{ height: 300 }}>
       <ResponsiveHeatMap
         data={heatmapRows}
-        margin={{ top: 30, right: 40, bottom: 40, left: 40 }}
+        margin={{ top: 50, right: 40, bottom: 40, left: 60 }}
         valueFormat=".0f"
-        axisTop={null}
+        axisTop={{
+          tickRotation: 0,
+          legend: 'Day of Week',
+          legendPosition: 'middle',
+          legendOffset: -30,
+        }}
         axisRight={null}
+        axisBottom={null}
         axisLeft={{
           tickSize: 5,
           tickPadding: 5,
-          legend: 'Day',
+          legend: 'Week #',
           legendPosition: 'middle',
-          legendOffset: -30,
+          legendOffset: -40,
         }}
         colors={{ type: 'diverging', scheme: 'greens', minValue: 0, maxValue: 1 }}
         emptyColor="#eeeeee"
