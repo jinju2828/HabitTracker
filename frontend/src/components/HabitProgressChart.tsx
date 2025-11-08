@@ -40,7 +40,12 @@ export const HabitProgressChart: React.FC = () => {
       {habits.map((habit) => (
         <div key={habit.id} style={{ marginBottom: '50px' }}>
           <h3>{habit.name}</h3>
-          <HabitChartType habitLogs={logs[habit.id] ?? []} />
+          <HabitChartType
+            habitLogs={logs[habit.id]?.map(l => ({
+              date: l.log_date,
+              completed: l.completed ? 1 : 0,
+            })) ?? []}
+          />
         </div>
       ))}
     </div>
