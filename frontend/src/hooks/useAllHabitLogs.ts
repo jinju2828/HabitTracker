@@ -1,26 +1,18 @@
-import { useState, useEffect } from 'react';
-import type { HabitLog } from '../utils/types';
-import { useHabits } from './useHabits';
+import { useMemo } from 'react';
 import { useHabitLogs } from './useHabitLogs';
+import { useHabits } from './useHabits';
+import type { HabitLog } from '../utils/types';
 
-export const useAllHabitLogs = () => {
+export const useAllHabitLogs = (): HabitLog[] => {
   const { habits } = useHabits();
-  const [allLogs, setAllLogs] = useState<HabitLog[]>([]);
 
-  useEffect(() => {
-    const fetchAllLogs = async () => {
-      const logsPromises = habits.map(async (habit) => {
-        const { logs, fetchLogs } = useHabitLogs(habit.id);
-        await fetchLogs();
-        return logs;
-      });
+  // ✅ 습관별 훅을 렌더 시점에 고정된 순서로 호출
+  const habitLogHooks = habits.map((habit) => useHabitLogs(habit.id));
 
-      const resolvedLogs = await Promise.all(logsPromises);
-      setAllLogs(resolvedLogs.flat());
-    };
-
-    if (habits.length > 0) fetchAllLogs();
-  }, [habits]);
+  // ✅ 모든 로그 합치기
+  const allLogs = useMemo(() => {
+    return habitLogHooks.flatMap(({ logs }) => logs);
+  }, [habitLogHooks]);
 
   return allLogs;
 };
