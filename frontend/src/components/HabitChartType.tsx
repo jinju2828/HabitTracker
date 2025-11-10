@@ -13,10 +13,6 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
   const [chartType, setChartType] = useState<'line' | 'bar' | 'heatmap'>('heatmap')
   const [selectedMonth, setSelectedMonth] = useState<string>('')
 
-  if (!habitLogs || habitLogs.length === 0) {
-    return <p>No logs available.</p>
-  }
-
   // ✅ 1. 모든 month 목록 추출 (중복 제거)
   const months = useMemo(() => {
     const unique = new Set(
@@ -32,6 +28,10 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
       (log) => format(parseISO(log.date), 'yyyy-MM') === selectedMonth
     )
   }, [habitLogs, selectedMonth])
+
+    if (!habitLogs || habitLogs.length === 0) {
+    return <p>No logs available.</p>
+  }
 
   return (
     <div style={{ width: '100%', height: 450 }}>
