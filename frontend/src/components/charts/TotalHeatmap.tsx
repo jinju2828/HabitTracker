@@ -1,36 +1,30 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ResponsiveHeatMap } from '@nivo/heatmap'
 import { eachDayOfInterval, format, parseISO, startOfWeek } from 'date-fns'
+import type { HabitLog } from '../../utils/types'
 
-export interface HeatmapProps {
-  chartData: { date: string; completed: number }[]
+interface TotalHeatmapProps {
+  allLogs: HabitLog[] // ✅ 모든 습관 로그 (habit 구분 없이)
 }
 
-/**
- * 주 단위 + 일요일 시작
- */
 const groupByWeek = (chartData: { date: string; completed: number }[]) => {
   if (!chartData.length) return []
 
-  // 전체 기간: chartData의 최소/최대 날짜
   const sortedDates = chartData
     .map(d => parseISO(d.date))
     .sort((a, b) => a.getTime() - b.getTime())
-  const start = startOfWeek(sortedDates[0], { weekStartsOn: 0 }) // ✅ 일요일 기준
+
+  const start = startOfWeek(sortedDates[0], { weekStartsOn: 0 })
   const end = sortedDates[sortedDates.length - 1]
 
-  // 일요일 기준 모든 날짜 배열
   const allDates = eachDayOfInterval({ start, end })
 
-  // 날짜별 completed map
   const logMap = new Map(chartData.map(d => [d.date, d.completed]))
-
-  // 주 단위 그룹핑
   const weeks: Record<string, { x: string; y: number; fullDate: string }[]> = {}
 
   allDates.forEach(date => {
     const weekNumber = format(date, "'W'w")
-    const dayName = format(date, 'EEE') // Sun, Mon, Tue, ...
+    const dayName = format(date, 'EEE')
     const iso = format(date, 'yyyy-MM-dd')
     const completed = logMap.get(iso) ?? 0
 
@@ -41,30 +35,47 @@ const groupByWeek = (chartData: { date: string; completed: number }[]) => {
   return Object.entries(weeks).map(([id, data]) => ({ id, data }))
 }
 
-export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
-  const heatmapRows = groupByWeek(chartData)
+export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
+  // ✅ 날짜별 완료 습관 수 합산
+  const dateCounts = useMemo(() => {
+    const countMap: Record<string, number> = {}
+
+    allLogs.forEach((log) => {
+        console.log('HabitLog:', log);
+      const date = log.log_date.slice(0, 10)
+      if (!countMap[date]) countMap[date] = 0
+      if (log.completed) countMap[date] += 1
+    })
+
+    return Object.entries(countMap).map(([date, completed]) => ({ date, completed }))
+  }, [allLogs])
+
+  const heatmapRows = groupByWeek(dateCounts)
+
+  // ✅ 색상 단계
+  const getColor = (value: number) => {
+    if (value === 0) return '#eeeeee'
+    if (value <= 2) return '#c6e48b'
+    if (value <= 4) return '#7bc96f'
+    if (value <= 6) return '#239a3b'
+    return '#196127'
+  }
 
   return (
-    <div style={{ height: 280 }}>
+    <div style={{ height: 300 }}>
       <ResponsiveHeatMap
         data={heatmapRows}
         margin={{ top: 50, right: 40, bottom: 40, left: 60 }}
-        // ✅ 숫자 표시 제거
         labelTextColor="transparent"
         valueFormat={() => ''}
-
-        // ✅ 색상만 표시 (초록=완료, 흰색=미완료)
-        colors={(cell) => (cell.value === 1 ? '#4CAF50' : '#f5f5f5')}
-        emptyColor="#f5f5f5"
-
+        colors={({ value }) => getColor(value || 0)}
+        emptyColor="#eeeeee"
         axisTop={{
           tickRotation: 0,
           legend: 'Day of Week',
           legendPosition: 'middle',
           legendOffset: -30,
         }}
-        axisRight={null}
-        axisBottom={null}
         axisLeft={{
           tickSize: 5,
           tickPadding: 5,
@@ -73,8 +84,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
           legendOffset: -40,
         }}
         borderWidth={1}
-        borderColor="#ffffff"
-
+        borderColor="#fff"
         tooltip={({ cell }) => {
           const { y, fullDate } = cell.data as { y: number; fullDate: string }
           return (
@@ -88,7 +98,7 @@ export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
               }}
             >
               <div><strong>{fullDate}</strong></div>
-              <div>{y === 1 ? '✅ Completed' : '❌ Missed'}</div>
+              <div>{y} habit(s) completed</div>
             </div>
           )
         }}
