@@ -8,7 +8,8 @@ import { useAllHabitLogs } from './hooks/useAllHabitLogs';
 
 function App() {
   const { habits } = useHabits();
-  const allLogs = useAllHabitLogs();
+  const { allLogs, loading } = useAllHabitLogs();
+  console.log('all logs', allLogs)
 
   return (
     <div style={{ padding: '20px' }}>

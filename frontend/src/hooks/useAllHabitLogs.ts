@@ -1,28 +1,35 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useHabits } from './useHabits';
-import type { HabitLog } from '../utils/types';
+// ✅ useAllHabitLogs.ts
+import { useEffect, useState } from "react";
+import { useHabitLogs } from "./useHabitLogs";
+import type { HabitLog } from "@/utils/types";
+import { useHabits } from "./useHabits";
 
 export const useAllHabitLogs = () => {
   const { habits } = useHabits();
   const [allLogs, setAllLogs] = useState<HabitLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    console.log('here')
     const fetchLogs = async () => {
       setLoading(true);
-      const logsArr: HabitLog[][] = await Promise.all(
-        habits.map(async (habit) => {
-          const res = await axios.get<HabitLog[]>(`/habit-logs/${habit.id}`);
-          // 날짜 정규화
-          return res.data.map(l => ({ ...l, log_date: l.log_date.slice(0, 10) }));
-        })
-      );
-      setAllLogs(logsArr.flat());
-      setLoading(false);
+      try {
+        const results = await Promise.all(
+          habits.map(async (habit) => {
+            const { logs } = await useHabitLogs(habit.id);
+            return logs; // ✅ log_date 그대로 유지
+          })
+        );
+        setAllLogs(results.flat());
+        console.log('results', results);
+      } catch (err) {
+        console.error("Failed to fetch all logs", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    if (habits.length) fetchLogs();
+    if (habits.length > 0) fetchLogs();
   }, [habits]);
 
   return { allLogs, loading };
