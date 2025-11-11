@@ -1,18 +1,29 @@
-import { useMemo } from 'react';
-import { useHabitLogs } from './useHabitLogs';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useHabits } from './useHabits';
 import type { HabitLog } from '../utils/types';
 
-export const useAllHabitLogs = (): HabitLog[] => {
+export const useAllHabitLogs = () => {
   const { habits } = useHabits();
+  const [allLogs, setAllLogs] = useState<HabitLog[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ 습관별 훅을 렌더 시점에 고정된 순서로 호출
-  const habitLogHooks = habits.map((habit) => useHabitLogs(habit.id));
+  useEffect(() => {
+    const fetchLogs = async () => {
+      setLoading(true);
+      const logsArr: HabitLog[][] = await Promise.all(
+        habits.map(async (habit) => {
+          const res = await axios.get<HabitLog[]>(`/habit-logs/${habit.id}`);
+          // 날짜 정규화
+          return res.data.map(l => ({ ...l, log_date: l.log_date.slice(0, 10) }));
+        })
+      );
+      setAllLogs(logsArr.flat());
+      setLoading(false);
+    };
 
-  // ✅ 모든 로그 합치기
-  const allLogs = useMemo(() => {
-    return habitLogHooks.flatMap(({ logs }) => logs);
-  }, [habitLogHooks]);
+    if (habits.length) fetchLogs();
+  }, [habits]);
 
-  return allLogs;
+  return { allLogs, loading };
 };
