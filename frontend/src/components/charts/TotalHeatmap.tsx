@@ -11,7 +11,7 @@ import {
 import dayjs from "dayjs";
 
 interface HabitLog {
-  date: string;
+  log_date: string; // ✅ API 기준 log_date 사용
   completed: boolean;
 }
 
@@ -25,15 +25,17 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
   // ✅ 월별 필터링
   const filteredLogs = useMemo(
     () =>
-      allLogs.filter((log) => dayjs(log.date).month() === selectedMonth),
+      allLogs.filter(
+        (log) => dayjs(log.log_date).month() === selectedMonth
+      ),
     [allLogs, selectedMonth]
   );
 
-  // ✅ 주별로 묶기
+  // ✅ 주별 묶기
   const weeks = useMemo(() => {
     const byWeek: Record<string, HabitLog[]> = {};
     filteredLogs.forEach((log) => {
-      const weekKey = dayjs(log.date).startOf("week").format("YYYY-MM-DD");
+      const weekKey = dayjs(log.log_date).startOf("week").format("YYYY-MM-DD");
       if (!byWeek[weekKey]) byWeek[weekKey] = [];
       byWeek[weekKey].push(log);
     });
@@ -44,7 +46,7 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
         const days = Array.from({ length: 7 }).map((_, i) => {
           const date = dayjs(weekKey).add(i, "day");
           const log = byWeek[weekKey].find((l) =>
-            dayjs(l.date).isSame(date, "day")
+            dayjs(l.log_date).isSame(date, "day")
           );
           return {
             date: date.toISOString(),
@@ -77,8 +79,9 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
         </select>
       </div>
 
-      {/* ✅ Heatmap Chart */}
+      {/* ✅ 히트맵 차트 */}
       <div className="w-full h-[280px]">
+        TOTAL
         <ResponsiveContainer>
           <ComposedChart
             layout="vertical"
@@ -104,7 +107,6 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
                 );
               }}
             />
-
             <Bar dataKey="days">
               {weeks.flatMap((week) =>
                 week.days.map((day, i) => (

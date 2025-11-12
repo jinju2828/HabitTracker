@@ -1,18 +1,17 @@
-import React from 'react';
-import { HabitForm } from './components/HabitForm';
-import { HabitCard } from './components/HabitCard';
-import { HabitProgressChart } from './components/HabitProgressChart';
-import { TotalHeatmap } from './components/charts/TotalHeatmap';
-import { useHabits } from './hooks/useHabits';
-import { useAllHabitLogs } from './hooks/useAllHabitLogs';
+import React from "react";
+import { HabitForm } from "./components/HabitForm";
+import { HabitCard } from "./components/HabitCard";
+import { HabitProgressChart } from "./components/HabitProgressChart";
+import { TotalHeatmap } from "./components/charts/TotalHeatmap";
+import { useHabits } from "./hooks/useHabits";
+import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 
 function App() {
   const { habits } = useHabits();
   const { allLogs, loading } = useAllHabitLogs();
-  console.log('all logs', allLogs)
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: "20px" }}>
       <h1>🌿 Habit Tracker</h1>
 
       <HabitForm />
@@ -26,7 +25,11 @@ function App() {
       <HabitProgressChart />
 
       <h2>Total Habit Activity Overview</h2>
-      <TotalHeatmap allLogs={allLogs} />
+      {loading ? (
+        <p>Loading heatmap...</p>
+      ) : (
+        <TotalHeatmap allLogs={allLogs} />
+      )}
     </div>
   );
 }
