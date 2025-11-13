@@ -9,7 +9,7 @@ import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 function App() {
   const { habits } = useHabits();
   const { allLogs, loading } = useAllHabitLogs();
-
+  console.log("🔥 TotalHeatmap input", allLogs);
   return (
     <div style={{ padding: "20px" }}>
       <h1>🌿 Habit Tracker</h1>

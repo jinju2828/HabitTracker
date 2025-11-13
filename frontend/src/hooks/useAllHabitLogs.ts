@@ -19,6 +19,7 @@ export const useAllHabitLogs = () => {
             return logs;
           })
         );
+        console.log("Fetched all logs:", results);
         setAllLogs(results.flat());
       } catch (err) {
         console.error("Failed to fetch all logs", err);
