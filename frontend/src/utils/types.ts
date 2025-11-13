@@ -12,7 +12,7 @@ export interface HabitLog {
 // 차트 전용 타입
 export interface ChartPoint {
   date: string;
-  completed: number;
+  completed: 0 | 1;
 }
 
 // heatmap용 타입 (Nivo 포맷)
