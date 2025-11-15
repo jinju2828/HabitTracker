@@ -13,6 +13,8 @@ interface Props {
 export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
 
+  const today = dayjs();
+
   // 1) 월별 날짜 배열
   const monthDays = useMemo(() => {
     const start = dayjs().month(selectedMonth).startOf("month");
@@ -35,7 +37,7 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
       if (!map[dateKey]) map[dateKey] = 0;
       map[dateKey] += 1;
     });
-    return map; // { "2025-11-01": 2, ... }
+    return map;
   }, [allLogs]);
 
   // 3) 주 단위로 그룹화 (달력식)
@@ -105,18 +107,25 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
             {week.map((day) => {
               const dateKey = day.format("YYYY-MM-DD");
               const count = dailyCount[dateKey] || 0;
+              const isToday = day.isSame(today, "day");
               return (
                 <div
                   key={dateKey}
-                  title={`${dateKey} — ${count} habits`}
+                  title={`${dateKey} — ${count} habit(s)`}
                   style={{
                     width: 30,
                     height: 30,
                     backgroundColor: getColor(count),
                     borderRadius: 4,
-                    border: "1px solid #fff",
+                    border: isToday ? "2px solid #ff4500" : "1px solid #fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 14,
                   }}
-                />
+                >
+                  {count > 0 ? "⭕️" : "❌"}
+                </div>
               );
             })}
           </div>
