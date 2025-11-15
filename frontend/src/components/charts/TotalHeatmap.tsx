@@ -92,7 +92,10 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
       </div>
 
       {/* 요일 헤더 */}
-      <div className="grid grid-cols-7 gap-1 mb-1" style={{ fontSize: 12 }}>
+      <div style={{ display: "grid", 
+                    gridTemplateColumns: "repeat(7, 30px)", 
+                    gap: "4px",
+                    justifyContent: "center"}}>
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
           <div key={d} className="text-center">
             {d}
@@ -100,36 +103,29 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
         ))}
       </div>
 
-      {/* Heatmap */}
-      <div className="flex flex-col gap-1">
-        {weeks.map((week, wi) => (
-          <div key={wi} className="grid grid-cols-7 gap-1">
-            {week.map((day) => {
-              const dateKey = day.format("YYYY-MM-DD");
-              const count = dailyCount[dateKey] || 0;
-              const isToday = day.isSame(today, "day");
-              return (
-                <div
-                  key={dateKey}
-                  title={`${dateKey} — ${count} habit(s)`}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    backgroundColor: getColor(count),
-                    borderRadius: 4,
-                    border: isToday ? "2px solid #ff4500" : "1px solid #fff",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 14,
-                  }}
-                >
-                  {count > 0 ? "⭕️" : "❌"}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+      {/* Heatmap grid */}
+      <div style={{ display: "grid", 
+              gridTemplateColumns: "repeat(7, 30px)", 
+              gap: "4px",
+              justifyContent: "center"}}>
+        {weeks.map((week, wi) =>
+          week.map((day) => {
+            const dateKey = day.format("YYYY-MM-DD");
+            const count = dailyCount[dateKey] || 0;
+            return (
+              <div
+                key={dateKey}
+                style={{
+                  width: 30,
+                  height: 30,
+                  backgroundColor: getColor(count),
+                  borderRadius: 4,
+                  border: "1px solid #fff",
+                }}
+              />
+            );
+          })
+        )}
       </div>
     </div>
   );
