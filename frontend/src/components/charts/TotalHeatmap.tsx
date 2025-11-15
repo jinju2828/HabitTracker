@@ -1,14 +1,8 @@
-import React, { useState, useMemo } from "react";
-import {
-  ResponsiveContainer,
-  ComposedChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Bar,
-  Cell,
-} from "recharts";
+import React, { useMemo, useState } from "react";
 import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
+
+dayjs.extend(weekOfYear); // 이거 꼭 추가!
 
 interface HabitLog {
   log_date: string;
@@ -22,68 +16,26 @@ interface TotalHeatmapProps {
 export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
   const [selectedMonth, setSelectedMonth] = useState<number>(dayjs().month());
 
-  // 1) 날짜별 카운트
+  // 1) 날짜별 완료 개수
   const dailyCount = useMemo(() => {
     const map: Record<string, number> = {};
-
-    allLogs.forEach((l) => {
-      const date = dayjs(l.log_date).format("YYYY-MM-DD");
+    allLogs.forEach((log) => {
+      const date = dayjs(log.log_date).format("YYYY-MM-DD");
       if (!map[date]) map[date] = 0;
-      if (l.completed) map[date] += 1;
+      if (log.completed) map[date] += 1;
     });
-
     return map;
   }, [allLogs]);
 
-  // 2) 선택된 월의 날짜만
+  // 2) 선택한 달 날짜 목록
   const monthDates = useMemo(() => {
-    return Object.keys(dailyCount).filter(
-      (d) => dayjs(d).month() === selectedMonth
+    const daysInMonth = dayjs().month(selectedMonth).daysInMonth();
+    return Array.from({ length: daysInMonth }, (_, i) =>
+      dayjs().month(selectedMonth).date(i + 1).format("YYYY-MM-DD")
     );
-  }, [dailyCount, selectedMonth]);
+  }, [selectedMonth]);
 
-  // 3) week(행) × dayIndex(열) → heatmapData로 변환
-  const heatmapData = useMemo(() => {
-    const weeks: Record<string, any[]> = {};
-
-    monthDates.forEach((dateString) => {
-      const date = dayjs(dateString);
-      const weekKey = date.startOf("week").format("YYYY-MM-DD");
-
-      if (!weeks[weekKey]) weeks[weekKey] = [];
-
-      const dayIndex = date.day();
-      weeks[weekKey].push({
-        week: weekKey,
-        dayIndex,
-        date: dateString,
-        count: dailyCount[dateString],
-      });
-    });
-
-    // Recharts용 flatten
-    const flat: any[] = [];
-
-    Object.keys(weeks)
-      .sort()
-      .forEach((weekKey) => {
-        for (let i = 0; i < 7; i++) {
-          const found = weeks[weekKey].find((w) => w.dayIndex === i);
-          flat.push(
-            found || {
-              week: weekKey,
-              dayIndex: i,
-              date: dayjs(weekKey).add(i, "day").format("YYYY-MM-DD"),
-              count: 0,
-            }
-          );
-        }
-      });
-
-    return flat;
-  }, [monthDates, dailyCount]);
-
-  // 색상
+  // 3) 색상 단계
   const getColor = (count: number) => {
     if (count === 0) return "#ebedf0";
     if (count === 1) return "#c6e48b";
@@ -91,6 +43,21 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
     if (count === 3) return "#239a3b";
     return "#196127";
   };
+
+  // 4) 요일별로 배치
+  const weeks = useMemo(() => {
+    const weekMap: Record<number, { date: string; count: number }[]> = {};
+    monthDates.forEach((dateStr) => {
+      const date = dayjs(dateStr);
+      const weekNum = date.week();
+      if (!weekMap[weekNum]) weekMap[weekNum] = [];
+      weekMap[weekNum].push({
+        date: dateStr,
+        count: dailyCount[dateStr] || 0,
+      });
+    });
+    return Object.values(weekMap);
+  }, [monthDates, dailyCount]);
 
   const months = Array.from({ length: 12 }, (_, i) => ({
     label: dayjs().month(i).format("MMMM"),
@@ -115,49 +82,26 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
       </div>
 
       {/* Heatmap */}
-      <div className="w-full h-[280px]" style={{ height: 280}}>
-        <ResponsiveContainer>
-          <ComposedChart
-            data={heatmapData}
-            margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
-          >
-            {/* X축 = 요일(0~6) */}
-            <XAxis
-              dataKey="dayIndex"
-              type="number"
-              domain={[0, 6]}
-              ticks={[0, 1, 2, 3, 4, 5, 6]}
-              tickFormatter={(d) => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d]}
-            />
-
-            {/* Y축 = Week row */}
-            <YAxis
-              dataKey="week"
-              type="category"
-              width={60}
-              tickFormatter={(v) => dayjs(v).format("MMM D")}
-            />
-
-            <Tooltip
-              content={({ payload }) => {
-                if (!payload || !payload.length) return null;
-                const d = payload[0].payload;
-                return (
-                  <div className="bg-white p-2 border rounded text-xs">
-                    {dayjs(d.date).format("MMM D")} — {d.count} habits completed
-                  </div>
-                );
-              }}
-            />
-
-            {/* Bar = 각 셀이 1개의 박스 */}
-            <Bar dataKey="count" barSize={20}>
-              {heatmapData.map((d, i) => (
-                <Cell key={i} fill={getColor(d.count)} />
-              ))}
-            </Bar>
-          </ComposedChart>
-        </ResponsiveContainer>
+      <div className="flex flex-col gap-1">
+        {weeks.map((week, i) => (
+          <div key={i} className="flex gap-1">
+            {Array.from({ length: 7 }).map((_, j) => {
+              const day = week[j];
+              return (
+                <div
+                  key={j}
+                  title={day ? `${day.date}: ${day.count} habits` : ""}
+                  style={{
+                    width: 14,
+                    height: 14,
+                    backgroundColor: day ? getColor(day.count) : "#ebedf0",
+                    borderRadius: 3,
+                  }}
+                />
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );
