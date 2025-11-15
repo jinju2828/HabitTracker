@@ -1,63 +1,65 @@
 import React, { useMemo, useState } from "react";
 import dayjs from "dayjs";
-import weekOfYear from "dayjs/plugin/weekOfYear";
-
-dayjs.extend(weekOfYear); // 이거 꼭 추가!
 
 interface HabitLog {
-  log_date: string;
+  log_date: string; // "yyyy-MM-DD"
   completed: boolean;
 }
 
-interface TotalHeatmapProps {
+interface Props {
   allLogs: HabitLog[];
 }
 
-export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
-  const [selectedMonth, setSelectedMonth] = useState<number>(dayjs().month());
+export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
+  const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
 
-  // 1) 날짜별 완료 개수
-  const dailyCount = useMemo(() => {
-    const map: Record<string, number> = {};
-    allLogs.forEach((log) => {
-      const date = dayjs(log.log_date).format("YYYY-MM-DD");
-      if (!map[date]) map[date] = 0;
-      if (log.completed) map[date] += 1;
-    });
-    return map;
-  }, [allLogs]);
-
-  // 2) 선택한 달 날짜 목록
-  const monthDates = useMemo(() => {
-    const daysInMonth = dayjs().month(selectedMonth).daysInMonth();
-    return Array.from({ length: daysInMonth }, (_, i) =>
-      dayjs().month(selectedMonth).date(i + 1).format("YYYY-MM-DD")
-    );
+  // 1) 월별 날짜 배열
+  const monthDays = useMemo(() => {
+    const start = dayjs().month(selectedMonth).startOf("month");
+    const end = dayjs().month(selectedMonth).endOf("month");
+    const days: dayjs.Dayjs[] = [];
+    let curr = start;
+    while (curr.isBefore(end) || curr.isSame(end, "day")) {
+      days.push(curr);
+      curr = curr.add(1, "day");
+    }
+    return days;
   }, [selectedMonth]);
 
-  // 3) 색상 단계
+  // 2) 날짜별 완료 개수 계산
+  const dailyCount = useMemo(() => {
+    const map: Record<string, number> = {};
+    allLogs.forEach((l) => {
+      if (!l.completed) return;
+      const dateKey = dayjs(l.log_date).format("YYYY-MM-DD");
+      if (!map[dateKey]) map[dateKey] = 0;
+      map[dateKey] += 1;
+    });
+    return map; // { "2025-11-01": 2, ... }
+  }, [allLogs]);
+
+  // 3) 주 단위로 그룹화
+  const weeks = useMemo(() => {
+    const map: Record<number, dayjs.Dayjs[]> = {};
+    const firstDayOfMonth = dayjs().month(selectedMonth).startOf("month").startOf("week");
+
+    monthDays.forEach((day) => {
+      const weekIndex = day.startOf("week").diff(firstDayOfMonth, "week");
+      if (!map[weekIndex]) map[weekIndex] = [];
+      map[weekIndex].push(day);
+    });
+
+    return map;
+  }, [monthDays, selectedMonth]);
+
+  // 4) 색상 단계 (GitHub style)
   const getColor = (count: number) => {
-    if (count === 0) return "#ebedf0";
+    if (count === 0) return "#ebedf0"; // 연한 회색
     if (count === 1) return "#c6e48b";
     if (count === 2) return "#7bc96f";
     if (count === 3) return "#239a3b";
-    return "#196127";
+    return "#196127"; // 4 이상
   };
-
-  // 4) 요일별로 배치
-  const weeks = useMemo(() => {
-    const weekMap: Record<number, { date: string; count: number }[]> = {};
-    monthDates.forEach((dateStr) => {
-      const date = dayjs(dateStr);
-      const weekNum = date.week();
-      if (!weekMap[weekNum]) weekMap[weekNum] = [];
-      weekMap[weekNum].push({
-        date: dateStr,
-        count: dailyCount[dateStr] || 0,
-      });
-    });
-    return Object.values(weekMap);
-  }, [monthDates, dailyCount]);
 
   const months = Array.from({ length: 12 }, (_, i) => ({
     label: dayjs().month(i).format("MMMM"),
@@ -66,7 +68,7 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Month Selector */}
+      {/* Month selector */}
       <div className="flex justify-end mb-2">
         <select
           value={selectedMonth}
@@ -82,26 +84,34 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
       </div>
 
       {/* Heatmap */}
-      <div className="flex flex-col gap-1">
-        {weeks.map((week, i) => (
-          <div key={i} className="flex gap-1">
-            {Array.from({ length: 7 }).map((_, j) => {
-              const day = week[j];
-              return (
-                <div
-                  key={j}
-                  title={day ? `${day.date}: ${day.count} habits` : ""}
-                  style={{
-                    width: 14,
-                    height: 14,
-                    backgroundColor: day ? getColor(day.count) : "#ebedf0",
-                    borderRadius: 3,
-                  }}
-                />
-              );
-            })}
+      <div className="grid gap-1" style={{ gridTemplateColumns: "repeat(7, 30px)" }}>
+        {/* 요일 헤더 */}
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+          <div key={d} style={{ fontSize: 12, textAlign: "center" }}>
+            {d}
           </div>
         ))}
+
+        {/* 날짜 칸 */}
+        {Object.values(weeks).map((week) =>
+          week.map((day) => {
+            const dateKey = day.format("YYYY-MM-DD");
+            const count = dailyCount[dateKey] || 0;
+            return (
+              <div
+                key={dateKey}
+                title={`${dateKey} — ${count} habits`}
+                style={{
+                  width: 30,
+                  height: 30,
+                  backgroundColor: getColor(count),
+                  borderRadius: 4,
+                  border: "1px solid #fff",
+                }}
+              />
+            );
+          })
+        )}
       </div>
     </div>
   );
