@@ -22,7 +22,7 @@ interface TotalHeatmapProps {
 export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
   const [selectedMonth, setSelectedMonth] = useState<number>(dayjs().month());
 
-  // 1) 날짜별 count
+  // 1) 날짜별 카운트
   const dailyCount = useMemo(() => {
     const map: Record<string, number> = {};
 
@@ -35,34 +35,33 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
     return map;
   }, [allLogs]);
 
-  // 2) 선택된 월만 추출
+  // 2) 선택된 월의 날짜만
   const monthDates = useMemo(() => {
     return Object.keys(dailyCount).filter(
       (d) => dayjs(d).month() === selectedMonth
     );
   }, [dailyCount, selectedMonth]);
 
-  // 3) Heatmap 구조로 변환
+  // 3) week(행) × dayIndex(열) → heatmapData로 변환
   const heatmapData = useMemo(() => {
     const weeks: Record<string, any[]> = {};
 
     monthDates.forEach((dateString) => {
       const date = dayjs(dateString);
       const weekKey = date.startOf("week").format("YYYY-MM-DD");
-      const dayIndex = date.day();
-      const count = dailyCount[dateString];
 
       if (!weeks[weekKey]) weeks[weekKey] = [];
 
+      const dayIndex = date.day();
       weeks[weekKey].push({
         week: weekKey,
         dayIndex,
         date: dateString,
-        count,
-        dummy: 1,
+        count: dailyCount[dateString],
       });
     });
 
+    // Recharts용 flatten
     const flat: any[] = [];
 
     Object.keys(weeks)
@@ -70,25 +69,21 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
       .forEach((weekKey) => {
         for (let i = 0; i < 7; i++) {
           const found = weeks[weekKey].find((w) => w.dayIndex === i);
-
-          if (found) {
-            flat.push(found);
-          } else {
-            flat.push({
+          flat.push(
+            found || {
               week: weekKey,
               dayIndex: i,
               date: dayjs(weekKey).add(i, "day").format("YYYY-MM-DD"),
               count: 0,
-              dummy: 1,
-            });
-          }
+            }
+          );
         }
       });
 
     return flat;
   }, [monthDates, dailyCount]);
 
-  // 4) 색상
+  // 색상
   const getColor = (count: number) => {
     if (count === 0) return "#ebedf0";
     if (count === 1) return "#c6e48b";
@@ -119,27 +114,30 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
         </select>
       </div>
 
-      {/* HEATMAP */}
-      <div className="w-full h-[280px]" style={{height: 280}}>
-        <ResponsiveContainer width="100%" height="100%">
+      {/* Heatmap */}
+      <div className="w-full h-[280px]" style={{ height: 280}}>
+        <ResponsiveContainer>
           <ComposedChart
-            layout="vertical"
             data={heatmapData}
-            margin={{ top: 10, right: 20, left: 20, bottom: 10 }}
+            margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
           >
-            {/* Y축 = 주 단위 */}
+            {/* X축 = 요일(0~6) */}
+            <XAxis
+              dataKey="dayIndex"
+              type="number"
+              domain={[0, 6]}
+              ticks={[0, 1, 2, 3, 4, 5, 6]}
+              tickFormatter={(d) => ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d]}
+            />
+
+            {/* Y축 = Week row */}
             <YAxis
               dataKey="week"
               type="category"
-              interval={0}
-              width={70}
+              width={60}
               tickFormatter={(v) => dayjs(v).format("MMM D")}
             />
 
-            {/* X축 = 요일 (0~6) */}
-            <XAxis type="number" domain={[0, 6]} hide />
-
-            {/* Tooltip */}
             <Tooltip
               content={({ payload }) => {
                 if (!payload || !payload.length) return null;
@@ -152,10 +150,10 @@ export const TotalHeatmap: React.FC<TotalHeatmapProps> = ({ allLogs }) => {
               }}
             />
 
-            {/* 각 Heatmap Cell */}
-            <Bar dataKey="dayIndex" barSize={20}>
-              {heatmapData.map((d, idx) => (
-                <Cell key={idx} fill={getColor(d.count)} />
+            {/* Bar = 각 셀이 1개의 박스 */}
+            <Bar dataKey="count" barSize={20}>
+              {heatmapData.map((d, i) => (
+                <Cell key={i} fill={getColor(d.count)} />
               ))}
             </Bar>
           </ComposedChart>
