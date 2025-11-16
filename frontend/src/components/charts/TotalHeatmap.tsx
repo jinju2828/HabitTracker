@@ -15,20 +15,7 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
 
   const today = dayjs();
 
-  // 1) 월별 날짜 배열
-  const monthDays = useMemo(() => {
-    const start = dayjs().month(selectedMonth).startOf("month");
-    const end = dayjs().month(selectedMonth).endOf("month");
-    const days: dayjs.Dayjs[] = [];
-    let curr = start;
-    while (curr.isBefore(end) || curr.isSame(end, "day")) {
-      days.push(curr);
-      curr = curr.add(1, "day");
-    }
-    return days;
-  }, [selectedMonth]);
-
-  // 2) 날짜별 완료 개수 계산
+  // 1) 날짜별 완료 개수 계산
   const dailyCount = useMemo(() => {
     const map: Record<string, number> = {};
     allLogs.forEach((l) => {
@@ -40,7 +27,7 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
     return map;
   }, [allLogs]);
 
-  // 3) 주 단위로 그룹화 (달력식)
+  // 2) 달력식 주차 배열 생성
   const weeks = useMemo(() => {
     const firstDayOfMonth = dayjs().month(selectedMonth).startOf("month").startOf("week");
     const lastDayOfMonth = dayjs().month(selectedMonth).endOf("month").endOf("week");
@@ -60,13 +47,13 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
     return weekMap;
   }, [selectedMonth]);
 
-  // 4) 색상 단계 (GitHub style)
+  // 3) 색상 단계 (GitHub style)
   const getColor = (count: number) => {
-    if (count === 0) return "#ebedf0"; // 연한 회색
+    if (count === 0) return "#ebedf0";
     if (count === 1) return "#c6e48b";
     if (count === 2) return "#7bc96f";
     if (count === 3) return "#239a3b";
-    return "#196127"; // 4 이상
+    return "#196127";
   };
 
   const months = Array.from({ length: 12 }, (_, i) => ({
@@ -91,36 +78,54 @@ export const TotalHeatmap: React.FC<Props> = ({ allLogs }) => {
         </select>
       </div>
 
-      {/* 요일 헤더 */}
-      <div style={{ display: "grid", 
-                    gridTemplateColumns: "repeat(7, 30px)", 
-                    gap: "4px",
-                    justifyContent: "center"}}>
+      {/* Weekday header */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 30px)",
+          gap: "4px",
+          justifyContent: "center",
+          fontSize: 12,
+          textAlign: "center",
+        }}
+      >
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-          <div key={d} className="text-center">
-            {d}
-          </div>
+          <div key={d}>{d}</div>
         ))}
       </div>
 
-      {/* Heatmap grid */}
-      <div style={{ display: "grid", 
-              gridTemplateColumns: "repeat(7, 30px)", 
-              gap: "4px",
-              justifyContent: "center"}}>
+      {/* Heatmap grid (with tooltip) */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 30px)",
+          gap: "4px",
+          justifyContent: "center",
+        }}
+      >
         {weeks.map((week, wi) =>
           week.map((day) => {
             const dateKey = day.format("YYYY-MM-DD");
             const count = dailyCount[dateKey] || 0;
+
             return (
               <div
                 key={dateKey}
+                title={`${dateKey}\n습관 ${count}개 완료`}
                 style={{
                   width: 30,
                   height: 30,
                   backgroundColor: getColor(count),
                   borderRadius: 4,
                   border: "1px solid #fff",
+                  cursor: "pointer",
+                  transition: "transform 0.15s",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.transform = "scale(1)";
                 }}
               />
             );
