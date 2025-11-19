@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Dot } from 'recharts'
 import { parseISO, format } from 'date-fns'
+import { CustomTooltip } from '../CustomTooltip'   // 추가
 
 interface Props {
   chartData: { date: string; completed: number }[]
@@ -23,7 +24,7 @@ export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
       <LineChart data={data}>
         <XAxis dataKey="date" />
         <YAxis allowDecimals={false} />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} /> {/* ← 변경 */}
         <Line
           type="monotone"
           dataKey="completed"

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { parseISO, format } from 'date-fns'
+import { CustomTooltip } from '../CustomTooltip'  // 추가
 
 interface Props {
   chartData: { date: string; completed: number }[]
@@ -23,7 +24,7 @@ export const BarChartView: React.FC<Props> = ({ chartData }) => {
       <BarChart data={data}>
         <XAxis dataKey="date" />
         <YAxis allowDecimals={false} />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} /> {/* ← 변경 */}
         <Bar dataKey="completed" fill="#4f46e5" />
       </BarChart>
     </ResponsiveContainer>
