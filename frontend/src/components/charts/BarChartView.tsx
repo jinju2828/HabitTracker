@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { parseISO, format } from 'date-fns'
-import { CustomTooltip } from '../CustomTooltip'  // 추가
 
 interface Props {
   chartData: { date: string; completed: number }[]
@@ -9,11 +8,10 @@ interface Props {
 
 export const BarChartView: React.FC<Props> = ({ chartData }) => {
   const data = useMemo(() => {
-    if (!chartData || chartData.length === 0) return []
-
-    return chartData.map((item) => ({
-      date: format(parseISO(item.date), 'MM/dd'),
-      completed: item.completed,
+    return chartData.map(item => ({
+      date: format(parseISO(item.date), "MM/dd"),
+      completed: item.completed === -1 ? 0 : item.completed,
+      originalCompleted: item.completed,
     }))
   }, [chartData])
 
@@ -23,9 +21,25 @@ export const BarChartView: React.FC<Props> = ({ chartData }) => {
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
         <XAxis dataKey="date" />
-        <YAxis allowDecimals={false} />
-        <Tooltip content={<CustomTooltip />} /> {/* ← 변경 */}
-        <Bar dataKey="completed" fill="#4f46e5" />
+        
+        <Bar
+          dataKey="completed"
+          shape={(props: any) => {
+            const { x, y, width, height, payload } = props
+            const isNotYet = payload.originalCompleted === -1
+            const color = isNotYet ? "#ddd" : "#4f46e5"
+            return <rect x={x} y={y} width={width} height={height} fill={color} />
+          }}
+        />
+
+        <Tooltip
+          formatter={(_, __, payload: any) => {
+            const v = payload?.payload?.originalCompleted
+            return v === -1 ? "Not yet" : v === 1 ? "Completed" : "Not done"
+          }}
+        />
+
+        <YAxis domain={[0, 1]} ticks={[0, 1]} />
       </BarChart>
     </ResponsiveContainer>
   )

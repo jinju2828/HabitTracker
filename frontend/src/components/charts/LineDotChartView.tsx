@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Dot } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { parseISO, format } from 'date-fns'
-import { CustomTooltip } from '../CustomTooltip'   // 추가
 
 interface Props {
   chartData: { date: string; completed: number }[]
@@ -9,11 +8,10 @@ interface Props {
 
 export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
   const data = useMemo(() => {
-    if (!chartData || chartData.length === 0) return []
-
-    return chartData.map((item) => ({
-      date: format(parseISO(item.date), 'MM/dd'),
-      completed: item.completed,
+    return chartData.map(item => ({
+      date: format(parseISO(item.date), "MM/dd"),
+      completed: item.completed === -1 ? 0 : item.completed,
+      originalCompleted: item.completed, // -1 보관
     }))
   }, [chartData])
 
@@ -23,14 +21,35 @@ export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>
         <XAxis dataKey="date" />
-        <YAxis allowDecimals={false} />
-        <Tooltip content={<CustomTooltip />} /> {/* ← 변경 */}
+        <YAxis
+          domain={[0, 1]}
+          ticks={[0, 1]}
+          tickFormatter={(v) => (v === 1 ? "Done" : "Miss")}
+        />
+
+        <Tooltip
+          formatter={(_, __, payload: any) => {
+            const v = payload?.payload?.originalCompleted
+            return v === -1 ? "Not yet" : v === 1 ? "Completed" : "Not done"
+          }}
+        />
+
         <Line
-          type="monotone"
           dataKey="completed"
           stroke="#4f46e5"
-          strokeWidth={2}
-          dot={<Dot r={4} stroke="#4f46e5" strokeWidth={2} fill="#fff" />}
+          dot={({ cx, cy, payload }) => {
+            const isNotYet = payload.originalCompleted === -1
+
+            return (
+              <circle
+                cx={cx}
+                cy={cy}
+                r={4}
+                fill={isNotYet ? "#ccc" : "#fff"}
+                stroke={isNotYet ? "#999" : "#4f46e5"}
+              />
+            )
+          }}
         />
       </LineChart>
     </ResponsiveContainer>

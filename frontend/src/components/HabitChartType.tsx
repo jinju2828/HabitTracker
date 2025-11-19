@@ -43,13 +43,24 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
     )
 
     return allDates.map((d) => {
-      const key = format(d, "yyyy-MM-dd")
-      const log = logMap.get(key)
+      const key = format(d, "yyyy-MM-dd");
+      const isFuture = d > new Date();
+
+      // 미래 날짜일 때
+      if (isFuture) {
+        return {
+          date: key,
+          completed: -1, // 미래
+        };
+      }
+
+      // 과거/현재 날짜
+      const log = logMap.get(key);
       return {
         date: key,
-        completed: log ? log.completed : 0, // 로그가 없으면 0!
-      }
-    })
+        completed: log ? log.completed : 0,
+      };
+    });
   }, [filteredLogs])
 
   return (
