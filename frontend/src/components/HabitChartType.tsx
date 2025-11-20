@@ -28,40 +28,33 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
     )
   }, [habitLogs, selectedMonth])
 
-  // 🔥🔥🔥 해당 월의 모든 날짜 생성 + 로그 없는 날은 completed = 0
   const fullChartData = useMemo(() => {
-    if (filteredLogs.length === 0) return []
+  if (filteredLogs.length === 0) return []
 
+  let start: Date, end: Date
+
+  if (selectedMonth) {
     const monthDate = parseISO(filteredLogs[0].date)
-    const start = startOfMonth(monthDate)
-    const end = endOfMonth(monthDate)
+    start = startOfMonth(monthDate)
+    end = endOfMonth(monthDate)
+  } else {
+    const dates = filteredLogs.map(l => parseISO(l.date))
+    start = new Date(Math.min(...dates.map(d => d.getTime())))
+    end = new Date(Math.max(...dates.map(d => d.getTime())))
+  }
 
-    const allDates = eachDayOfInterval({ start, end })
+  const allDates = eachDayOfInterval({ start, end })
+  const logMap = new Map(filteredLogs.map(l => [format(parseISO(l.date), "yyyy-MM-dd"), l]))
 
-    const logMap = new Map(
-      filteredLogs.map((l) => [format(parseISO(l.date), "yyyy-MM-dd"), l])
-    )
+  return allDates.map(d => {
+    const key = format(d, "yyyy-MM-dd")
+    const isFuture = d > new Date()
+    if (isFuture) return { date: key, completed: -1 }
+    const log = logMap.get(key)
+    return { date: key, completed: log ? log.completed : 0 }
+  })
+}, [filteredLogs, selectedMonth])
 
-    return allDates.map((d) => {
-      const key = format(d, "yyyy-MM-dd");
-      const isFuture = d > new Date();
-
-      // 미래 날짜일 때
-      if (isFuture) {
-        return {
-          date: key,
-          completed: -1, // 미래
-        };
-      }
-
-      // 과거/현재 날짜
-      const log = logMap.get(key);
-      return {
-        date: key,
-        completed: log ? log.completed : 0,
-      };
-    });
-  }, [filteredLogs])
 
   return (
     <div style={{ width: '100%', height: 450 }}>
