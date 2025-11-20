@@ -12,27 +12,30 @@ export interface HeatmapProps {
 const groupByWeek = (chartData: { date: string; completed: number }[]) => {
   if (!chartData.length) return []
 
-  // 전체 기간: chartData의 최소/최대 날짜
+  // 전체 기간
   const sortedDates = chartData
     .map(d => parseISO(d.date))
     .sort((a, b) => a.getTime() - b.getTime())
-  const start = startOfWeek(sortedDates[0], { weekStartsOn: 0 }) // ✅ 일요일 기준
+
+  const start = startOfWeek(sortedDates[0], { weekStartsOn: 0 })
   const end = sortedDates[sortedDates.length - 1]
 
-  // 일요일 기준 모든 날짜 배열
+  // 모든 날짜
   const allDates = eachDayOfInterval({ start, end })
 
-  // 날짜별 completed map
+  // 날짜별 completed 저장
   const logMap = new Map(chartData.map(d => [d.date, d.completed]))
 
-  // 주 단위 그룹핑
+  // 주 단위로 그룹핑
   const weeks: Record<string, { x: string; y: number; fullDate: string }[]> = {}
 
   allDates.forEach(date => {
     const weekNumber = format(date, "'W'w")
-    const dayName = format(date, 'EEE') // Sun, Mon, Tue, ...
+    const dayName = format(date, 'EEE')
     const iso = format(date, 'yyyy-MM-dd')
-    const completed = logMap.get(iso) ?? 0
+
+    // ❗ 미래 날짜(-1) 그대로 유지하도록 수정
+    const completed = logMap.has(iso) ? logMap.get(iso)! : 0
 
     if (!weeks[weekNumber]) weeks[weekNumber] = []
     weeks[weekNumber].push({ x: dayName, y: completed, fullDate: iso })
@@ -49,12 +52,16 @@ export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
       <ResponsiveHeatMap
         data={heatmapRows}
         margin={{ top: 50, right: 40, bottom: 40, left: 60 }}
-        // ✅ 숫자 표시 제거
+
+        // 숫자 숨김
         labelTextColor="transparent"
         valueFormat={() => ''}
 
-        // ✅ 색상만 표시 (초록=완료, 흰색=미완료)
-        colors={(cell) => (cell.value === 1 ? '#4CAF50' : '#f5f5f5')}
+        // 색 처리
+        colors={(cell) => {
+          if (cell.value === -1) return '#d0d0d0' // ❗ 미래 날짜 = 회색
+          return cell.value === 1 ? '#4CAF50' : '#f5f5f5'
+        }}
         emptyColor="#f5f5f5"
 
         axisTop={{
@@ -88,7 +95,10 @@ export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
               }}
             >
               <div><strong>{fullDate}</strong></div>
-              <div>{y === 1 ? '✅ Completed' : '❌ Missed'}</div>
+
+              {y === -1 && <div>⏳ Not yet</div>}
+              {y === 1 && <div>✅ Completed</div>}
+              {y === 0 && <div>❌ Missed</div>}
             </div>
           )
         }}
