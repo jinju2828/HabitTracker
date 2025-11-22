@@ -33,6 +33,8 @@ export const BarChartView: React.FC<Props> = ({ chartData }) => {
         />
 
         <Tooltip
+          labelFormatter={(label) => `Date: ${label}`}
+          contentStyle={{ color: '#000' }}         // Tooltip 내부 텍스트 색상   
           formatter={(_, __, payload: any) => {
             const v = payload?.payload?.originalCompleted
             return v === -1 ? "Not yet" : v === 1 ? "Completed" : "Not done"
