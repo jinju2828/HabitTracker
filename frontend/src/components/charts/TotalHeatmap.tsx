@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 
 interface HabitLog {
   log_date: string; // "yyyy-MM-DD"
-  completed: boolean;
+  completed: number;
 }
 
 interface Props {

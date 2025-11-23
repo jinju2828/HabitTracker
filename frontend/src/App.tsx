@@ -5,6 +5,7 @@ import { HabitProgressChart } from "./components/HabitProgressChart";
 import { TotalHeatmap } from "./components/charts/TotalHeatmap";
 import { useHabits } from "./hooks/useHabits";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
+import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
 
 function App() {
   const { habits } = useHabits();
@@ -28,7 +29,7 @@ function App() {
       {loading ? (
         <p>Loading heatmap...</p>
       ) : (
-        <TotalHeatmap allLogs={allLogs} />
+        <TotalHabitProgressChart allLogs={allLogs} />
       )}
     </div>
   );
