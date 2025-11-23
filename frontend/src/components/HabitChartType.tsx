@@ -57,7 +57,7 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
 
 
   return (
-    <div style={{ width: '100%', height: 450 }}>
+    <div style={{ width: '100%', height: 350 }}>
       {/* 월/타입 선택 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
         <label>

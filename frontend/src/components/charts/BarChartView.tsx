@@ -41,7 +41,10 @@ export const BarChartView: React.FC<Props> = ({ chartData }) => {
           }}
         />
 
-        <YAxis domain={[0, 1]} ticks={[0, 1]} />
+        <YAxis 
+          domain={[0, 1]} 
+          ticks={[0, 1]} 
+          tickFormatter={(v) => (v === 1 ? "Done" : "Miss")}/>
       </BarChart>
     </ResponsiveContainer>
   )
