@@ -1,18 +1,13 @@
 import { BarChartView } from "./BarChartView";
 
-type ChartItem = {
+export interface ChartItem {
   date: string;
-  completed: number;
-};
+  completed: number; // 🌿 날짜별 완료된 해빗 총 개수
+}
 
 export default function TotalBarChart({ chartData }: { chartData: ChartItem[] }) {
   if (!chartData || chartData.length === 0) {
     return <p>No data for bar chart.</p>;
   }
-
-  return (
-    <div style={{ width: "100%", height: 300 }}>   {/* ★ height 추가 */}
-      <BarChartView chartData={chartData} />
-    </div>
-  );
+  return <BarChartView chartData={chartData} />;
 }
