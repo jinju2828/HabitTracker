@@ -1,11 +1,18 @@
 import { BarChartView } from "./BarChartView";
 
-export default function TotalBarChart({ allLogs }: { allLogs: any[] }) {
+type ChartItem = {
+  date: string;
+  completed: number;
+};
 
-  const chartData = allLogs.map(log => ({
-    date: log.log_date,
-    completed: log.completed
-  }));
+export default function TotalBarChart({ chartData }: { chartData: ChartItem[] }) {
+  if (!chartData || chartData.length === 0) {
+    return <p>No data for bar chart.</p>;
+  }
 
-  return <BarChartView chartData={chartData} />;
+  return (
+    <div style={{ width: "100%", height: 300 }}>   {/* ★ height 추가 */}
+      <BarChartView chartData={chartData} />
+    </div>
+  );
 }

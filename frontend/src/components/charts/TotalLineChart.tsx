@@ -1,11 +1,20 @@
 import { LineDotChartView } from "./LineDotChartView";
 
-export default function TotalLineChart({ allLogs }: { allLogs: any[] }) {
+type ChartItem = {
+  date: string;
+  completed: number;
+};
 
-  const chartData = allLogs.map(log => ({
-    date: log.log_date,      // 🔥 LineChart가 요구하는 필드로 변환
-    completed: log.completed // 그대로 사용
-  }));
+export default function TotalLineChart({ chartData }: { chartData: ChartItem[] }) {
+  
+  console.log("TotalLineChart received chartData:", chartData);
+  if (!chartData || chartData.length === 0) {
+    return <p>No data for line chart.</p>;
+  }
 
-  return <LineDotChartView chartData={chartData} />;
+  return (
+    <div style={{ width: "100%", height: 300 }}>   {/* ★ height 추가 */}
+      <LineDotChartView chartData={chartData} />
+    </div>
+  );
 }
