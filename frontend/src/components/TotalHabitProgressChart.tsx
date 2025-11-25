@@ -2,6 +2,10 @@ import { useState, useMemo } from "react";
 import TotalLineChart from "./charts/TotalLineChart";
 import TotalBarChart from "./charts/TotalBarChart";
 import { TotalHeatmap } from "./charts/TotalHeatmap";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 interface HabitLog {
   log_date: string;
@@ -13,65 +17,78 @@ interface Props {
 }
 
 export default function TotalHabitProgressChart({ allLogs }: Props) {
-  const [month, setMonth] = useState("all");
+  const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
 
-  // 🔥 1) 월별 필터링
+  /** 1) 정확한 월 필터링 (UTC 기반) */
   const filteredLogs = useMemo(() => {
-    if (month === "all") return allLogs;
-    return allLogs.filter((log) => log.log_date.startsWith(month));
-  }, [month, allLogs]);
+    return allLogs.filter((log) =>
+      dayjs.utc(log.log_date).month() === selectedMonth
+    );
+  }, [allLogs, selectedMonth]);
 
-  // 🔥 2) 날짜별 완료 합산
-  const chartData = useMemo(() => {
-    const dailyTotals: Record<string, number> = {};
+  /** 2) 라인/바 차트용 chartData 생성 */
+const chartData = useMemo(() => {
+  const start = dayjs().month(selectedMonth).startOf("month");
+  const end = dayjs().month(selectedMonth).endOf("month");
 
-    filteredLogs.forEach((log) => {
-      const date = log.log_date.split("T")[0];
-      dailyTotals[date] =
-        (dailyTotals[date] || 0) + (log.completed ? 1 : 0);
+  const map: Record<string, number> = {};
+
+  filteredLogs.forEach((log) => {
+    const key = dayjs.utc(log.log_date).format("YYYY-MM-DD");
+
+    // 날짜별 개수 누적 ⭐
+    map[key] = (map[key] ?? 0) + (log.completed ? 1 : 0);
+  });
+
+  const result = [];
+  let d = start;
+
+  while (d.isBefore(end) || d.isSame(end, "day")) {
+    const key = d.format("YYYY-MM-DD");
+
+    result.push({
+      date: key,
+      completed: map[key] ?? 0, // 개수 그대로 사용
     });
 
-    return Object.entries(dailyTotals).map(([date, completed]) => ({
-      date,
-      completed,
-    }));
-  }, [filteredLogs]);
+    d = d.add(1, "day");
+  }
 
-  // 🔥 3) 월 선택 목록 자동 생성
-  const monthList = useMemo(() => {
-    const set = new Set<string>();
-    allLogs.forEach((log) => {
-      set.add(log.log_date.substring(0, 7)); // YYYY-MM
-    });
-    return ["all", ...Array.from(set).sort()];
-  }, [allLogs]);
+  return result;
+}, [filteredLogs, selectedMonth]);
+
+  /** 3) Heatmap용 데이터 생성 */
+  const heatmapLogs = chartData.map((d) => ({
+    log_date: d.date,
+    completed: d.completed,
+  }));
 
   return (
     <div style={{ marginTop: 20 }}>
-      {/* 📌 Month Selector */}
-      <div style={{ marginBottom: 12 }}>
-        <label style={{ marginRight: 8 }}>Month:</label>
-        <select value={month} onChange={(e) => setMonth(e.target.value)}>
-          {monthList.map((m) => (
-            <option key={m} value={m}>
-              {m === "all" ? "All" : m}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Month selector */}
+      <select
+        value={selectedMonth}
+        onChange={(e) => setSelectedMonth(Number(e.target.value))}
+      >
+        {Array.from({ length: 12 }, (_, i) => (
+          <option key={i} value={i}>
+            {dayjs().month(i).format("MMMM")}
+          </option>
+        ))}
+      </select>
 
       <h3>Total Line Chart</h3>
       <div style={{ height: 250 }}>
-        <TotalLineChart chartData={chartData} />
+      <TotalLineChart chartData={chartData} />
       </div>
 
       <h3>Total Bar Chart</h3>
       <div style={{ height: 250 }}>
-        <TotalBarChart chartData={chartData} />
+      <TotalBarChart chartData={chartData} />
       </div>
 
       <h3>Total Heatmap</h3>
-      <TotalHeatmap allLogs={filteredLogs} />
+      <TotalHeatmap allLogs={heatmapLogs} />
     </div>
   );
 }
