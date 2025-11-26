@@ -2,7 +2,6 @@ import React from "react";
 import { HabitForm } from "./components/HabitForm";
 import { HabitCard } from "./components/HabitCard";
 import { HabitProgressChart } from "./components/HabitProgressChart";
-import { TotalHeatmap } from "./components/charts/TotalHeatmap";
 import { useHabits } from "./hooks/useHabits";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
