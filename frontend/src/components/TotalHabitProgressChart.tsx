@@ -1,15 +1,15 @@
 import { useState, useMemo } from "react";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import TotalLineChart from "./charts/TotalLineChart";
 import TotalBarChart from "./charts/TotalBarChart";
 import TotalHeatmap from "./charts/TotalHeatmap";
-import dayjs from "dayjs";
-import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 
 interface HabitLog {
-  log_date: string; // YYYY-MM-DD
-  completed: number | boolean;
+  log_date: string; // YYYY-MM-DD or ISO
+  completed: number | boolean; // true/false or number
 }
 
 interface Props {
@@ -17,112 +17,101 @@ interface Props {
 }
 
 export default function TotalHabitProgressChart({ allLogs }: Props) {
-  const today = new Date();
-  const [selectedYear, setSelectedYear] = useState(today.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(today.getMonth() + 1);
+  const today = dayjs();
+  const [selectedYear, setSelectedYear] = useState<number>(today.year());
+  const [selectedMonth, setSelectedMonth] = useState<number>(today.month() + 1); // 1..12
   const [viewMode, setViewMode] = useState<"monthly" | "weekly">("monthly");
 
-  const years = Array.from(
-    new Set(allLogs.map((log) => new Date(log.log_date).getFullYear()))
-  ).sort();
+  // available years
+  const years = useMemo(() => {
+    const s = Array.from(new Set(allLogs.map((l) => dayjs.utc(l.log_date).year())));
+    return s.sort((a, b) => a - b);
+  }, [allLogs]);
 
-  const filteredLogs = allLogs.filter((log) => {
-    const d = new Date(log.log_date);
-    return (
-      d.getFullYear() === selectedYear &&
-      d.getMonth() + 1 === selectedMonth
-    );
-  });
+  // 1) filter logs to selected year & month
+  const filteredLogs = useMemo(() => {
+    return allLogs.filter((l) => {
+      const d = dayjs.utc(l.log_date);
+      return d.year() === selectedYear && d.month() + 1 === selectedMonth;
+    });
+  }, [allLogs, selectedYear, selectedMonth]);
 
-  // 1) daily 기준 데이터 생성
-  const dailyData = filteredLogs.map((log) => ({
-    date: log.log_date,
-    completed: Number(log.completed),
-  }));
+  // 2) build daily aggregated counts for the month (every date present, ordered)
+  const dailyChartData = useMemo(() => {
+    const start = dayjs.utc(`${selectedYear}-${String(selectedMonth).padStart(2, "0")}-01`).startOf("month");
+    const end = start.endOf("month");
 
-  // 2) weekly 집계 → date 필드 통일
-  const weeklyData = useMemo(() => {
-    const map = new Map<string, number>();
-
-    filteredLogs.forEach((log) => {
-      const d = new Date(log.log_date);
-      const week = Math.ceil((d.getDate() - d.getDay() + 1) / 7);
-      const key = `${selectedYear}-${selectedMonth}-W${week}`;
-
-      map.set(key, (map.get(key) || 0) + Number(log.completed));
+    // map counts
+    const map: Record<string, number> = {};
+    filteredLogs.forEach((l) => {
+      const key = dayjs.utc(l.log_date).format("YYYY-MM-DD");
+      map[key] = (map[key] || 0) + (typeof l.completed === "number" ? l.completed : Number(l.completed));
     });
 
-    return Array.from(map.keys()).map((key) => ({
-      date: key, // 중요! date 필드로 통일
-      completed: map.get(key) || 0,
-    }));
+    const out: { date: string; completed: number }[] = [];
+    let cur = start;
+    while (cur.isBefore(end) || cur.isSame(end, "day")) {
+      const key = cur.format("YYYY-MM-DD");
+      out.push({ date: key, completed: map[key] ?? 0 });
+      cur = cur.add(1, "day");
+    }
+    return out;
   }, [filteredLogs, selectedYear, selectedMonth]);
 
-  // 최종 chartdata
-  const chartData = viewMode === "weekly" ? weeklyData : dailyData;
+  // 3) weekly aggregated (if viewMode === 'weekly')
+  const weeklyChartData = useMemo(() => {
+    // group by ISO week starting Sunday -> we'll use weekStart Sunday for consistency
+    const map = new Map<string, number>();
+    filteredLogs.forEach((l) => {
+      const d = dayjs.utc(l.log_date);
+      // get week starting date (Sunday)
+      const weekStart = d.startOf("week").format("YYYY-MM-DD");
+      map.set(weekStart, (map.get(weekStart) || 0) + (typeof l.completed === "number" ? l.completed : Number(l.completed)));
+    });
+    // sort keys (weekStart asc)
+    const keys = Array.from(map.keys()).sort((a, b) => (a < b ? -1 : 1));
+    return keys.map((k) => ({ date: k, completed: map.get(k) || 0 }));
+  }, [filteredLogs]);
+
+  // choose chartData based on viewMode
+  const chartData = viewMode === "weekly" ? weeklyChartData : dailyChartData;
+
+  // heatmap expects allLogs-like with log_date + completed count per day.
+  // We'll reuse dailyChartData to pass in as allLogs (TotalHeatmap expects log_date & completed number)
+  const heatmapLogs = dailyChartData.map((d) => ({ log_date: d.date, completed: d.completed }));
 
   return (
     <div style={{ marginTop: 20 }}>
-      {/* ===== YEAR / MONTH SELECT ===== */}
-      <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(Number(e.target.value))}
-        >
-          {years.map((y) => (
-            <option key={y} value={y}>
-              {y}년
-            </option>
-          ))}
+      {/* controls */}
+      <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
+        <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
+          {years.map((y) => (<option key={y} value={y}>{y}년</option>))}
         </select>
 
-        <select
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(Number(e.target.value))}
-        >
+        <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
           {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-            <option key={m} value={m}>
-              {m}월
-            </option>
+            <option key={m} value={m}>{m}월</option>
           ))}
         </select>
 
-        {/* WEEK / MONTH 버튼 */}
-        <button
-          onClick={() => setViewMode("monthly")}
-          style={{
-            padding: "5px 10px",
-            background: viewMode === "monthly" ? "#333" : "#eee",
-            color: viewMode === "monthly" ? "white" : "black",
-          }}
-        >
-          월간
-        </button>
-
-        <button
-          onClick={() => setViewMode("weekly")}
-          style={{
-            padding: "5px 10px",
-            background: viewMode === "weekly" ? "#333" : "#eee",
-            color: viewMode === "weekly" ? "white" : "black",
-          }}
-        >
-          주간
-        </button>
+        <button onClick={() => setViewMode("monthly")} style={{ padding: "6px 10px", background: viewMode === "monthly" ? "#333" : "#eee", color: viewMode === "monthly" ? "#fff" : "#000" }}>월간</button>
+        <button onClick={() => setViewMode("weekly")} style={{ padding: "6px 10px", background: viewMode === "weekly" ? "#333" : "#eee", color: viewMode === "weekly" ? "#fff" : "#000" }}>주간</button>
       </div>
 
       <h3>Total Line Chart</h3>
-      <TotalLineChart chartData={chartData} />
+      <div style={{ height: 240 }}>
+        <TotalLineChart chartData={chartData} />
+      </div>
 
       <h3>Total Bar Chart</h3>
-      <TotalBarChart chartData={chartData} />
+      <div style={{ height: 240 }}>
+        <TotalBarChart chartData={chartData} />
+      </div>
 
       <h3>Total Heatmap</h3>
-      <TotalHeatmap
-        allLogs={allLogs}
-        selectedYear={selectedYear}
-        selectedMonth={selectedMonth}
-      />
+      <div style={{ marginTop: 8 }}>
+        <TotalHeatmap allLogs={heatmapLogs} selectedYear={selectedYear} selectedMonth={selectedMonth} />
+      </div>
     </div>
   );
 }
