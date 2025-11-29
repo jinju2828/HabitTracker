@@ -85,25 +85,29 @@ export default function TotalHeatmap({
     padding: 8,
     borderRadius: 6,
     background: "#fff",
+    margin: "0 auto" 
   };
   const gridStyle: React.CSSProperties = {
     display: "grid",
     gridAutoRows: `${cellSize}px`,
     gap: 6,
+    justifyContent: "center",
   };
   const weekRowStyle = {
     display: "grid",
     gridTemplateColumns: `repeat(7, ${cellSize}px)`,
     gap: 6,
     alignItems: "center",
+    justifyContent: "center",
   } as React.CSSProperties;
 
   return (
-    <div style={containerStyle}>
+    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+          <div style={containerStyle}>
       <div style={{ marginBottom: 8, fontSize: 13, color: "#222" }}>{monthLabel}</div>
 
       {/* Weekday header */}
-      <div style={{ display: "grid", gridTemplateColumns: `repeat(7, ${cellSize}px)`, gap: 6, marginBottom: 6, fontSize: 11, color: "#666", textAlign: "center" }}>
+      <div style={{ display: "grid", gridTemplateColumns: `repeat(7, ${cellSize}px)`, gap: 6, marginBottom: 6, fontSize: 11, color: "#666", textAlign: "center",  justifyContent: "center" }}>
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
           <div key={d} style={{ width: cellSize }}>{d}</div>
         ))}
@@ -160,6 +164,7 @@ export default function TotalHeatmap({
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 }
