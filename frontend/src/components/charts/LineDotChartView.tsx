@@ -7,16 +7,16 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { parseISO, format } from "date-fns";
+import { format } from "date-fns";
 
 interface Props {
-  chartData: { date: string; completed: number }[];
+  chartData: { date: Date; completed: number }[];
 }
 
 export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
   const data = useMemo(() => {
     return chartData.map((item) => ({
-      date: format(parseISO(item.date), "MM/dd"),
+      date: format(item.date, "MM/dd"), // ✅ Date -> formatted string
       completed: item.completed,
     }));
   }, [chartData]);
@@ -26,7 +26,6 @@ export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
       <LineChart data={data}>
         <XAxis dataKey="date" />
 
-        {/* ✔ Y축: 해빗 개수 표시 */}
         <YAxis
           allowDecimals={false}
           domain={[0, "dataMax"]}
