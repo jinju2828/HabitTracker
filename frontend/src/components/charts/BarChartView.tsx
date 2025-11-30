@@ -7,16 +7,16 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { format } from "date-fns";
+import { parseISO, format } from "date-fns";
 
 interface Props {
-  chartData: { date: Date; completed: number }[]; // string -> Date
+  chartData: { date: string; completed: number }[]; // <-- string
 }
 
 export const BarChartView: React.FC<Props> = ({ chartData }) => {
   const data = useMemo(() => {
     return chartData.map((item) => ({
-      date: format(item.date, "MM/dd"), // parseISO 제거
+      date: format(parseISO(item.date), "MM/dd"),
       completed: item.completed,
     }));
   }, [chartData]);
@@ -25,19 +25,16 @@ export const BarChartView: React.FC<Props> = ({ chartData }) => {
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
         <XAxis dataKey="date" />
-
         <YAxis
           allowDecimals={false}
           domain={[0, "dataMax"]}
           label={{ value: "Habits Completed", angle: -90, position: "insideLeft" }}
         />
-
         <Tooltip
           labelFormatter={(label) => `Date: ${label}`}
           contentStyle={{ color: "#000" }}
           formatter={(v: any) => `${v} completed`}
         />
-
         <Bar dataKey="completed" fill="#4f46e5" />
       </BarChart>
     </ResponsiveContainer>
