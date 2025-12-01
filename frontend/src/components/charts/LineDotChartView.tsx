@@ -7,18 +7,26 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, isAfter } from "date-fns";
 
 interface Props {
-  chartData: { date: string; completed: number }[]; // <-- string으로 통일
+  chartData: { date: string; completed: number }[];
 }
 
+// ✅ 반드시 named export!
 export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
+  const today = new Date();
+
   const data = useMemo(() => {
-    return chartData.map((item) => ({
-      date: format(parseISO(item.date), "MM/dd"), // 문자열 그대로 parseISO
-      completed: item.completed,
-    }));
+    return chartData
+      .filter((item) => {
+        const d = parseISO(item.date);
+        return !isAfter(d, today); // 미래 날짜 제거
+      })
+      .map((item) => ({
+        date: format(parseISO(item.date), "MM/dd"),
+        completed: item.completed ?? 0,
+      }));
   }, [chartData]);
 
   return (
@@ -27,8 +35,12 @@ export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
         <XAxis dataKey="date" />
         <YAxis
           allowDecimals={false}
-          domain={[0, "dataMax"]}
-          label={{ value: "Habits Completed", angle: -90, position: "insideLeft" }}
+          domain={[0, (dataMax: number) => Math.max(1, dataMax)]}
+          label={{
+            value: "Habits Completed",
+            angle: -90,
+            position: "insideLeft",
+          }}
         />
         <Tooltip
           labelFormatter={(label) => `Date: ${label}`}

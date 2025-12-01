@@ -7,34 +7,48 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { parseISO, format } from "date-fns";
+import { parseISO, format, isAfter } from "date-fns";
 
 interface Props {
-  chartData: { date: string; completed: number }[]; // <-- string
+  chartData: { date: string; completed: number }[]; // string 유지
 }
 
 export const BarChartView: React.FC<Props> = ({ chartData }) => {
+  const today = new Date();
+
   const data = useMemo(() => {
-    return chartData.map((item) => ({
-      date: format(parseISO(item.date), "MM/dd"),
-      completed: item.completed,
-    }));
+    return chartData
+      .filter((item) => {
+        const d = parseISO(item.date);
+        return !isAfter(d, today); // ❗ 미래 날짜 제거
+      })
+      .map((item) => ({
+        date: format(parseISO(item.date), "MM/dd"),
+        completed: Math.max(0, item.completed ?? 0), // ❗ 음수/undefined 보호
+      }));
   }, [chartData]);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>
         <XAxis dataKey="date" />
+
         <YAxis
           allowDecimals={false}
-          domain={[0, "dataMax"]}
-          label={{ value: "Habits Completed", angle: -90, position: "insideLeft" }}
+          domain={[0, (dataMax: number) => Math.max(1, dataMax)]} // 최소 1 보장
+          label={{
+            value: "Habits Completed",
+            angle: -90,
+            position: "insideLeft",
+          }}
         />
+
         <Tooltip
           labelFormatter={(label) => `Date: ${label}`}
           contentStyle={{ color: "#000" }}
           formatter={(v: any) => `${v} completed`}
         />
+
         <Bar dataKey="completed" fill="#4f46e5" />
       </BarChart>
     </ResponsiveContainer>
