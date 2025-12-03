@@ -17,16 +17,17 @@ export const BarChartView: React.FC<Props> = ({ chartData }) => {
   const today = new Date();
 
   const data = useMemo(() => {
-    return chartData
-      .filter((item) => {
-        const d = parseISO(item.date);
-        return !isAfter(d, today); // ❗ 미래 날짜 제거
-      })
-      .map((item) => ({
-        date: format(parseISO(item.date), "MM/dd"),
-        completed: Math.max(0, item.completed ?? 0), // ❗ 음수/undefined 보호
-      }));
-  }, [chartData]);
+  return chartData
+    .filter((item) => {
+      const d = new Date(item.date + "T00:00:00Z"); // ← UTC 기준!
+      return !isAfter(d, today);
+    })
+    .map((item) => ({
+      date: format(new Date(item.date + "T00:00:00Z"), "MM/dd"), // ← UTC 기준!
+      completed: item.completed ?? 0,
+    }));
+}, [chartData]);
+
 
   return (
     <ResponsiveContainer width="100%" height="100%">
