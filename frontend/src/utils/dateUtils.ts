@@ -35,6 +35,6 @@ export function isAfterUTC(dateStr: string, compare: Date): boolean {
 /**
  * Dayjs UTC Helpers
  */
-export function dayjsUTC(dateStr: string) {
-  return dayjs.utc(dateStr);
+export function dayjsUTC(dateStr?: string) {
+  return dateStr ? dayjs.utc(dateStr) : dayjs.utc(); // ← 인자 없으면 now(UTC)
 }
