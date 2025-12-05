@@ -11,7 +11,17 @@ function App() {
   const { allLogs, loading } = useAllHabitLogs();
 
   const localNow = new Date(); // Local time
-  const utcNow = new Date(localNow.toISOString()); // UTC time
+
+  // Correct UTC Date object
+  const utcNow = new Date(Date.UTC(
+    localNow.getFullYear(),
+    localNow.getMonth(),
+    localNow.getDate(),
+    localNow.getHours(),
+    localNow.getMinutes(),
+    localNow.getSeconds(),
+  ));
+
 
   return (
     <div style={{ padding: "20px" }}>
@@ -29,8 +39,10 @@ function App() {
         }}>
           <div><strong>🕒 Local Time:</strong> {localNow.toString()}</div>
           <div><strong>🌍 UTC Time:</strong> {utcNow.toUTCString()}</div>
+
           <div><strong>📅 Local Date:</strong> {localNow.toISOString().slice(0, 10)}</div>
           <div><strong>📅 UTC Date:</strong> {utcNow.toISOString().slice(0, 10)}</div>
+
         </div>
       </div>
 
