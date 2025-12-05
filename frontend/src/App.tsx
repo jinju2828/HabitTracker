@@ -12,16 +12,10 @@ function App() {
 
   const localNow = new Date(); // Local time
 
-  // Correct UTC Date object
-  const utcNow = new Date(Date.UTC(
-    localNow.getFullYear(),
-    localNow.getMonth(),
-    localNow.getDate(),
-    localNow.getHours(),
-    localNow.getMinutes(),
-    localNow.getSeconds(),
-  ));
-
+  // 정확한 UTC Date 객체 생성
+  const utcNow = new Date(
+    Date.now() + localNow.getTimezoneOffset() * 60000
+  );
 
   return (
     <div style={{ padding: "20px" }}>
