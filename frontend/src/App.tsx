@@ -18,17 +18,20 @@ function App() {
       <h1>🌿 Habit Tracker</h1>
 
       {/* 🔥 시스템 날짜 표시 */}
-      <div style={{ 
-        marginBottom: "20px", 
-        padding: "10px 14px",
-        background: "#f3f4f6",
-        borderRadius: 8 ,
-        color: "#333"
-      }}>
-        <div><strong>🕒 Local Time:</strong> {localNow.toString()}</div>
-        <div><strong>🌍 UTC Time:</strong> {utcNow.toUTCString()}</div>
-        <div><strong>📅 Local Date:</strong> {localNow.toISOString().slice(0, 10)}</div>
-        <div><strong>📅 UTC Date:</strong> {utcNow.toISOString().slice(0, 10)}</div>
+      <div>
+        <strong>TODAY: </strong> {localNow.toDateString()} <br />
+        <div style={{ 
+          marginBottom: "20px", 
+          padding: "10px 14px",
+          background: "#f3f4f6",
+          borderRadius: 8 ,
+          color: "#333"
+        }}>
+          <div><strong>🕒 Local Time:</strong> {localNow.toString()}</div>
+          <div><strong>🌍 UTC Time:</strong> {utcNow.toUTCString()}</div>
+          <div><strong>📅 Local Date:</strong> {localNow.toISOString().slice(0, 10)}</div>
+          <div><strong>📅 UTC Date:</strong> {utcNow.toISOString().slice(0, 10)}</div>
+        </div>
       </div>
 
       <HabitForm />
