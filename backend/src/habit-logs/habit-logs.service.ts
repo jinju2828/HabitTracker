@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { db } from '../db/kysely.provider';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 @Injectable()
 export class HabitLogsService {
   // 특정 habit의 모든 로그 조회
   async getLogsByHabit(habitId: number) {
-    console.log('Fetching logs for habitId:', habitId)
-    return await db.selectFrom('habit_logs')
+    return await db
+      .selectFrom('habit_logs')
       .selectAll()
       .where('habit_id', '=', habitId)
       .orderBy('log_date')
@@ -14,14 +20,19 @@ export class HabitLogsService {
   }
 
   // 새 로그 추가
-  async createLog(habitId: number, date: string, completed = false) {
+  async createLog(habitId: number, date: string, completed = false, userTimezone?: string) {
+    // 1) date가 전달되면 그대로, 없으면 현재 날짜 기준으로 계산
+    const logDate = date
+      ? dayjs(date).format('YYYY-MM-DD')
+      : dayjs().tz(userTimezone || 'UTC').format('YYYY-MM-DD');
+
     await db.insertInto('habit_logs').values({
       habit_id: habitId,
-      log_date: date,
+      log_date: logDate,
       completed,
     }).execute();
 
-    return { message: `Log for habit ${habitId} on ${date} added!` };
+    return { message: `Log for habit ${habitId} on ${logDate} added!` };
   }
 
   // 로그 업데이트 (체크 상태 변경)
