@@ -7,20 +7,20 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { isAfterUTC, formatDisplay, parseDateUTC, getTodayUTC } from "../../utils/dateUtils";
+import { format, parseISO } from "date-fns";
 
 interface Props {
   chartData: { date: string; completed: number }[];
 }
 
 export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
-  const today = parseDateUTC(getTodayUTC());
+  const todayStr = format(new Date(), "yyyy-MM-dd");
 
   const data = useMemo(() => {
     return chartData
-      .filter((item) => !isAfterUTC(item.date, today))
+      .filter((item) => item.date <= todayStr) // ← local date 기준!
       .map((item) => ({
-        date: formatDisplay(item.date),
+        date: format(parseISO(item.date), "MM/dd"),
         completed: item.completed ?? 0,
       }));
   }, [chartData]);

@@ -16,17 +16,21 @@ interface Props {
 export const BarChartView: React.FC<Props> = ({ chartData }) => {
   const today = new Date();
 
-  const data = useMemo(() => {
+  const todayStr = format(today, "yyyy-MM-dd");
+
+const data = useMemo(() => {
   return chartData
     .filter((item) => {
-      const d = new Date(item.date + "T00:00:00Z"); // ← UTC 기준!
-      return !isAfter(d, today);
+      // 문자열 기반으로 비교 (시간 영향 없음)
+      return item.date <= todayStr;
     })
     .map((item) => ({
-      date: format(new Date(item.date + "T00:00:00Z"), "MM/dd"), // ← UTC 기준!
+      // 표시용 날짜 포맷 (그냥 local 기준으로 변환)
+      date: format(parseISO(item.date), "MM/dd"),
       completed: item.completed ?? 0,
     }));
 }, [chartData]);
+
 
 
   return (
