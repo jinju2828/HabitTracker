@@ -41,7 +41,10 @@ function App() {
     try {
       for (const habit of habits) {
         const logs = await getHabitLogs(habit.id);
-        const todayLog = logs.find((l) => l.log_date.slice(0, 10) === todayLocal);
+        const todayLog = logs.find((l) => 
+          l.log_date.slice(0, 10) === todayLocal
+      );
+      console.log("Today log for habit", habit.id, todayLog);
 
         if (todayLog) {
           await updateHabitLog(todayLog.id, checkedMap[habit.id]);
