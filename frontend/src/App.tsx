@@ -4,7 +4,7 @@ import { HabitCard } from "./components/HabitCard";
 import { HabitProgressChart } from "./components/HabitProgressChart";
 import { useHabits } from "./hooks/useHabits";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
-import { fetchHabitLogs, createHabitLog, updateHabitLog } from "@/api/habitLogsApi";
+import { getHabitLogs, createHabitLog, updateHabitLog } from "@/api/habitLogsApi";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
 
 function App() {
@@ -21,7 +21,7 @@ function App() {
     const initChecked = async () => {
       const map: Record<number, boolean> = {};
       for (const habit of habits) {
-        const logs = await fetchHabitLogs(habit.id);
+        const logs = await getHabitLogs(habit.id);
         const todayLog = logs.find((l) => l.log_date.slice(0, 10) === todayLocal);
         map[habit.id] = todayLog ? todayLog.completed : false;
       }
@@ -40,7 +40,7 @@ function App() {
     setSaving(true);
     try {
       for (const habit of habits) {
-        const logs = await fetchHabitLogs(habit.id);
+        const logs = await getHabitLogs(habit.id);
         const todayLog = logs.find((l) => l.log_date.slice(0, 10) === todayLocal);
 
         if (todayLog) {
