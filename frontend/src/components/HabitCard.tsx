@@ -1,13 +1,20 @@
-import React from 'react';
+import React from "react";
 
 interface HabitCardProps {
   id: number;
   name: string;
-  completed: boolean;
-  onChange: (id: number, completed: boolean) => void;
+  isCompleted: boolean;
+  onChange: (completed: boolean) => void;
+  disabled?: boolean;
 }
 
-export const HabitCard: React.FC<HabitCardProps> = ({ id, name, completed, onChange }) => {
+export const HabitCard: React.FC<HabitCardProps> = ({
+  id,
+  name,
+  isCompleted,
+  onChange,
+  disabled = false,
+}) => {
   return (
     <div
       style={{
@@ -24,10 +31,11 @@ export const HabitCard: React.FC<HabitCardProps> = ({ id, name, completed, onCha
       <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <input
           type="checkbox"
-          checked={completed}
-          onChange={(e) => onChange(id, e.target.checked)}
+          checked={isCompleted}
+          onChange={(e) => onChange(e.target.checked)}
+          disabled={disabled}
         />
-        <span>{completed ? "Done" : "Mark"}</span>
+        <span>{isCompleted ? "Done" : "Mark"}</span>
       </label>
     </div>
   );

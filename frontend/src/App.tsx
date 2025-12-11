@@ -4,50 +4,58 @@ import { HabitCard } from "./components/HabitCard";
 import { HabitProgressChart } from "./components/HabitProgressChart";
 import { useHabits } from "./hooks/useHabits";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
+import { fetchHabitLogs, createHabitLog, updateHabitLog } from "@/api/habitLogsApi";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
-import { createHabitLog, updateHabitLog, getHabitLogs } from "@/api/habitLogsApi";
 
 function App() {
-  const { habits, fetchHabits } = useHabits();
+  const { habits } = useHabits();
   const { allLogs, loading, refetch: refetchAllLogs } = useAllHabitLogs();
 
-  const [completedMap, setCompletedMap] = useState<Record<number, boolean>>({});
+  const [checkedMap, setCheckedMap] = useState<Record<number, boolean>>({});
+  const [saving, setSaving] = useState(false);
 
-  // 초기값 세팅: 오늘 로그 기준
+  const todayLocal = new Date().toISOString().slice(0, 10);
+
+  // 오늘 로그 초기값 세팅
   useEffect(() => {
-    async function loadTodayLogs() {
+    const initChecked = async () => {
       const map: Record<number, boolean> = {};
       for (const habit of habits) {
-        const logs = await getHabitLogs(habit.id);
-        const todayLog = logs.find(l => l.log_date.slice(0, 10) === new Date().toISOString().slice(0,10));
+        const logs = await fetchHabitLogs(habit.id);
+        const todayLog = logs.find((l) => l.log_date.slice(0, 10) === todayLocal);
         map[habit.id] = todayLog ? todayLog.completed : false;
       }
-      setCompletedMap(map);
-    }
-    if (habits.length) loadTodayLogs();
-  }, [habits]);
+      setCheckedMap(map);
+    };
+    if (habits.length > 0) initChecked();
+  }, [habits, todayLocal]);
 
-  const handleChange = (id: number, completed: boolean) => {
-    setCompletedMap(prev => ({ ...prev, [id]: completed }));
+  // 체크박스 상태 변경
+  const handleChange = (id: number, value: boolean) => {
+    setCheckedMap((prev) => ({ ...prev, [id]: value }));
   };
 
+  // Save All 버튼
   const saveAll = async () => {
-    for (const habitIdStr in completedMap) {
-      const habitId = Number(habitIdStr);
-      const completed = completedMap[habitId];
-      const logs = await getHabitLogs(habitId);
-      const todayLog = logs.find(l => l.log_date.slice(0,10) === new Date().toISOString().slice(0,10));
+    setSaving(true);
+    try {
+      for (const habit of habits) {
+        const logs = await fetchHabitLogs(habit.id);
+        const todayLog = logs.find((l) => l.log_date.slice(0, 10) === todayLocal);
 
-      if (todayLog) {
-        await updateHabitLog(todayLog.id, completed);
-      } else {
-        await createHabitLog(habitId, new Date().toISOString(), completed);
+        if (todayLog) {
+          await updateHabitLog(todayLog.id, checkedMap[habit.id]);
+        } else {
+          await createHabitLog(habit.id, new Date().toISOString(), checkedMap[habit.id]);
+        }
       }
+      // 모든 로그 새로 fetch
+      await refetchAllLogs?.();
+    } catch (err) {
+      console.error("Save all error", err);
+    } finally {
+      setSaving(false);
     }
-
-    fetchHabits();      // 습관 리스트 갱신
-    refetchAllLogs();   // 모든 로그 갱신
-    alert("Saved!");
   };
 
   return (
@@ -57,27 +65,29 @@ function App() {
       <HabitForm />
 
       <h2 style={{ marginTop: 20 }}>Today's Habits</h2>
-      {habits.map(h => (
+      {habits.map((habit) => (
         <HabitCard
-          key={h.id}
-          id={h.id}
-          name={h.name}
-          completed={completedMap[h.id] ?? false}
-          onChange={handleChange}
+          key={habit.id}
+          id={habit.id}
+          name={habit.name}
+          isCompleted={checkedMap[habit.id] || false}
+          onChange={(v) => handleChange(habit.id, v)}
+          disabled={saving || loading}
         />
       ))}
 
       <button
         onClick={saveAll}
+        disabled={saving}
         style={{
           marginTop: 12,
           padding: "8px 16px",
           background: "#4f46e5",
           color: "white",
-          borderRadius: 4,
+          borderRadius: 6,
         }}
       >
-        Save All
+        {saving ? "Saving..." : "Save All"}
       </button>
 
       <h2 style={{ marginTop: 30 }}>Each Habit Progress</h2>
