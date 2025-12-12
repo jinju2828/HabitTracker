@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { HabitForm } from "./components/HabitForm";
 import { HabitCard } from "./components/HabitCard";
 import { HabitProgressChart } from "./components/HabitProgressChart";
@@ -14,7 +14,14 @@ function App() {
   const [checkedMap, setCheckedMap] = useState<Record<number, boolean>>({});
   const [saving, setSaving] = useState(false);
 
-  const todayLocal = new Date().toISOString().slice(0, 10);
+  // 유저 로컬 기준 오늘 날짜 (YYYY-MM-DD)
+  const todayLocal = (() => {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+  })();
 
   // 오늘 로그 초기값 세팅
   useEffect(() => {
@@ -22,7 +29,13 @@ function App() {
       const map: Record<number, boolean> = {};
       for (const habit of habits) {
         const logs = await getHabitLogs(habit.id);
-        const todayLog = logs.find((l) => l.log_date.slice(0, 10) === todayLocal);
+        const todayLog = logs.find((l) => {
+          const logDate = new Date(l.log_date);
+          const logY = logDate.getFullYear();
+          const logM = String(logDate.getMonth() + 1).padStart(2, "0");
+          const logD = String(logDate.getDate()).padStart(2, "0");
+          return `${logY}-${logM}-${logD}` === todayLocal;
+        });
         map[habit.id] = todayLog ? todayLog.completed : false;
       }
       setCheckedMap(map);
@@ -41,13 +54,15 @@ function App() {
     try {
       for (const habit of habits) {
         const logs = await getHabitLogs(habit.id);
-        const todayLog = logs.find((l) => 
-         {
-           console.log('Checking log date:', l.log_date, 'against today:', todayLocal)
-           return l.log_date.slice(0, 10) === todayLocal
-         }
-      );
-      console.log("Today log for habit", habit.id, todayLog);
+        const todayLog = logs.find((l) => {
+          const logDate = new Date(l.log_date);
+          const logY = logDate.getFullYear();
+          const logM = String(logDate.getMonth() + 1).padStart(2, "0");
+          const logD = String(logDate.getDate()).padStart(2, "0");
+
+          // console.log("Comparing log date:", `${logY}-${logM}-${logD}`, "with todayLocal:", todayLocal);
+          return `${logY}-${logM}-${logD}` === todayLocal;
+        });
 
         if (todayLog) {
           await updateHabitLog(todayLog.id, checkedMap[habit.id]);
@@ -55,7 +70,7 @@ function App() {
           await createHabitLog(habit.id, new Date().toISOString(), checkedMap[habit.id]);
         }
       }
-      // 모든 로그 새로 fetch
+      // 모든 로그 새로 fetch해서 차트 바로 업데이트
       await refetchAllLogs?.();
     } catch (err) {
       console.error("Save all error", err);
@@ -98,7 +113,6 @@ function App() {
 
       <h2 style={{ marginTop: 30 }}>Each Habit Progress</h2>
       <HabitProgressChart refreshKey={allLogs} />
-
 
       <h2>Total Habit Activity Overview</h2>
       {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
