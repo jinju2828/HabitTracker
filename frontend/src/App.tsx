@@ -94,7 +94,8 @@ function App() {
       </button>
 
       <h2 style={{ marginTop: 30 }}>Each Habit Progress</h2>
-      <HabitProgressChart />
+      <HabitProgressChart refreshKey={allLogs} />
+
 
       <h2>Total Habit Activity Overview</h2>
       {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
