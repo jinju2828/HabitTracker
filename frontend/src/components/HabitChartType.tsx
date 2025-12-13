@@ -59,7 +59,7 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
 
 
   return (
-    <div style={{ width: '100%', height: 350 }}>
+    <div style={{ width: '100%', height: 280 }}>
       {/* 월/타입 선택 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
         <label>
@@ -91,7 +91,7 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
       </div>
 
       {/* 차트 */}
-      <div style={{ height: '100%', minHeight: 350 }}>
+      <div style={{ height: '100%', minHeight: 280 }}>
         {chartType === 'line' && <LineDotChartView chartData={fullChartData} />}
         {chartType === 'bar' && <BarChartView chartData={fullChartData} />}
         {chartType === 'heatmap' && <Heatmap chartData={fullChartData} />}
