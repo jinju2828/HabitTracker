@@ -10,7 +10,9 @@ interface HabitChartTypeProps {
 
 export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => {
   const [chartType, setChartType] = useState<'line' | 'bar' | 'heatmap'>('heatmap')
-  const [selectedMonth, setSelectedMonth] = useState<string>('')
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    format(new Date(), 'yyyy-MM') // 현재 월을 기본값으로
+  )
 
   // 월 목록
   const months = useMemo(() => {
