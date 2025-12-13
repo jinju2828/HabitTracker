@@ -58,44 +58,42 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
 }, [filteredLogs, selectedMonth])
 
 
-  return (
-    <div style={{ width: '100%', height: 280 }}>
-      {/* 월/타입 선택 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-        <label>
-          Month:{' '}
-          <select
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-          >
-            <option value="">All</option>
-            {months.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
-            ))}
-          </select>
-        </label>
+ return (
+  <div style={{ width: '100%', height: 260 }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        gap: 12,
+        marginBottom: 8,
+        flexWrap: 'wrap',
+      }}
+    >
+      <select value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)}>
+        <option value="">All</option>
+        {months.map(m => (
+          <option key={m} value={m}>
+            {m}
+          </option>
+        ))}
+      </select>
 
-        <label>
-          Chart Type:{' '}
-          <select
-            value={chartType}
-            onChange={(e) => setChartType(e.target.value as any)}
-          >
-            <option value="line">Line & Dot</option>
-            <option value="bar">Bar</option>
-            <option value="heatmap">Heatmap</option>
-          </select>
-        </label>
-      </div>
-
-      {/* 차트 */}
-      <div style={{ height: '100%', minHeight: 280 }}>
-        {chartType === 'line' && <LineDotChartView chartData={fullChartData} />}
-        {chartType === 'bar' && <BarChartView chartData={fullChartData} />}
-        {chartType === 'heatmap' && <Heatmap chartData={fullChartData} />}
-      </div>
+      <select
+        value={chartType}
+        onChange={e => setChartType(e.target.value as any)}
+      >
+        <option value="line">Line</option>
+        <option value="bar">Bar</option>
+        <option value="heatmap">Heatmap</option>
+      </select>
     </div>
-  )
+
+    <div style={{ height: 200 }}>
+      {chartType === 'line' && <LineDotChartView chartData={fullChartData} />}
+      {chartType === 'bar' && <BarChartView chartData={fullChartData} />}
+      {chartType === 'heatmap' && <Heatmap chartData={fullChartData} />}
+    </div>
+  </div>
+)
+
 }
