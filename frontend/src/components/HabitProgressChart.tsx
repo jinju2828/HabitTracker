@@ -4,45 +4,58 @@ import { HabitChartType } from './HabitChartType'
 import type { Habit, HabitLog } from '../utils/types'
 
 export const HabitProgressChart: React.FC<{ refreshKey: any }> = ({ refreshKey }) => {
-  const [habits, setHabits] = useState<Habit[]>([])
-  const [logs, setLogs] = useState<Record<number, HabitLog[]>>({})
+  const [habits, setHabits] = useState<Habit[]>([]);
+  const [logs, setLogs] = useState<Record<number, HabitLog[]>>({});
 
   useEffect(() => {
-    axios
-      .get<Habit[]>('http://localhost:3000/habits')
+    axios.get<Habit[]>('http://localhost:3000/habits')
       .then(res => setHabits(res.data))
-      .catch(console.error)
-  }, [])
+      .catch(err => console.error(err));
+  }, []);
 
   useEffect(() => {
-    if (!habits.length) return
+    if (!habits.length) return;
 
     const fetchAllLogs = async () => {
-      const next: Record<number, HabitLog[]> = {}
+      const next: Record<number, HabitLog[]> = {};
 
       await Promise.all(
-        habits.map(async habit => {
-          const res = await axios.get<HabitLog[]>(
-            `http://localhost:3000/habit-logs/${habit.id}`
-          )
-
-          next[habit.id] = res.data
+        habits.map(async (habit) => {
+          const res = await axios.get<HabitLog[]>(`http://localhost:3000/habit-logs/${habit.id}`);
+          const normalized = res.data
             .map(l => ({ ...l, log_date: l.log_date.slice(0, 10) }))
-            .sort((a, b) => a.log_date.localeCompare(b.log_date))
+            .sort((a, b) => a.log_date.localeCompare(b.log_date));
+
+          next[habit.id] = normalized;
         })
-      )
+      );
 
-      setLogs(next)
-    }
+      setLogs(next);
+    };
 
-    fetchAllLogs()
-  }, [habits, refreshKey])
+    fetchAllLogs();
+  }, [habits, refreshKey]);
 
   return (
-    <div style={styles.grid}>
-      {habits.map(habit => (
-        <div key={habit.id} style={styles.card}>
-          <h3 style={styles.title}>{habit.name}</h3>
+    <div
+  style={{
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
+    gap: 24,
+  }}
+>
+      {habits.map((habit) => (
+        <div
+          key={habit.id}
+          style={{
+            padding: 16,
+            borderRadius: 12,
+            background: '#fafafa',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+            color: '#333',
+          }}
+        >
+          <h3 style={{ marginBottom: 8 }}>{habit.name}</h3>
 
           <HabitChartType
             habitLogs={
@@ -55,26 +68,5 @@ export const HabitProgressChart: React.FC<{ refreshKey: any }> = ({ refreshKey }
         </div>
       ))}
     </div>
-  )
-}
-
-const styles: Record<string, React.CSSProperties> = {
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-    gap: 24,
-    width: '100%',
-  },
-  card: {
-    // background: '#f5b387ff',
-    borderRadius: 12,
-    padding: 16,
-    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-  },
-  title: {
-    marginBottom: 12,
-    fontSize: 16,
-    fontWeight: 600,
-    color: '#333',
-  },
-}
+  );
+};

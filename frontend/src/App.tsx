@@ -81,6 +81,12 @@ function App() {
 
   return (
     <div style={{ padding: "20px" }}>
+       <div
+      style={{
+        maxWidth: 1200,
+        margin: "0 auto",
+      }}
+    >
       <h1>🌿 Habit Tracker</h1>
 
       <HabitForm />
@@ -116,6 +122,7 @@ function App() {
 
       <h2>Total Habit Activity Overview</h2>
       {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
+      </div>
     </div>
   );
 }
