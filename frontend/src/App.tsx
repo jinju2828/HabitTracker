@@ -80,51 +80,63 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-       <div
+  <div style={{ padding: "20px" }}>
+    {/* 전체 컨테이너 (차트용 wide) */}
+    <div
       style={{
         maxWidth: 1200,
         margin: "0 auto",
       }}
     >
-      <h1>🌿 Habit Tracker</h1>
-
-      <HabitForm />
-
-      <h2 style={{ marginTop: 20 }}>Today's Habits</h2>
-      {habits.map((habit) => (
-        <HabitCard
-          key={habit.id}
-          id={habit.id}
-          name={habit.name}
-          isCompleted={checkedMap[habit.id] || false}
-          onChange={(v) => handleChange(habit.id, v)}
-          disabled={saving || loading}
-        />
-      ))}
-
-      <button
-        onClick={saveAll}
-        disabled={saving}
+      {/* 🔹 상단 좁은 영역 */}
+      <div
         style={{
-          marginTop: 12,
-          padding: "8px 16px",
-          background: "#4f46e5",
-          color: "white",
-          borderRadius: 6,
+          maxWidth: 640,
+          margin: "0 auto",
         }}
       >
-        {saving ? "Saving..." : "Save All"}
-      </button>
+        <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
 
-      <h2 style={{ marginTop: 30 }}>Each Habit Progress</h2>
+        <HabitForm />
+
+        <h2 style={{ marginTop: 20 }}>Today's Habits</h2>
+        {habits.map((habit) => (
+          <HabitCard
+            key={habit.id}
+            id={habit.id}
+            name={habit.name}
+            isCompleted={checkedMap[habit.id] || false}
+            onChange={(v) => handleChange(habit.id, v)}
+            disabled={saving || loading}
+          />
+        ))}
+
+        <button
+          onClick={saveAll}
+          disabled={saving}
+          style={{
+            marginTop: 12,
+            padding: "8px 16px",
+            background: "#4f46e5",
+            color: "white",
+            borderRadius: 6,
+            width: "100%", // 🔥 버튼도 깔끔
+          }}
+        >
+          {saving ? "Saving..." : "Save All"}
+        </button>
+      </div>
+
+      {/* 🔹 차트 영역 (wide) */}
+      <h2 style={{ marginTop: 40 }}>Each Habit Progress</h2>
       <HabitProgressChart refreshKey={allLogs} />
 
       <h2>Total Habit Activity Overview</h2>
       {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
-      </div>
     </div>
-  );
+  </div>
+);
+
 }
 
 export default App;
