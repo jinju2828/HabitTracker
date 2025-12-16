@@ -65,7 +65,18 @@ function App() {
     setSaving(true);
     try {
       for (const habit of habits) {
-        const logs = await getHabitLogs(habit.id);
+        // const logs = await getHabitLogs(habit.id);
+        let logs: any[] = [];
+
+        try {
+          logs = await getHabitLogs(habit.id);
+        } catch (err: any) {
+          if (err.response?.status !== 404) {
+            throw err; // 진짜 에러만 throw
+          }
+          // 404면 logs = []
+        }
+
         const todayLog = logs.find((l) => {
           const logDate = new Date(l.log_date);
           const logY = logDate.getFullYear();
