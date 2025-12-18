@@ -40,7 +40,7 @@ export class HabitsService {
   }
 
   // 🗑 habit 삭제
-  async remove(id: number) {
+  async delete(id: number) {
     const result = await db
       .deleteFrom('habits')
       .where('id', '=', id)

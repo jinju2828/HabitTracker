@@ -25,7 +25,7 @@ export class HabitsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.habitsService.remove(+id)
+  delete(@Param('id') id: string) {
+    return this.habitsService.delete(+id)
   }
 }

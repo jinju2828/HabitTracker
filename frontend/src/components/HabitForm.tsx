@@ -84,6 +84,7 @@ export const HabitForm: React.FC = () => {
               marginBottom: 8,
               background: "#f9f9f9",
               borderRadius: 6,
+              color: "#333",
             }}
           >
             {editingId === habit.id ? (

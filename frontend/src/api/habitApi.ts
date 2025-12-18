@@ -9,6 +9,17 @@ export async function createHabit(data: { name: string }) {
   return response.data
 }
 
+export async function updateHabit(id: number, name: string) {
+  const response = await axios.patch(`${BASE_URL}/habits/${id}`, { name });
+  return response.data;
+}
+
+export async function deleteHabit(id: number) {
+  const response = await axios.delete(`${BASE_URL}/habits/${id}`);
+  return response.data;
+}
+
+
 // 모든 습관 가져오기
 export async function getHabits() {
   const response = await axios.get(`${BASE_URL}/habits`)
