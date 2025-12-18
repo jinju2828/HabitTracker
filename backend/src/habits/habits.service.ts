@@ -1,24 +1,55 @@
-import { Injectable } from '@nestjs/common';
-import { db } from '../db/kysely.provider';
+import { Injectable, NotFoundException } from '@nestjs/common'
+import { db } from '../db/kysely.provider'
 
 @Injectable()
 export class HabitsService {
   async getAll() {
     // SELECT * FROM habits ORDER BY id ASC
-    const habits = await db.selectFrom('habits')
+    return db
+      .selectFrom('habits')
       .selectAll()
       .orderBy('id')
-      .execute();
-    return habits;
+      .execute()
   }
 
   async create(name: string) {
-    // INSERT INTO habits (name, created_at) VALUES (...)
-    await db.insertInto('habits').values({
-      name,
-      created_at: new Date(),
-    }).execute();
+    await db
+      .insertInto('habits')
+      .values({
+        name,
+        created_at: new Date(),
+      })
+      .execute()
 
-    return { message: `Habit "${name}" added!` };
+    return { message: `Habit "${name}" added!` }
+  }
+
+  // ✏️ habit 이름 수정
+  async update(id: number, name: string) {
+    const result = await db
+      .updateTable('habits')
+      .set({ name })
+      .where('id', '=', id)
+      .executeTakeFirst()
+
+    if (!result || Number(result.numUpdatedRows) === 0) {
+      throw new NotFoundException(`Habit ${id} not found`)
+    }
+
+    return { message: `Habit ${id} updated` }
+  }
+
+  // 🗑 habit 삭제
+  async remove(id: number) {
+    const result = await db
+      .deleteFrom('habits')
+      .where('id', '=', id)
+      .executeTakeFirst()
+
+    if (!result || Number(result.numDeletedRows) === 0) {
+      throw new NotFoundException(`Habit ${id} not found`)
+    }
+
+    return { message: `Habit ${id} deleted` }
   }
 }
