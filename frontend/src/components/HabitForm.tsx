@@ -23,7 +23,7 @@ export const HabitForm: React.FC = () => {
   const handleUpdate = async (id: number) => {
     if (!editingName.trim()) return;
 
-    await updateHabit(id, { name: editingName });
+    await updateHabit(id, editingName );
     setEditingId(null);
     setEditingName("");
     fetchHabits();
