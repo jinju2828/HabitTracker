@@ -25,6 +25,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        color: disabled ? "#888" : "#333",
       }}
     >
       <div>{name}</div>
