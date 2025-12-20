@@ -44,7 +44,7 @@ const data = useMemo(() => {
           label={{
             value: "Habits Completed",
             angle: -90,
-            position: "insideLeft",
+            position: "outerLeft",
           }}
         />
 
