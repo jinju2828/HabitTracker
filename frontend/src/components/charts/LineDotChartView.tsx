@@ -32,6 +32,11 @@ export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
         <YAxis
           allowDecimals={false}
           domain={[0, (dataMax: number) => Math.max(1, dataMax)]}
+          label={{
+            value: "Habits Completed",
+            angle: -90,
+            position: "outerLeft",
+          }}
         />
         <Tooltip formatter={(v) => `${v}회`} />
         <Line dataKey="completed" stroke="#4f46e5" dot={{ r: 4 }} />
