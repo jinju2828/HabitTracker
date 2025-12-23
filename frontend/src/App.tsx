@@ -122,7 +122,7 @@ function App() {
 
         <HabitForm />
 
-        <h2 style={{ marginTop: 20 }}>Today's Habits</h2>
+        <h2 style={{ marginTop: 20, textAlign: "center" }}>Today's Habits</h2>
         {habits.map((habit) => (
           <HabitCard
             key={habit.id}
@@ -151,10 +151,10 @@ function App() {
       </div>
 
       {/* 🔹 차트 영역 (wide) */}
-      <h2 style={{ marginTop: 40 }}>Each Habit Progress</h2>
+      <h2 style={{ marginTop: 40, textAlign: "center" }}>Each Habit Progress</h2>
       <HabitProgressChart refreshKey={allLogs} />
 
-      <h2>Total Habit Activity Overview</h2>
+      <h2 style={{ marginTop: 40, textAlign: "center" }}>Total Habit Activity Overview</h2>
       {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
     </div>
   </div>
