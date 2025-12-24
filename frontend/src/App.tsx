@@ -114,7 +114,7 @@ function App() {
       {/* 🔹 상단 좁은 영역 */}
       <div
         style={{
-          maxWidth: 640,
+          maxWidth: 500,
           margin: "0 auto",
         }}
       >
