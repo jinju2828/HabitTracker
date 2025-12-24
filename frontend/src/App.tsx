@@ -155,7 +155,14 @@ function App() {
       <HabitProgressChart refreshKey={allLogs} />
 
       <h2 style={{ marginTop: 40, textAlign: "center" }}>Total Habit Activity Overview</h2>
-      {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
+      <div
+        style={{
+          maxWidth: 640,
+          margin: "0 auto",
+        }}
+      > 
+        {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
+      </div>
     </div>
   </div>
 );
