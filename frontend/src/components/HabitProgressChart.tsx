@@ -55,7 +55,7 @@ export const HabitProgressChart: React.FC<{ refreshKey: any }> = ({ refreshKey }
             color: '#333',
           }}
         >
-          <h3 style={{ marginBottom: 8 }}>{habit.name}</h3>
+          <h3 style={{ marginBottom: 8, marginTop: 0 }}>{habit.name}</h3>
 
           <HabitChartType
             habitLogs={

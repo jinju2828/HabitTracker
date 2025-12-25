@@ -64,20 +64,20 @@ export const Heatmap: React.FC<HeatmapProps> = ({ chartData }) => {
         }}
         emptyColor="#f5f5f5"
 
-        axisTop={{
-          tickRotation: 0,
-          legend: 'Day of Week',
-          legendPosition: 'middle',
-          legendOffset: -30,
-        }}
+        // axisTop={{
+        //   tickRotation: 0,
+        //   legend: 'Day of Week',
+        //   legendPosition: 'middle',
+        //   legendOffset: -30,
+        // }}
         axisRight={null}
         axisBottom={null}
         axisLeft={{
           tickSize: 5,
           tickPadding: 5,
-          legend: 'Week #',
+          legend: 'Week',
           legendPosition: 'middle',
-          legendOffset: -40,
+          legendOffset: -50,
         }}
         borderWidth={1}
         borderColor="#ffffff"
