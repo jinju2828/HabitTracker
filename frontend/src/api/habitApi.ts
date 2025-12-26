@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // 백엔드 서버 기본 URL
-const BASE_URL = 'http://localhost:3000'
+export const BASE_URL = 'http://localhost:3000'
 
 // 새 습관 생성
 export async function createHabit(data: { name: string }) {

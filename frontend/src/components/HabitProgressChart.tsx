@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { HabitChartType } from './HabitChartType'
 import type { Habit, HabitLog } from '../utils/types'
+import { BASE_URL } from '@/api/habitApi'
 
 export const HabitProgressChart: React.FC<{ refreshKey: any }> = ({ refreshKey }) => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [logs, setLogs] = useState<Record<number, HabitLog[]>>({});
 
   useEffect(() => {
-    axios.get<Habit[]>('http://localhost:3000/habits')
+    axios.get<Habit[]>(`${BASE_URL}/habits`)
       .then(res => setHabits(res.data))
       .catch(err => console.error(err));
   }, []);
@@ -21,7 +22,7 @@ export const HabitProgressChart: React.FC<{ refreshKey: any }> = ({ refreshKey }
 
       await Promise.all(
         habits.map(async (habit) => {
-          const res = await axios.get<HabitLog[]>(`http://localhost:3000/habit-logs/${habit.id}`);
+          const res = await axios.get<HabitLog[]>(`${BASE_URL}/habit-logs/${habit.id}`);
           const normalized = res.data
             .map(l => ({ ...l, log_date: l.log_date.slice(0, 10) }))
             .sort((a, b) => a.log_date.localeCompare(b.log_date));

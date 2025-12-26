@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_BASE = 'http://localhost:3000'; // 백엔드 URL
+import { BASE_URL } from './habitApi';
 
 export interface Habit {
   id: number;
@@ -17,12 +16,12 @@ export interface HabitLog {
 
 // 모든 습관 조회
 export const getHabits = async (): Promise<Habit[]> => {
-  const res = await axios.get(`${API_BASE}/habits`);
+  const res = await axios.get(`${BASE_URL}/habits`);
   return res.data;
 };
 
 // 특정 습관 로그 조회
 export const getHabitLogs = async (habitId: number): Promise<HabitLog[]> => {
-  const res = await axios.get(`${API_BASE}/habit-logs/${habitId}`);
+  const res = await axios.get(`${BASE_URL}/habit-logs/${habitId}`);
   return res.data;
 };

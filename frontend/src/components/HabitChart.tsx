@@ -4,6 +4,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 
+import { BASE_URL } from '@/api/habitApi'
+
 interface HabitLog {
   id: number
   habit_id: number
@@ -24,14 +26,14 @@ export default function HabiCthart() {
 
   // 전체 습관 불러오기
   useEffect(() => {
-    axios.get('http://localhost:3000/habits')
+    axios.get(`${BASE_URL}/habits`)
       .then(res => setHabits(res.data))
   }, [])
 
   // 특정 습관의 로그 불러오기
   useEffect(() => {
     if (selectedHabit) {
-      axios.get(`http://localhost:3000/habit-logs/${selectedHabit}`)
+      axios.get(`${BASE_URL}/habit-logs/${selectedHabit}`)
         .then(res => {
           const formatted = res.data.map((log: HabitLog) => ({
             date: log.log_date.slice(0, 10),

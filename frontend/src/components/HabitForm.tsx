@@ -48,7 +48,7 @@ export const HabitForm: React.FC = () => {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="New habit"
+          placeholder="Add a New Habit"
           style={{
             flex: 1,
             height: 36,

@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import type { HabitLog } from "@/utils/types";
+import { BASE_URL } from "@/api/habitApi";
 
 // ✅ Hook에서 쓸 수 있는 fetch 함수 따로 분리
 export const fetchHabitLogs = async (habitId: number): Promise<HabitLog[]> => {
-  const res = await axios.get(`http://localhost:3000/habit-logs/${habitId}`);
+  const res = await axios.get(`${BASE_URL}/habit-logs/${habitId}`);
   return res.data; 
 };
 
