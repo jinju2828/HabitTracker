@@ -120,7 +120,8 @@ function App() {
         }}
       >
         <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
-        <h3>You have total {habits.length} habits!</h3>
+        {habits.length > 0 && <h3>You have total {habits.length} habits!</h3>}
+        {habits.length === 0 && <h3>No habits yet. Start by adding one below!</h3>}
 
         <HabitForm />
 
