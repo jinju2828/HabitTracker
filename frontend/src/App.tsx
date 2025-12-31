@@ -11,6 +11,7 @@ function App() {
   const { habits } = useHabits();
   const { allLogs, loading, refetch: refetchAllLogs } = useAllHabitLogs();
 
+  console.log('habits:', habits.length);
   const [checkedMap, setCheckedMap] = useState<Record<number, boolean>>({});
   const [saving, setSaving] = useState(false);
 
@@ -119,6 +120,7 @@ function App() {
         }}
       >
         <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
+        <h3>You have total {habits.length} habits!</h3>
 
         <HabitForm />
 
