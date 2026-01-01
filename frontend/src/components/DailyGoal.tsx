@@ -2,6 +2,8 @@ import { useHabits } from '../hooks/useHabits';
 import '../styles/DailyGoal.css';
 import { useAllHabitLogs } from "../hooks/useAllHabitLogs";
 
+const DAILY_GOAL = 5;
+
 export const DailyGoal: React.FC = () => {
     const {habits} = useHabits()
     const {allLogs} = useAllHabitLogs()
@@ -9,7 +11,28 @@ export const DailyGoal: React.FC = () => {
     console.log('DailyGoal habits:', habits.length);
     console.log('DailyGoal:', allLogs);
     
+      const todayLocal = new Date().toLocaleDateString("en-CA");
+
+  const todayCompletedCount = Object.values(allLogs)
+    .flat()
+    .filter((log) => {
+      return (
+        log.log_date.slice(0, 10) === todayLocal &&
+        log.completed
+      );
+    }).length;
+
     return (
-        <div className="daily-goal">Your Daily Goal: Complete 5 habits</div>
+        <div className="daily-goal">
+        <h3>Daily Goal</h3>
+        <p>
+            {todayCompletedCount} / {DAILY_GOAL} completed
+        </p>
+
+        {todayCompletedCount >= DAILY_GOAL && (
+            <p className="goal-done">🎉 Goal achieved!</p>
+        )}
+        </div>
     );
+
 };
