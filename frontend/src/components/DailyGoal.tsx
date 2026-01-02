@@ -11,16 +11,16 @@ export const DailyGoal: React.FC = () => {
     console.log('DailyGoal habits:', habits.length);
     console.log('DailyGoal:', allLogs);
     
-      const todayLocal = new Date().toLocaleDateString("en-CA");
+    const todayLocal = new Date().toLocaleDateString("en-CA");
 
-  const todayCompletedCount = Object.values(allLogs)
-    .flat()
-    .filter((log) => {
-      return (
-        log.log_date.slice(0, 10) === todayLocal &&
-        log.completed
-      );
-    }).length;
+    const todayCompletedCount = Object.values(allLogs)
+        .flat()
+        .filter((log) => {
+        return (
+            log.log_date.slice(0, 10) === todayLocal &&
+            log.completed
+        );
+        }).length;
 
     return (
         <div className="daily-goal">
