@@ -6,7 +6,7 @@ import { useHabits } from "./hooks/useHabits";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 import { getHabitLogs, createHabitLog, updateHabitLog } from "@/api/habitLogsApi";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
-import { DailyGoal } from "./components/DailyGoal";
+import DailyGoal from "./components/DailyGoal";
 
 function App() {
   const { habits } = useHabits();
@@ -124,7 +124,7 @@ function App() {
           {habits.length > 0 && <h3 style={{ textAlign: "center" }}>You have total {habits.length} habits!</h3>}
           {habits.length === 0 && <h3 style={{ textAlign: "center" }}>No habits yet. Start by adding one below!</h3>}
 
-          <DailyGoal />
+          <DailyGoal allLogs={allLogs}/>
           <HabitForm />
 
           <h2 style={{ marginTop: 20, textAlign: "center" }}>Today's Habits</h2>

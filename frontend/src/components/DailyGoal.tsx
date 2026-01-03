@@ -4,9 +4,19 @@ import { useAllHabitLogs } from "../hooks/useAllHabitLogs";
 
 const DAILY_GOAL = 5;
 
-export const DailyGoal: React.FC = () => {
+interface HabitLog {
+  log_date: string; // "YYYY-MM-DD"
+  completed: number | boolean;
+}
+
+interface Props {
+  allLogs: HabitLog[];
+}
+
+
+export default function DailyGoal ({ allLogs }: Props) {
     const {habits} = useHabits()
-    const {allLogs} = useAllHabitLogs()
+    // const {allLogs} = useAllHabitLogs()
 
     console.log('DailyGoal habits:', habits.length);
     console.log('DailyGoal:', allLogs);
