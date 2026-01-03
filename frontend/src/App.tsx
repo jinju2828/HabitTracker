@@ -105,73 +105,73 @@ function App() {
   };
 
   return (
-  <div style={{ padding: "20px" }}>
-    {/* 전체 컨테이너 (차트용 wide) */}
-    <div
-      style={{
-        maxWidth: 1200,
-        margin: "0 auto",
-      }}
-    >
-      {/* 🔹 상단 좁은 영역 */}
+    <div style={{ padding: "20px" }}>
+      {/* 전체 컨테이너 (차트용 wide) */}
       <div
         style={{
-          maxWidth: 500,
+          maxWidth: 1200,
           margin: "0 auto",
         }}
       >
-        <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
-        {habits.length > 0 && <h3 style={{ textAlign: "center" }}>You have total {habits.length} habits!</h3>}
-        {habits.length === 0 && <h3 style={{ textAlign: "center" }}>No habits yet. Start by adding one below!</h3>}
-
-        <DailyGoal />
-        <HabitForm />
-
-        <h2 style={{ marginTop: 20, textAlign: "center" }}>Today's Habits</h2>
-        <h3> Mark as Done! </h3>
-        {habits.map((habit) => (
-          <HabitCard
-            key={habit.id}
-            id={habit.id}
-            name={habit.name}
-            isCompleted={checkedMap[habit.id] || false}
-            onChange={(v) => handleChange(habit.id, v)}
-            disabled={saving || loading}
-          />
-        ))}
-
-        <button
-          onClick={saveAll}
-          disabled={saving}
+        {/* 🔹 상단 좁은 영역 */}
+        <div
           style={{
-            marginTop: 12,
-            padding: "8px 16px",
-            background: "#4f46e5",
-            color: "white",
-            borderRadius: 6,
-            width: "100%", // 🔥 버튼도 깔끔
+            maxWidth: 500,
+            margin: "0 auto",
           }}
         >
-          {saving ? "Saving..." : "Save All"}
-        </button>
-      </div>
+          <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
+          {habits.length > 0 && <h3 style={{ textAlign: "center" }}>You have total {habits.length} habits!</h3>}
+          {habits.length === 0 && <h3 style={{ textAlign: "center" }}>No habits yet. Start by adding one below!</h3>}
 
-      {/* 🔹 차트 영역 (wide) */}
-      <h2 style={{ marginTop: 40, textAlign: "center" }}>Each Habit Progress</h2>
-      <HabitProgressChart refreshKey={allLogs} />
+          <DailyGoal />
+          <HabitForm />
 
-      <h2 style={{ marginTop: 40, textAlign: "center" }}>Total Habit Activity Overview</h2>
-      <div
-        style={{
-          maxWidth: 640,
-          margin: "0 auto",
-        }}
-      > 
-        {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
+          <h2 style={{ marginTop: 20, textAlign: "center" }}>Today's Habits</h2>
+          <h3> Mark as Done! </h3>
+          {habits.map((habit) => (
+            <HabitCard
+              key={habit.id}
+              id={habit.id}
+              name={habit.name}
+              isCompleted={checkedMap[habit.id] || false}
+              onChange={(v) => handleChange(habit.id, v)}
+              disabled={saving || loading}
+            />
+          ))}
+
+          <button
+            onClick={saveAll}
+            disabled={saving}
+            style={{
+              marginTop: 12,
+              padding: "8px 16px",
+              background: "#4f46e5",
+              color: "white",
+              borderRadius: 6,
+              width: "100%", // 🔥 버튼도 깔끔
+            }}
+          >
+            {saving ? "Saving..." : "Save All"}
+          </button>
+        </div>
+
+        {/* 🔹 차트 영역 (wide) */}
+        <h2 style={{ marginTop: 40, textAlign: "center" }}>Each Habit Progress</h2>
+        <HabitProgressChart refreshKey={allLogs} />
+
+        <h2 style={{ marginTop: 40, textAlign: "center" }}>Total Habit Activity Overview</h2>
+        <div
+          style={{
+            maxWidth: 640,
+            margin: "0 auto",
+          }}
+        >
+          {loading ? <p>Loading heatmap...</p> : <TotalHabitProgressChart allLogs={allLogs} />}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 
 }
 
