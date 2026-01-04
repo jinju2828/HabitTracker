@@ -2,6 +2,7 @@ import { useHabits } from '../hooks/useHabits';
 import '../styles/DailyGoal.css';
 import { useAllHabitLogs } from "../hooks/useAllHabitLogs";
 import { useState } from 'react';
+import InputDailyGoal from './InputDailyGoal';
 
 // const DAILY_GOAL = 5;
 
@@ -39,6 +40,7 @@ export default function DailyGoal ({ allLogs }: Props) {
     return (
         <div className="daily-goal">
         <h3>Daily Goal</h3>
+        <InputDailyGoal />
         <p>
             {todayCompletedCount} / {DAILY_GOAL} completed
         </p>
