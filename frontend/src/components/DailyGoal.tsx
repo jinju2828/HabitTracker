@@ -1,8 +1,9 @@
 import { useHabits } from '../hooks/useHabits';
 import '../styles/DailyGoal.css';
 import { useAllHabitLogs } from "../hooks/useAllHabitLogs";
+import { useState } from 'react';
 
-const DAILY_GOAL = 5;
+// const DAILY_GOAL = 5;
 
 interface HabitLog {
   log_date: string; // "YYYY-MM-DD"
@@ -17,6 +18,8 @@ interface Props {
 export default function DailyGoal ({ allLogs }: Props) {
     const {habits} = useHabits()
     // const {allLogs} = useAllHabitLogs()
+    const default_daily_goal = 5;
+    const [DAILY_GOAL, setDailyGoal] = useState(default_daily_goal);
 
     console.log('DailyGoal habits:', habits.length);
     console.log('DailyGoal:', allLogs);
@@ -31,6 +34,7 @@ export default function DailyGoal ({ allLogs }: Props) {
             log.completed
         );
         }).length;
+
 
     return (
         <div className="daily-goal">
