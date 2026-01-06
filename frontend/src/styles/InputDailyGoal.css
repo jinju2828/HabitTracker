@@ -10,6 +10,14 @@
         text-align: center;
     }
 
+    .input-daily-goal-form{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        max-height: fit-content;
+    }
     .set-goal-button{
         color: white;
         border: none;
@@ -28,7 +36,7 @@
     }
 
     .goal-input{
-        padding: 8px;
+        padding: 10px;
         font-size: 16px;
         border: 2px solid #646cff;
         border-radius: 4px;

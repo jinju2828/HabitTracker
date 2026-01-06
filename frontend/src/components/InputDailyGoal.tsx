@@ -10,7 +10,7 @@ export default function InputDailyGoal () {
     return (
         <div className="input-daily-goal">
             <h3>Input Daily Goal Component</h3>
-            <form onSubmit={handleSetGoal}>
+            <form className='input-daily-goal-form' onSubmit={handleSetGoal}>
                 <input className="goal-input" type="number" placeholder="Enter daily goal" />
                 <button className="set-goal-button" type="submit">
                     Set Goal
