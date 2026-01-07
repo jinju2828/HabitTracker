@@ -20,6 +20,7 @@ export default function DailyGoal ({ allLogs }: Props) {
     const {habits} = useHabits()
     // const {allLogs} = useAllHabitLogs()
     const default_daily_goal = 5;
+
     const [dailyGoal, setDailyGoal] = useState(default_daily_goal);
 
     console.log('DailyGoal habits:', habits.length);
