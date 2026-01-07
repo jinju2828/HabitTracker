@@ -20,7 +20,7 @@ export default function DailyGoal ({ allLogs }: Props) {
     const {habits} = useHabits()
     // const {allLogs} = useAllHabitLogs()
     const default_daily_goal = 5;
-    const [DAILY_GOAL, setDailyGoal] = useState(default_daily_goal);
+    const [dailyGoal, setDailyGoal] = useState(default_daily_goal);
 
     console.log('DailyGoal habits:', habits.length);
     console.log('DailyGoal:', allLogs);
@@ -42,10 +42,10 @@ export default function DailyGoal ({ allLogs }: Props) {
         <h3>Daily Goal</h3>
         <InputDailyGoal />
         <p>
-            {todayCompletedCount} / {DAILY_GOAL} completed
+            {todayCompletedCount} / {dailyGoal} completed
         </p>
 
-        {todayCompletedCount >= DAILY_GOAL && (
+        {todayCompletedCount >= dailyGoal && (
             <p className="goal-done">🎉 Goal achieved!</p>
         )}
         </div>
