@@ -3,6 +3,7 @@ import '../styles/DailyGoal.css';
 import { useAllHabitLogs } from "../hooks/useAllHabitLogs";
 import { useState } from 'react';
 import InputDailyGoal from './InputDailyGoal';
+import { useDailyGoal } from '../context/DailyGoalContext';
 
 // const DAILY_GOAL = 5;
 
@@ -21,7 +22,8 @@ export default function DailyGoal ({ allLogs }: Props) {
     // const {allLogs} = useAllHabitLogs()
     const default_daily_goal = 5;
 
-    const [dailyGoal, setDailyGoal] = useState(default_daily_goal);
+    // const [dailyGoal, setDailyGoal] = useState(default_daily_goal);
+    const { dailyGoal } = useDailyGoal();
 
     console.log('DailyGoal habits:', habits.length);
     console.log('DailyGoal:', allLogs);

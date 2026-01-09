@@ -8,6 +8,9 @@ import { getHabitLogs, createHabitLog, updateHabitLog } from "@/api/habitLogsApi
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
 import DailyGoal from "./components/DailyGoal";
 
+// context
+import { DailyGoalProvider } from "./context/DailyGoalContext";
+
 function App() {
   const { habits } = useHabits();
   const { allLogs, loading, refetch: refetchAllLogs } = useAllHabitLogs();
@@ -105,7 +108,9 @@ function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <DailyGoalProvider>
+      <div className="app">
+            <div style={{ padding: "20px" }}>
       {/* 전체 컨테이너 (차트용 wide) */}
       <div
         style={{
@@ -171,6 +176,8 @@ function App() {
         </div>
       </div>
     </div>
+      </div>
+    </DailyGoalProvider>
   );
 
 }

@@ -18,7 +18,6 @@ export function DailyGoalProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// 안전한 커스텀 훅
 export function useDailyGoal() {
   const ctx = useContext(DailyGoalContext);
   if (!ctx) {
