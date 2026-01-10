@@ -1,30 +1,38 @@
-import { useDailyGoal } from '@/context/DailyGoalContext';
-import '../styles/InputDailyGoal.css';
-import { useState } from 'react';
+// src/context/DailyGoalContext.tsx
+import { createContext, useContext, useEffect, useState } from "react";
 
-export default function InputDailyGoal () {
-    const {setDailyGoal} = useDailyGoal();
-    const [value, setValue] = useState<number>(5);
+interface DailyGoalContextType {
+  dailyGoal: number;
+  setDailyGoal: (n: number) => void;
+}
 
-    const handleSetGoal = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Handle daily goal submission logic here
+const DailyGoalContext = createContext<DailyGoalContextType | null>(null);
 
-        const num = Number(value)
-        if (num > 0) {
-            setDailyGoal(num);
-        }
-    }
+const STORAGE_KEY = "dailyGoal";
 
-    return (
-        <div className="input-daily-goal">
-            <h3>Input Daily Goal Component</h3>
-            <form className='input-daily-goal-form' onSubmit={handleSetGoal}>
-                <input className="goal-input" type="number" placeholder="Enter daily goal" onChange={(e) => setValue(Number(e.target.value))} />
-                <button className="set-goal-button" type="submit">
-                    Set Goal
-                </button>
-            </form>
-        </div>
-    );
+export function DailyGoalProvider({ children }: { children: React.ReactNode }) {
+  // ✅ 초기값을 localStorage에서 읽기
+  const [dailyGoal, setDailyGoal] = useState<number>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? Number(saved) : 5;
+  });
+
+  // ✅ 값이 바뀔 때마다 저장
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, String(dailyGoal));
+  }, [dailyGoal]);
+
+  return (
+    <DailyGoalContext.Provider value={{ dailyGoal, setDailyGoal }}>
+      {children}
+    </DailyGoalContext.Provider>
+  );
+}
+
+export function useDailyGoal() {
+  const ctx = useContext(DailyGoalContext);
+  if (!ctx) {
+    throw new Error("useDailyGoal must be used inside DailyGoalProvider");
+  }
+  return ctx;
 }
