@@ -35,7 +35,8 @@ export default function DailyGoal({ allLogs }: Props) {
       </p>
 
       {/* 🔹 Progress Bar */}
-      <div className="progress-bar">
+      <div className="progress-chart">
+        <div className="progress-bar">
         <div
           className={`progress-fill ${progress >= 100 ? "done" : ""}`}
           style={{ width: `${progress}%` }}
@@ -43,6 +44,7 @@ export default function DailyGoal({ allLogs }: Props) {
       </div>
 
       <p className="progress-text">{progress}%</p>
+      </div>
 
       {progress >= 100 && <p className="goal-done">🎉 Goal achieved!</p>}
     </div>
