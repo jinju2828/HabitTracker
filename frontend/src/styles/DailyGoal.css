@@ -4,11 +4,17 @@
     text-align: center;
     margin: 20px 0;
 
+    .progress-text {
+        /* padding-left: 10px; */
+        font-size: 16px;
+        color: #333;
+    }
+
     .progress-chart {
         margin-top: 15px;
         display: flex;
         height: 24px;
-        flex-direction: column;
+        flex-direction: row;
 
         .progress-bar {
             width: 100%;
@@ -22,12 +28,6 @@
                 width: 0;
                 transition: width 0.5s ease-in-out;
             }
-        }
-
-        .progress-text {
-            /* padding-left: 10px; */
-            font-size: 16px;
-            color: #4CAF50;
         }
     }
 }
