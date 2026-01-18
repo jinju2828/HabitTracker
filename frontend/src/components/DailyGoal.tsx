@@ -1,3 +1,4 @@
+import { useHabits } from "@/hooks/useHabits";
 import { useDailyGoal } from "../context/DailyGoalContext";
 import "../styles/DailyGoal.css";
 import InputDailyGoal from "./InputDailyGoal";
@@ -13,6 +14,12 @@ interface Props {
 
 export default function DailyGoal({ allLogs }: Props) {
   const { dailyGoal } = useDailyGoal();
+  const { habits } = useHabits();
+  console.log("DailyGoal rendered with dailyGoal:", dailyGoal);
+  console.log("All Logs:", habits.length);
+
+
+  
   const todayLocal = new Date().toLocaleDateString("en-CA");
 
   const todayCompletedCount = allLogs.filter(
