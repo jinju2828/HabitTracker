@@ -4,8 +4,10 @@
     text-align: center;
     margin: 20px 0;
 
+    .progress-chart {
+        margin-top: 15px;
 
-    .progress-bar {
+        .progress-bar {
         width: 100%;
         background-color: #f3f3f3;
         border-radius: 5px;
@@ -19,9 +21,10 @@
         }
     }
 
-    .progress-text {
-        margin-top: 10px;
-        font-size: 16px;
-        color: #333;
+        .progress-text {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+        }
     }
 }
