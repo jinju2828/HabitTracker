@@ -1,27 +1,30 @@
-// Context for managing daily goal state
-import { createContext, useContext, useState } from "react";
+import { useDailyGoal } from '@/context/DailyGoalContext';
+import '../styles/InputDailyGoal.css';
+import { useState } from 'react';
 
-interface DailyGoalContextType {
-  dailyGoal: number;
-  setDailyGoal: (n: number) => void;
-}
+export default function InputDailyGoal () {
+    const {setDailyGoal} = useDailyGoal();
+    const [value, setValue] = useState<number>(5);
 
-const DailyGoalContext = createContext<DailyGoalContextType | null>(null);
+    const handleSetGoal = (e: React.FormEvent) => {
+        e.preventDefault();
+        // Handle daily goal submission logic here
 
-export function DailyGoalProvider({ children }: { children: React.ReactNode }) {
-  const [dailyGoal, setDailyGoal] = useState(5);
+        const num = Number(value)
+        if (num > 0) {
+            setDailyGoal(num);
+        }
+    }
 
-  return (
-    <DailyGoalContext.Provider value={{ dailyGoal, setDailyGoal }}>
-      {children}
-    </DailyGoalContext.Provider>
-  );
-}
-
-export function useDailyGoal() {
-  const ctx = useContext(DailyGoalContext);
-  if (!ctx) {
-    throw new Error("useDailyGoal must be used inside DailyGoalProvider");
-  }
-  return ctx;
+    return (
+        <div className="input-daily-goal">
+            <h3>Input Daily Goal Component</h3>
+            <form className='input-daily-goal-form' onSubmit={handleSetGoal}>
+                <input className="goal-input" type="number" placeholder="Enter daily goal" onChange={(e) => setValue(Number(e.target.value))} />
+                <button className="set-goal-button" type="submit">
+                    Set Goal
+                </button>
+            </form>
+        </div>
+    );
 }
