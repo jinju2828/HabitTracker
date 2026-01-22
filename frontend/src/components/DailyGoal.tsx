@@ -49,7 +49,7 @@ export default function DailyGoal({ allLogs }: Props) {
       <p>
         {todayCompletedCount} / {dailyGoal} completed today.{" "}
         <div className="progress-text">You've done {progress}% of today's goal!</div>
-        <div className="progress-text"> See your progress </div>
+        <div className="progress-text"> See your progress below </div>
       </p>
 
       {/* 🔹 Progress Bar */}
