@@ -3,4 +3,24 @@
     color: #4CAF50;
     text-align: center;
     margin: 20px 0;
+
+    .progress-bar {
+        width: 100%;
+        background-color: #f3f3f3;
+        border-radius: 5px;
+        overflow: hidden;
+
+        .progress-fill {
+            height: 20px;
+            background-color: #4CAF50;
+            width: 0;
+            transition: width 0.5s ease-in-out;
+        }
+    }
+
+    .progress-text {
+        margin-top: 10px;
+        font-size: 16px;
+        color: #333;
+    }
 }
