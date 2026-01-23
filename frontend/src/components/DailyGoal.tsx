@@ -2,6 +2,7 @@ import { useHabits } from "@/hooks/useHabits";
 import { useDailyGoal } from "../context/DailyGoalContext";
 import "../styles/DailyGoal.css";
 import InputDailyGoal from "./InputDailyGoal";
+import { da } from "date-fns/locale";
 
 interface HabitLog {
   log_date: string;
@@ -18,8 +19,12 @@ export default function DailyGoal({ allLogs }: Props) {
   console.log("DailyGoal rendered with dailyGoal:", dailyGoal);
   console.log("All Logs:", habits.length);
 
+  if (dailyGoal > habits.length) {
+    return (<div className="daily-goal">
+      <p>Your daily goal exceeds the number of habits you have. Please adjust your daily goal or add more habits.</p>
+    </div>);  
+  }
 
-  
   const todayLocal = new Date().toLocaleDateString("en-CA");
 
   const todayCompletedCount = allLogs.filter(
