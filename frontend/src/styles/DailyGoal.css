@@ -30,4 +30,25 @@
             }
         }
     }
+
+    
+    .streak-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+            padding: 12px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #fff7ed, #ffedd5);
+            border: 1px solid #fed7aa;
+        }
+
+        .streak-fire {
+            font-size: 28px;
+        }
+
+        .streak-sub {
+            font-size: 12px;
+            color: #92400e;
+        }
 }
