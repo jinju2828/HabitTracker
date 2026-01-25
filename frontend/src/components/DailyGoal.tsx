@@ -23,7 +23,8 @@ export default function DailyGoal({ allLogs }: Props) {
     return (
       <div className="daily-goal">
         <InputDailyGoal />
-        <p>Your daily goal exceeds the number of habits you have. Please adjust your daily goal or add more habits.</p>
+        <p>Your daily goal exceeds the number of habits you have. 
+        <br /> Please adjust your daily goal or add more habits.</p>
       </div>
     );  
   }
