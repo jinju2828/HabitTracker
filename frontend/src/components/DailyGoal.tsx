@@ -40,6 +40,39 @@ export default function DailyGoal({ allLogs }: Props) {
     100
   );
 
+  const completedByDate: Record<string, number> = {};
+
+  allLogs.forEach((log) => {
+    if (!log.completed) return;
+
+    const date = log.log_date.slice(0, 10); // YYYY-MM-DD
+    completedByDate[date] = (completedByDate[date] || 0) + 1;
+  });
+
+  const calculateStreak = () => {
+    let streak = 0;
+    const today = new Date();
+
+    for (let i = 0; ; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+
+      const dateStr = d.toLocaleDateString("en-CA"); // YYYY-MM-DD
+      const completedCount = completedByDate[dateStr] || 0;
+
+      if (completedCount >= dailyGoal) {
+        streak++;
+      } else {
+        break; // streak 끊김
+      }
+    }
+
+    return streak;
+  };
+
+  const streak = calculateStreak();
+
+
   return (
     <div className="daily-goal">
       <h3>Daily Goal</h3>
@@ -64,6 +97,21 @@ export default function DailyGoal({ allLogs }: Props) {
       </div>
 
       {progress >= 100 && <p className="goal-done">🎉 Goal achieved!</p>}
+
+      <div className="streak-box">
+        <span className="streak-fire">🔥</span>
+        <div>
+          <strong>{streak} day streak</strong>
+          <div className="streak-sub">
+            {streak === 0
+              ? "Start today!"
+              : streak === 1
+              ? "Great start!"
+              : "Keep it going 💪"}
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }
