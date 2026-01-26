@@ -50,5 +50,6 @@
         .streak-sub {
             font-size: 12px;
             color: #92400e;
+            text-align: left;
         }
 }
