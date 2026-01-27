@@ -53,22 +53,26 @@ export default function DailyGoal({ allLogs }: Props) {
     let streak = 0;
     const today = new Date();
 
-    for (let i = 0; ; i++) {
+    const todayCompleted = completedByDate[todayLocal] || 0;
+    const startOffset = todayCompleted >= dailyGoal ? 0 : 1;
+
+    for (let i = startOffset; ; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() - i);
 
-      const dateStr = d.toLocaleDateString("en-CA"); // YYYY-MM-DD
+      const dateStr = d.toLocaleDateString("en-CA");
       const completedCount = completedByDate[dateStr] || 0;
 
       if (completedCount >= dailyGoal) {
         streak++;
       } else {
-        break; // streak 끊김
+        break;
       }
     }
 
     return streak;
   };
+
 
   const streak = calculateStreak();
 
@@ -103,12 +107,11 @@ export default function DailyGoal({ allLogs }: Props) {
         <div>
           <strong>{streak} day streak</strong>
           <div className="streak-sub">
-            {streak === 0
-              ? "Start today!"
-              : streak === 1
-              ? "Great start!"
-              : "Keep it going 💪"}
+            {todayCompletedCount >= dailyGoal
+              ? "You're on fire today 🔥"
+              : "Complete today's goal to extend your streak!"}
           </div>
+
         </div>
       </div>
 
