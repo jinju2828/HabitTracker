@@ -104,7 +104,7 @@ export default function DailyGoal({ allLogs }: Props) {
 
       <div className="streak-box">
         <span className="streak-fire">🔥</span>
-        <div>
+        <div className="streak-info">
           <strong>{streak} day streak</strong>
           <div className="streak-sub">
             {todayCompletedCount >= dailyGoal
