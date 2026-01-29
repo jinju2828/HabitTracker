@@ -13,6 +13,8 @@ export default function InputDailyGoal () {
         const num = Number(value)
         if (num > 0) {
             setDailyGoal(num);
+        } else {
+            alert("Please enter a valid positive number for the daily goal.");
         }
     }
 
