@@ -50,12 +50,13 @@
         .streak-info {
             display: flex;
             flex-direction: column;
-            text-align: left;
+            text-align: center;
+            width: 100%;
         }
 
         .streak-sub {
             font-size: 12px;
             color: #92400e;
-            text-align: left;
+            /* text-align: left; */
         }
 }
