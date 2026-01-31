@@ -100,14 +100,17 @@ export const HabitForm: React.FC = () => {
                     padding: "0 8px",
                   }}
                 />
-                <button onClick={() => handleUpdate(habit.id)}>💾</button>
-                <button onClick={() => setEditingId(null)}>❌</button>
+                <div style={{ display: "flex", gap: 6}}>
+                  <button style={{ width:60 }} onClick={() => handleUpdate(habit.id)}>💾</button>
+                  <button style={{ width:60 }} onClick={() => setEditingId(null)}>❌</button>
+                </div>
               </>
             ) : (
               <>
-                <span>{habit.name}</span>
+                <span >{habit.name}</span>
                 <div style={{ display: "flex", gap: 6 }}>
                   <button
+                    style={{ width:60 }}
                     onClick={() => {
                       setEditingId(habit.id);
                       setEditingName(habit.name);
@@ -115,7 +118,11 @@ export const HabitForm: React.FC = () => {
                   >
                     ✏️
                   </button>
-                  <button onClick={() => handleDelete(habit.id)}>🗑</button>
+                  <button 
+                    style={{ width:60 }} 
+                    onClick={() => handleDelete(habit.id)}>
+                      🗑
+                  </button>
                 </div>
               </>
             )}
