@@ -133,7 +133,6 @@ function App() {
           <HabitForm />
 
           <h2 style={{ marginTop: 20, textAlign: "center" }}>Today's Habits</h2>
-          <h3> Mark as Done! </h3>
           {habits.map((habit) => (
             <HabitCard
               key={habit.id}
