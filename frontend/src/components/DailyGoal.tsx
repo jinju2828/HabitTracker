@@ -77,6 +77,46 @@ export default function DailyGoal({ allLogs }: Props) {
   const streak = calculateStreak();
 
 
+  const calculateLongestStreak = () => {
+    const dates = Object.keys(completedByDate).sort(); // YYYY-MM-DD 정렬
+    let longest = 0;
+    let current = 0;
+    let prevDate: Date | null = null;
+
+    for (const dateStr of dates) {
+      const completedCount = completedByDate[dateStr];
+
+      if (completedCount < dailyGoal) {
+        current = 0;
+        prevDate = null;
+        continue;
+      }
+
+      const currentDate = new Date(dateStr);
+
+      if (prevDate) {
+        const diff =
+          (currentDate.getTime() - prevDate.getTime()) /
+          (1000 * 60 * 60 * 24);
+
+        if (diff === 1) {
+          current += 1;
+        } else {
+          current = 1;
+        }
+      } else {
+        current = 1;
+      }
+
+      longest = Math.max(longest, current);
+      prevDate = currentDate;
+    }
+
+    return longest;
+  };
+
+  const longestStreak = calculateLongestStreak();
+
   return (
     <div className="daily-goal">
       <h3>Daily Goal</h3>
@@ -110,6 +150,9 @@ export default function DailyGoal({ allLogs }: Props) {
             {todayCompletedCount >= dailyGoal
               ? "You're on fire today 🔥"
               : "Complete today's goal to extend your streak!"}
+          </div>
+          <div>
+            Longest streak: {longestStreak} days 🏆
           </div>
 
         </div>
