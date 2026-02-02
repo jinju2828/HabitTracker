@@ -152,6 +152,11 @@ export default function DailyGoal({ allLogs }: Props) {
               : "Complete today's goal to extend your streak!"}
           </div>
           <div>
+            {streak === longestStreak && streak > 0
+              ? "This is your longest streak! 🏆"
+              : ""}
+          </div>
+          <div className="longest-streak">
             Longest streak: {longestStreak} days 🏆
           </div>
 
