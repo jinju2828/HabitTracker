@@ -2,7 +2,7 @@ import { useHabits } from "@/hooks/useHabits";
 import { useDailyGoal } from "../context/DailyGoalContext";
 import "../styles/DailyGoal.css";
 import InputDailyGoal from "./InputDailyGoal";
-import { da } from "date-fns/locale";
+import StreakCalendar from "./StreakCalendar";
 
 interface HabitLog {
   log_date: string;
@@ -141,6 +141,11 @@ export default function DailyGoal({ allLogs }: Props) {
       </div>
 
       {progress >= 100 && <p className="goal-done">🎉 Goal achieved!</p>}
+      
+      <StreakCalendar
+        completedByDate={completedByDate}
+        dailyGoal={dailyGoal}
+      />
 
       <div className="streak-box">
         <span className="streak-fire">🔥</span>
