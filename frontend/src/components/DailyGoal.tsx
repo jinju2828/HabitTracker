@@ -145,7 +145,10 @@ export default function DailyGoal({ allLogs }: Props) {
       <StreakCalendar
         completedByDate={completedByDate}
         dailyGoal={dailyGoal}
+        year={new Date().getFullYear()}
+        month={new Date().getMonth()}
       />
+
 
       <div className="streak-box">
         <span className="streak-fire">🔥</span>

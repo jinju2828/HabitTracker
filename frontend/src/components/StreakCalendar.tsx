@@ -3,26 +3,45 @@ import "../styles/StreakCalendar.css";
 interface Props {
   completedByDate: Record<string, number>;
   dailyGoal: number;
-  days?: number;
+  year?: number;
+  month?: number; // 0-based
 }
 
 export default function StreakCalendar({
   completedByDate,
   dailyGoal,
-  days = 30,
+  year,
+  month,
 }: Props) {
   const today = new Date();
+  const calendarDays: { date: string; completed: boolean }[] = [];
 
-  const calendarDays = [];
+  if (year !== undefined && month !== undefined) {
+    // 🔹 월별 캘린더
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const totalDays = lastDay.getDate();
 
-  for (let i = days - 1; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
+    for (let day = 1; day <= totalDays; day++) {
+      const d = new Date(year, month, day);
+      const dateStr = d.toLocaleDateString("en-CA");
 
-    const dateStr = d.toLocaleDateString("en-CA");
-    const completed = (completedByDate[dateStr] || 0) >= dailyGoal;
+      const completed = (completedByDate[dateStr] || 0) >= dailyGoal;
+      calendarDays.push({ date: dateStr, completed });
+    }
+  } else {
+    // 🔹 최근 N일 (기존 로직)
+    const days = 35;
 
-    calendarDays.push({ date: dateStr, completed });
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(today.getDate() - i);
+
+      const dateStr = d.toLocaleDateString("en-CA");
+      const completed = (completedByDate[dateStr] || 0) >= dailyGoal;
+
+      calendarDays.push({ date: dateStr, completed });
+    }
   }
 
   return (
@@ -39,10 +58,8 @@ export default function StreakCalendar({
               ${isToday ? "today" : ""}
             `}
           >
-            <div className="date">{day.date.slice(5)}</div>
-            <div className="icon">
-              {day.completed ? "🔥" : "○"}
-            </div>
+            <div className="date">{day.date.slice(8)}</div>
+            <div className="icon">{day.completed ? "🔥" : "○"}</div>
           </div>
         );
       })}
