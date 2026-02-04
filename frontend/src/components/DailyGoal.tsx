@@ -149,7 +149,6 @@ export default function DailyGoal({ allLogs }: Props) {
         month={new Date().getMonth()}
       />
 
-
       <div className="streak-box">
         <span className="streak-fire">🔥</span>
         <div className="streak-info">

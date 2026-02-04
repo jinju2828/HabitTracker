@@ -46,6 +46,10 @@ export default function StreakCalendar({
 
   return (
     <div className="streak-calendar">
+      <div>
+        {year === undefined || month === undefined ? "Last 35 Days" :
+        `${year}-${(month + 1).toString().padStart(2, "0")}`}
+      </div>
       {calendarDays.map((day) => {
         const isToday =
           day.date === new Date().toLocaleDateString("en-CA");

@@ -12,6 +12,7 @@
   text-align: center;
   font-size: 12px;
   border: 1px solid #e5e7eb;
+  min-height: 60px;
 }
 
 .calendar-day.done {
