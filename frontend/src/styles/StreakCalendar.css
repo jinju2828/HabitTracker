@@ -5,6 +5,13 @@
   margin-top: 20px;
 }
 
+.this-month {
+  grid-column: span 7;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 .calendar-day {
   background: #f9fafb;
   border-radius: 8px;
