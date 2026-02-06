@@ -1,10 +1,12 @@
 import "../styles/StreakCalendar.css";
 
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 interface Props {
   completedByDate: Record<string, number>;
   dailyGoal: number;
-  year?: number;
-  month?: number; // 0-based
+  year: number;
+  month: number; // 0-based
 }
 
 export default function StreakCalendar({
@@ -13,60 +15,70 @@ export default function StreakCalendar({
   year,
   month,
 }: Props) {
-  const today = new Date();
-  const calendarDays: { date: string; completed: boolean }[] = [];
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
 
-  if (year !== undefined && month !== undefined) {
-    // 🔹 월별 캘린더
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const totalDays = lastDay.getDate();
+  const startWeekday = firstDay.getDay(); // 0 (Sun) ~ 6 (Sat)
+  const totalDays = lastDay.getDate();
 
-    for (let day = 1; day <= totalDays; day++) {
-      const d = new Date(year, month, day);
-      const dateStr = d.toLocaleDateString("en-CA");
+  const calendarCells: {
+    date?: string;
+    completed?: boolean;
+  }[] = [];
 
-      const completed = (completedByDate[dateStr] || 0) >= dailyGoal;
-      calendarDays.push({ date: dateStr, completed });
-    }
-  } else {
-    // 🔹 최근 N일 (기존 로직)
-    const days = 35;
-
-    for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-
-      const dateStr = d.toLocaleDateString("en-CA");
-      const completed = (completedByDate[dateStr] || 0) >= dailyGoal;
-
-      calendarDays.push({ date: dateStr, completed });
-    }
+  // 🔹 앞쪽 padding (빈 칸)
+  for (let i = 0; i < startWeekday; i++) {
+    calendarCells.push({});
   }
 
-  return (
-    <div className="streak-calendar">
-      <div className="this-month">
-        {year === undefined || month === undefined ? "Last 35 Days" :
-        `${year}-${(month + 1).toString().padStart(2, "0")}`}
-      </div>
-      {calendarDays.map((day) => {
-        const isToday =
-          day.date === new Date().toLocaleDateString("en-CA");
+  // 🔹 실제 날짜
+  for (let day = 1; day <= totalDays; day++) {
+    const d = new Date(year, month, day);
+    const dateStr = d.toLocaleDateString("en-CA");
 
-        return (
-          <div
-            key={day.date}
-            className={`calendar-day
-              ${day.completed ? "done" : ""}
-              ${isToday ? "today" : ""}
-            `}
-          >
-            <div className="date">{day.date.slice(8)}</div>
-            <div className="icon">{day.completed ? "🔥" : "○"}</div>
+    const completed = (completedByDate[dateStr] || 0) >= dailyGoal;
+
+    calendarCells.push({ date: dateStr, completed });
+  }
+
+  const todayStr = new Date().toLocaleDateString("en-CA");
+
+  return (
+    <div className="streak-calendar-wrapper">
+      {/* 🔹 요일 헤더 */}
+      <div className="weekday-header">
+        {WEEKDAYS.map((day) => (
+          <div key={day} className="weekday">
+            {day}
           </div>
-        );
-      })}
+        ))}
+      </div>
+
+      {/* 🔹 캘린더 */}
+      <div className="streak-calendar">
+        {calendarCells.map((cell, idx) => {
+          if (!cell.date) {
+            return <div key={idx} className="calendar-day empty" />;
+          }
+
+          const isToday = cell.date === todayStr;
+
+          return (
+            <div
+              key={cell.date}
+              className={`calendar-day
+                ${cell.completed ? "done" : ""}
+                ${isToday ? "today" : ""}
+              `}
+            >
+              <div className="date">{cell.date.slice(8)}</div>
+              <div className="icon">
+                {cell.completed ? "🔥" : "○"}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
