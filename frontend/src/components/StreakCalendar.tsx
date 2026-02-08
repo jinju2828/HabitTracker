@@ -1,24 +1,30 @@
+import { useState } from "react";
 import "../styles/StreakCalendar.css";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 interface Props {
   completedByDate: Record<string, number>;
   dailyGoal: number;
-  year: number;
-  month: number; // 0-based
 }
 
 export default function StreakCalendar({
   completedByDate,
   dailyGoal,
-  year,
-  month,
 }: Props) {
+  const today = new Date();
+
+  const [year, setYear] = useState(today.getFullYear());
+  const [month, setMonth] = useState(today.getMonth()); // 0-based
+
   const firstDay = new Date(year, month, 1);
   const lastDay = new Date(year, month + 1, 0);
 
-  const startWeekday = firstDay.getDay(); // 0 (Sun) ~ 6 (Sat)
+  const startWeekday = firstDay.getDay();
   const totalDays = lastDay.getDate();
 
   const calendarCells: {
@@ -26,26 +32,53 @@ export default function StreakCalendar({
     completed?: boolean;
   }[] = [];
 
-  // 🔹 앞쪽 padding (빈 칸)
+  // 🔹 padding
   for (let i = 0; i < startWeekday; i++) {
     calendarCells.push({});
   }
 
-  // 🔹 실제 날짜
+  // 🔹 days
   for (let day = 1; day <= totalDays; day++) {
     const d = new Date(year, month, day);
     const dateStr = d.toLocaleDateString("en-CA");
 
     const completed = (completedByDate[dateStr] || 0) >= dailyGoal;
-
     calendarCells.push({ date: dateStr, completed });
   }
 
-  const todayStr = new Date().toLocaleDateString("en-CA");
+  const todayStr = today.toLocaleDateString("en-CA");
+
+  // 🔹 month navigation
+  const goPrevMonth = () => {
+    if (month === 0) {
+      setMonth(11);
+      setYear((y) => y - 1);
+    } else {
+      setMonth((m) => m - 1);
+    }
+  };
+
+  const goNextMonth = () => {
+    if (month === 11) {
+      setMonth(0);
+      setYear((y) => y + 1);
+    } else {
+      setMonth((m) => m + 1);
+    }
+  };
 
   return (
     <div className="streak-calendar-wrapper">
-      {/* 🔹 요일 헤더 */}
+      {/* 🔹 Month Header */}
+      <div className="calendar-header">
+        <button onClick={goPrevMonth}>◀</button>
+        <div className="month-title">
+          {MONTHS[month]} {year}
+        </div>
+        <button onClick={goNextMonth}>▶</button>
+      </div>
+
+      {/* 🔹 Weekdays */}
       <div className="weekday-header">
         {WEEKDAYS.map((day) => (
           <div key={day} className="weekday">
@@ -54,7 +87,7 @@ export default function StreakCalendar({
         ))}
       </div>
 
-      {/* 🔹 캘린더 */}
+      {/* 🔹 Calendar */}
       <div className="streak-calendar">
         {calendarCells.map((cell, idx) => {
           if (!cell.date) {
