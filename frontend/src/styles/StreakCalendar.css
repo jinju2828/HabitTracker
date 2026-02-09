@@ -111,3 +111,34 @@
     opacity: 1;
   }
 }
+
+/* 🔥 streak 연결선 */
+.calendar-day.streak-left::before,
+.calendar-day.streak-right::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 50%;
+  height: 6px;
+  background: #ffe9cc;
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.calendar-day.streak-left::before {
+  left: -50%;
+}
+
+.calendar-day.streak-right::after {
+  right: -50%;
+}
+
+/* 불꽃이 선 위에 올라오게 */
+.calendar-day {
+  position: relative;
+}
+
+.calendar-day .icon {
+  position: relative;
+  z-index: 1;
+}
