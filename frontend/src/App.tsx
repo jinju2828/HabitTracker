@@ -10,6 +10,7 @@ import DailyGoal from "./components/DailyGoal";
 
 // context
 import { DailyGoalProvider } from "./context/DailyGoalContext";
+import { HabitList } from "./components/HabitList";
 
 function App() {
   const { habits } = useHabits();
@@ -130,6 +131,8 @@ function App() {
           {habits.length === 0 && <h3 style={{ textAlign: "center" }}>No habits yet. Start by adding one below!</h3>}
 
           <DailyGoal allLogs={allLogs}/>
+
+          <HabitList />
           <HabitForm />
 
           <h2 style={{ marginTop: 20, textAlign: "center" }}>Today's Habits</h2>
