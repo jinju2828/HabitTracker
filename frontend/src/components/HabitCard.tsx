@@ -1,20 +1,34 @@
 import React from "react";
 
-interface HabitCardProps {
-  id: number;
-  name: string;
-  isCompleted: boolean;
-  onChange: (completed: boolean) => void;
-  disabled?: boolean;
-}
+type HabitCardProps = {
+  habit: {
+    id: number;
+    name: string;
+    isCompleted: boolean;
+  };
+  isEditing: boolean;
+  editingName: string;
+  onEditStart: () => void;
+  onEditChange: (value: string) => void;
+  onEditSave: () => void;
+  onEditCancel: () => void;
+  onDelete: () => void;
+  onToggle: (checked: boolean) => void;
+};
 
 export const HabitCard: React.FC<HabitCardProps> = ({
-  id,
-  name,
-  isCompleted,
-  onChange,
-  disabled = false,
+  habit,
+  isEditing,
+  editingName,
+  onEditStart,
+  onEditChange,
+  onEditSave,
+  onEditCancel,
+  onDelete,
+  onToggle,
 }) => {
+  if (!habit) return null;
+
   return (
     <div
       style={{
@@ -22,22 +36,37 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         padding: 12,
         borderRadius: 6,
         marginBottom: 8,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        color: disabled ? "#888" : "#333",
       }}
     >
-      <div>{name}</div>
-      <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <input
-          type="checkbox"
-          checked={isCompleted}
-          onChange={(e) => onChange(e.target.checked)}
-          disabled={disabled}
-        />
-        <span>{isCompleted ? "Done" : "Mark"}</span>
-      </label>
+      {isEditing ? (
+        <>
+          <input
+            value={editingName}
+            onChange={(e) => onEditChange(e.target.value)}
+          />
+          <button onClick={onEditSave}>💾 Save</button>
+          <button onClick={onEditCancel}>❌ Cancel</button>
+        </>
+      ) : (
+        <>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span>{habit.name}</span>
+            <div>
+              <button onClick={onEditStart}>✏️</button>
+              <button onClick={onDelete}>🗑</button>
+            </div>
+          </div>
+
+          <label style={{ display: "flex", gap: 8 }}>
+            <input
+              type="checkbox"
+              checked={habit.isCompleted}
+              onChange={(e) => onToggle(e.target.checked)}
+            />
+            <span>{habit.isCompleted ? "Done" : "Mark for today"}</span>
+          </label>
+        </>
+      )}
     </div>
   );
 };

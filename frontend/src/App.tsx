@@ -133,19 +133,18 @@ function App() {
           <DailyGoal allLogs={allLogs}/>
 
           <HabitList />
-          <HabitForm />
+          {/* <HabitForm />
 
           <h2 style={{ marginTop: 20, textAlign: "center" }}>Today's Habits</h2>
           {habits.map((habit) => (
             <HabitCard
               key={habit.id}
-              id={habit.id}
-              name={habit.name}
+              habit={habit}
               isCompleted={checkedMap[habit.id] || false}
               onChange={(v) => handleChange(habit.id, v)}
               disabled={saving || loading}
             />
-          ))}
+          ))} */}
 
           <button
             onClick={saveAll}
