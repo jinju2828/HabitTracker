@@ -3,22 +3,25 @@ import { DailyGoalProvider } from "./context/DailyGoalContext";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 import HabitManager from "./components/HabitManager";
 import DailyGoal from "./components/DailyGoal";
-import {HabitProgressChart} from "./components/HabitProgressChart";
+import { HabitProgressChart } from "./components/HabitProgressChart";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
 
 function App() {
-  const { allLogs, loading } = useAllHabitLogs();
+  const { allLogs, loading, refetch } = useAllHabitLogs();
 
   return (
     <DailyGoalProvider>
       <div style={{ padding: 20 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          
           <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
 
           <div style={{ maxWidth: 500, margin: "0 auto" }}>
             <DailyGoal allLogs={allLogs} />
-            <HabitManager />
+
+            <HabitManager
+              allLogs={allLogs}
+              refetchLogs={refetch}
+            />
           </div>
 
           <h2 style={{ marginTop: 40, textAlign: "center" }}>

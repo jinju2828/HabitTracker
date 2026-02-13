@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   createHabit,
   updateHabit,
@@ -9,7 +9,13 @@ import {
   updateHabitLog,
 } from "@/api/habitLogsApi";
 import { useHabits } from "@/hooks/useHabits";
-import { useAllHabitLogs } from "@/hooks/useAllHabitLogs";
+// import type { HabitLog } from "@/api/habitLogsApi";
+import type { HabitLog } from "@/utils/types";
+
+type Props = {
+  allLogs: HabitLog[];
+  refetchLogs: () => void;
+};
 
 const getTodayString = () => {
   const now = new Date();
@@ -19,40 +25,40 @@ const getTodayString = () => {
   return `${yyyy}-${mm}-${dd}`;
 };
 
-const HabitManager: React.FC = () => {
+const HabitManager: React.FC<Props> = ({
+  allLogs,
+  refetchLogs,
+}) => {
   const { habits, fetchHabits } = useHabits();
-  const { allLogs, refetch } = useAllHabitLogs();
 
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
-
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
   const todayStr = getTodayString();
 
-  // 🔥 오늘 로그 map 생성
+  // 🔥 오늘 로그 map
   const todayMap = useMemo(() => {
-  const map: Record<number, { id: number; completed: boolean }> = {};
+    const map: Record<number, { id: number; completed: boolean }> = {};
 
-  allLogs.forEach((log) => {
-    const logDate = new Date(log.log_date);
-    const yyyy = logDate.getFullYear();
-    const mm = String(logDate.getMonth() + 1).padStart(2, "0");
-    const dd = String(logDate.getDate()).padStart(2, "0");
-    const logStr = `${yyyy}-${mm}-${dd}`;
+    allLogs.forEach((log) => {
+      const date = new Date(log.log_date);
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, "0");
+      const dd = String(date.getDate()).padStart(2, "0");
+      const logStr = `${yyyy}-${mm}-${dd}`;
 
-    if (logStr === todayStr) {
-      map[log.habit_id] = {
-        id: log.id,
-        completed: log.completed,
-      };
-    }
-  });
+      if (logStr === todayStr) {
+        map[log.habit_id] = {
+          id: log.id,
+          completed: log.completed,
+        };
+      }
+    });
 
-  return map;
-}, [allLogs, todayStr]);
-
+    return map;
+  }, [allLogs, todayStr]);
 
   // ➕ Add
   const handleAdd = async (e: React.FormEvent) => {
@@ -61,7 +67,7 @@ const HabitManager: React.FC = () => {
 
     await createHabit({ name: newName });
     setNewName("");
-    fetchHabits();
+    await fetchHabits();
   };
 
   // 💾 Update
@@ -70,7 +76,7 @@ const HabitManager: React.FC = () => {
 
     await updateHabit(id, editingName);
     setEditingId(null);
-    fetchHabits();
+    await fetchHabits();
   };
 
   // 🗑 Delete
@@ -78,11 +84,15 @@ const HabitManager: React.FC = () => {
     if (!window.confirm("Delete this habit?")) return;
 
     await deleteHabit(id);
-    fetchHabits();
+    await fetchHabits();
+    await refetchLogs(); // 로그도 갱신
   };
 
-  // ✅ Toggle (Optimistic + 중복 방지)
-  const handleToggle = async (habitId: number, checked: boolean) => {
+  // ✅ Toggle
+  const handleToggle = async (
+    habitId: number,
+    checked: boolean
+  ) => {
     if (togglingId === habitId) return;
 
     setTogglingId(habitId);
@@ -96,9 +106,9 @@ const HabitManager: React.FC = () => {
         await createHabitLog(habitId, todayStr, checked);
       }
 
-      await refetch();
+      await refetchLogs(); // 🔥 차트 즉시 업데이트
     } catch (err) {
-      console.error("Toggle error", err);
+      console.error("Toggle error:", err);
     } finally {
       setTogglingId(null);
     }
@@ -106,7 +116,7 @@ const HabitManager: React.FC = () => {
 
   return (
     <div>
-      {/* ➕ Add */}
+      {/* Add */}
       <form onSubmit={handleAdd} style={{ display: "flex", gap: 8 }}>
         <input
           value={newName}
@@ -117,9 +127,10 @@ const HabitManager: React.FC = () => {
         <button type="submit">Add</button>
       </form>
 
-      {/* 📋 List */}
+      {/* List */}
       {habits.map((habit) => {
-        const isCompleted = todayMap[habit.id]?.completed ?? false;
+        const isCompleted =
+          todayMap[habit.id]?.completed ?? false;
 
         return (
           <div
@@ -134,26 +145,37 @@ const HabitManager: React.FC = () => {
               alignItems: "center",
             }}
           >
-            {/* 왼쪽 */}
+            {/* Left */}
             <div style={{ flex: 1 }}>
               {editingId === habit.id ? (
                 <>
                   <input
                     value={editingName}
-                    onChange={(e) => setEditingName(e.target.value)}
+                    onChange={(e) =>
+                      setEditingName(e.target.value)
+                    }
                   />
-                  <button onClick={() => handleUpdate(habit.id)}>Save</button>
-                  <button onClick={() => setEditingId(null)}>Cancel</button>
+                  <button onClick={() => handleUpdate(habit.id)}>
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingId(null)}
+                  >
+                    Cancel
+                  </button>
                 </>
               ) : (
                 <>
                   <span
                     style={{
-                      textDecoration: isCompleted ? "line-through" : "none",
+                      textDecoration: isCompleted
+                        ? "line-through"
+                        : "none",
                     }}
                   >
                     {habit.name}
                   </span>
+
                   <button
                     style={{ marginLeft: 8 }}
                     onClick={() => {
@@ -163,6 +185,7 @@ const HabitManager: React.FC = () => {
                   >
                     Edit
                   </button>
+
                   <button
                     style={{ marginLeft: 4 }}
                     onClick={() => handleDelete(habit.id)}
@@ -173,7 +196,7 @@ const HabitManager: React.FC = () => {
               )}
             </div>
 
-            {/* 오른쪽 체크 */}
+            {/* Checkbox */}
             <input
               type="checkbox"
               checked={isCompleted}
