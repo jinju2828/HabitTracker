@@ -11,6 +11,7 @@ import {
 import { useHabits } from "@/hooks/useHabits";
 // import type { HabitLog } from "@/api/habitLogsApi";
 import type { HabitLog } from "@/utils/types";
+import "../styles/HabitManager.css";
 
 type Props = {
   allLogs: HabitLog[];
@@ -135,37 +136,31 @@ const HabitManager: React.FC<Props> = ({
         return (
           <div
             key={habit.id}
-            style={{
-              border: "1px solid #ddd",
-              padding: 12,
-              marginTop: 12,
-              borderRadius: 8,
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
+            className="form-container"
           >
             {/* Left */}
             <div style={{ flex: 1 }}>
               {editingId === habit.id ? (
-                <>
+                <div className="input-container">
                   <input
                     value={editingName}
                     onChange={(e) =>
                       setEditingName(e.target.value)
                     }
                   />
-                  <button onClick={() => handleUpdate(habit.id)}>
-                    Save
-                  </button>
-                  <button
-                    onClick={() => setEditingId(null)}
-                  >
-                    Cancel
-                  </button>
-                </>
+                  <div className="button-container">
+                    <button onClick={() => handleUpdate(habit.id)}>
+                      💾
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                    >
+                      ❌
+                    </button>
+                  </div>
+                </div>
               ) : (
-                <>
+                <div className="input-container">
                   <span
                     style={{
                       textDecoration: isCompleted
@@ -176,23 +171,22 @@ const HabitManager: React.FC<Props> = ({
                     {habit.name}
                   </span>
 
-                  <button
-                    style={{ marginLeft: 8 }}
-                    onClick={() => {
-                      setEditingId(habit.id);
-                      setEditingName(habit.name);
-                    }}
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    style={{ marginLeft: 4 }}
-                    onClick={() => handleDelete(habit.id)}
-                  >
-                    Delete
-                  </button>
-                </>
+                  <div className="button-container">
+                    <button
+                      onClick={() => {
+                        setEditingId(habit.id);
+                        setEditingName(habit.name);
+                      }}
+                    >
+                      ✏️
+                    </button>
+                    <button className="delete-button"
+                      onClick={() => handleDelete(habit.id)}
+                    >
+                      🗑
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
 

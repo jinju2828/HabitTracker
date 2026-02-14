@@ -117,6 +117,8 @@ export default function DailyGoal({ allLogs }: Props) {
 
   const longestStreak = calculateLongestStreak();
 
+  console.log('streak:', streak, 'longestStreak:', longestStreak);
+
   return (
     <div className="daily-goal">
       <h3>Daily Goal</h3>
