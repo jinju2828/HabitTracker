@@ -149,10 +149,10 @@ const HabitManager: React.FC<Props> = ({
                     }
                   />
                   <div className="button-container">
-                    <button onClick={() => handleUpdate(habit.id)}>
+                    <button className="save-button" onClick={() => handleUpdate(habit.id)}>
                       💾
                     </button>
-                    <button
+                    <button className="cancel-button"
                       onClick={() => setEditingId(null)}
                     >
                       ❌
@@ -172,7 +172,7 @@ const HabitManager: React.FC<Props> = ({
                   </span>
 
                   <div className="button-container">
-                    <button
+                    <button className="edit-button"
                       onClick={() => {
                         setEditingId(habit.id);
                         setEditingName(habit.name);
