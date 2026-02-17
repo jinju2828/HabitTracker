@@ -162,11 +162,7 @@ const HabitManager: React.FC<Props> = ({
               ) : (
                 <div className="input-container">
                   <span
-                    style={{
-                      textDecoration: isCompleted
-                        ? "line-through"
-                        : "none",
-                    }}
+                    className={isCompleted ? "completed" : "not-completed"}
                   >
                     {habit.name}
                   </span>
