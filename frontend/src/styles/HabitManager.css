@@ -49,3 +49,9 @@
     padding: 4px 8px !important;
 }
 
+.checkbox {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+}
+

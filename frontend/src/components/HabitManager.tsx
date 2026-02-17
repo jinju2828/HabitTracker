@@ -192,6 +192,7 @@ const HabitManager: React.FC<Props> = ({
 
             {/* Checkbox */}
             <input
+              className="checkbox"
               type="checkbox"
               checked={isCompleted}
               disabled={togglingId === habit.id}
