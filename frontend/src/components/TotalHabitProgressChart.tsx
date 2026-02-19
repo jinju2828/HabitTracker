@@ -6,6 +6,8 @@ import TotalLineChart from "./charts/TotalLineChart";
 import TotalBarChart from "./charts/TotalBarChart";
 import TotalHeatmap from "./charts/TotalHeatmap";
 
+import "../styles/TotalHabitProgressChart.css";
+
 interface HabitLog {
   log_date: string; // "YYYY-MM-DD"
   completed: number | boolean;
@@ -87,7 +89,7 @@ export default function TotalHabitProgressChart({ allLogs }: Props) {
   ).sort((a, b) => a - b);
 
   return (
-    <div style={{ marginTop: 20 }}>
+    <div className="total-habit-progress-chart" style={{ marginTop: 20 }}>
       {/* Year + Month Selector */}
       <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 12 }}>
 
