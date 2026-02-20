@@ -59,4 +59,11 @@
             color: #92400e;
             /* text-align: left; */
         }
+
+        .longest-streak-message {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff510c;
+            text-align: center;
+        }
 }

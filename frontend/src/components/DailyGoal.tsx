@@ -119,6 +119,8 @@ export default function DailyGoal({ allLogs }: Props) {
 
   console.log('streak:', streak, 'longestStreak:', longestStreak);
 
+  const isCompletedToday = todayCompletedCount >= dailyGoal;
+
   return (
     <div className="daily-goal">
       <h3>Daily Goal</h3>
@@ -147,22 +149,20 @@ export default function DailyGoal({ allLogs }: Props) {
       <StreakCalendar
         completedByDate={completedByDate}
         dailyGoal={dailyGoal}
-        // year={new Date().getFullYear()}
-        // month={new Date().getMonth()}
       />
 
       <div className="streak-box">
-        <span className="streak-fire">🔥</span>
+        <span className="streak-fire">{isCompletedToday ? "🔥" : "😰"}</span>
         <div className="streak-info">
           <strong>{streak} day streak</strong>
           <div className="streak-sub">
-            {todayCompletedCount >= dailyGoal
+            {isCompletedToday
               ? "You're on fire today 🔥"
               : "Complete today's goal to extend your streak!"}
           </div>
-          <div>
+          <div className="longest-streak-message">
             {/* If user finishes today's goal, and if today's streak is greater than longest streak */}
-            {streak === longestStreak && streak > 0 && todayCompletedCount >= dailyGoal
+            {streak === longestStreak && streak > 0 && isCompletedToday
               ? "This is your longest streak!"
               : ""}
           </div>
