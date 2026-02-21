@@ -123,8 +123,6 @@ export default function DailyGoal({ allLogs }: Props) {
 
   return (
     <div className="daily-goal">
-      <h3>Daily Goal</h3>
-
       <InputDailyGoal />
 
       <p>
