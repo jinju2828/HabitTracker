@@ -7,16 +7,24 @@ dotenv.config();
 
 // 데이터베이스 타입 정의 (테이블 스키마)
 interface Database {
+  users: {
+    id?: number;
+    email: string;
+    password: string;
+    created_at?: string;
+  };
   habits: {
     id?: number;
     name: string;
-    created_at: Date;
+    user_id: number;
+    created_at?: string;
   };
   habit_logs: {
-    id?: number;           // SERIAL PK이므로 optional
-    habit_id: number;      // 연결된 habit ID
-    log_date: string;      // DATE 컬럼은 string으로 매핑
+    id?: number;
+    habit_id: number;
+    log_date: string;
     completed: boolean;
+    user_id: number;
   };
 }
 
