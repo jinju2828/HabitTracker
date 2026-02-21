@@ -1,17 +1,14 @@
+// auth.controller.ts
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { CreateUserDto } from './dto/create-user.dto';
 
-@Controller('auth')
+@Controller('auth') // ✅ 여기서 'auth' 라우트 등록
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  async register(@Body() body: { email: string; password: string }) {
+  @Post('register') // ✅ register 엔드포인트
+  register(@Body() body: CreateUserDto) {
     return this.authService.register(body.email, body.password);
-  }
-
-  @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
-    return this.authService.login(body.email, body.password);
   }
 }
