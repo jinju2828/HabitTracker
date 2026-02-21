@@ -10,24 +10,31 @@ dayjs.extend(timezone);
 @Injectable()
 export class HabitLogsService {
   // 특정 habit의 모든 로그 조회
-  async getLogsByHabit(habitId: number) {
+  async getLogsByHabit(habitId: number, userId: number) {
     return await db
       .selectFrom('habit_logs')
       .selectAll()
       .where('habit_id', '=', habitId)
+      .where('user_id', '=', userId) // 유저별 필터
       .orderBy('log_date')
       .execute();
   }
 
   // 새 로그 추가
-  async createLog(habitId: number, date: string, completed = false, userTimezone?: string) {
-    // 1) date가 전달되면 그대로, 없으면 현재 날짜 기준으로 계산
+  async createLog(
+    habitId: number,
+    userId: number,          // 필수로 userId 추가
+    date?: string,
+    completed = false,
+    userTimezone?: string,
+  ) {
     const logDate = date
       ? dayjs(date).format('YYYY-MM-DD')
       : dayjs().tz(userTimezone || 'UTC').format('YYYY-MM-DD');
 
     await db.insertInto('habit_logs').values({
       habit_id: habitId,
+      user_id: userId,       // 필수
       log_date: logDate,
       completed,
     }).execute();
