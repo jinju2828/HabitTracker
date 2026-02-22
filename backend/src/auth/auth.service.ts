@@ -37,7 +37,7 @@ export class AuthService {
     }
 
     // JWT 발급
-    const payload = { sub: user.id, email: user.email };
+    const payload = { userId: user.id, email: user.email };
     const token = this.jwtService.sign(payload);
 
     return { access_token: token };
