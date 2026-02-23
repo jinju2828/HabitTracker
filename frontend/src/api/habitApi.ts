@@ -1,45 +1,59 @@
 import axios from 'axios'
 
-// 백엔드 서버 기본 URL
 export const BASE_URL = 'http://localhost:3000'
+
+// 토큰 가져오기
+function getAuthHeader() {
+  const token = localStorage.getItem('access_token')
+  return { Authorization: `Bearer ${token}` }
+}
 
 // 새 습관 생성
 export async function createHabit(data: { name: string }) {
-  const response = await axios.post(`${BASE_URL}/habits`, data)
+  const response = await axios.post(`${BASE_URL}/habits`, data, {
+    headers: getAuthHeader()
+  })
   return response.data
 }
 
 export async function updateHabit(id: number, name: string) {
-  const response = await axios.patch(`${BASE_URL}/habits/${id}`, { name });
-  return response.data;
+  const response = await axios.patch(`${BASE_URL}/habits/${id}`, { name }, {
+    headers: getAuthHeader()
+  })
+  return response.data
 }
 
 export async function deleteHabit(id: number) {
-  const response = await axios.delete(`${BASE_URL}/habits/${id}`);
-  return response.data;
+  const response = await axios.delete(`${BASE_URL}/habits/${id}`, {
+    headers: getAuthHeader()
+  })
+  return response.data
 }
 
-
-// 모든 습관 가져오기
 export async function getHabits() {
-  const response = await axios.get(`${BASE_URL}/habits`)
+  const response = await axios.get(`${BASE_URL}/habits`, {
+    headers: getAuthHeader()
+  })
   return response.data
 }
 
-// 특정 habit 로그 가져오기
 export async function getHabitLogs(habitId: number) {
-  const response = await axios.get(`${BASE_URL}/habit-logs/${habitId}`)
+  const response = await axios.get(`${BASE_URL}/habit-logs/${habitId}`, {
+    headers: getAuthHeader()
+  })
   return response.data
 }
 
-// habit 로그 생성
 export async function createHabitLog(habitId: number, date: string, completed = false) {
-  const response = await axios.post(`${BASE_URL}/habit-logs`, { habitId, date, completed })
+  const response = await axios.post(`${BASE_URL}/habit-logs`, { habitId, date, completed }, {
+    headers: getAuthHeader()
+  })
   return response.data
 }
 
-// habit 로그 업데이트
 export async function updateHabitLog(id: number, completed: boolean) {
-  const response = await axios.patch(`${BASE_URL}/habit-logs/${id}`, { completed })
+  const response = await axios.patch(`${BASE_URL}/habit-logs/${id}`, { completed }, {
+    headers: getAuthHeader()
+  })
   return response.data
 }
