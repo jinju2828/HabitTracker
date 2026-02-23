@@ -1,16 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DailyGoalProvider } from "./context/DailyGoalContext";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 import HabitManager from "./components/HabitManager";
 import DailyGoal from "./components/DailyGoal";
 import { HabitProgressChart } from "./components/HabitProgressChart";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
+import Login from "./components/Login";
 
 function App() {
   const { allLogs, loading, refetch } = useAllHabitLogs();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    // 기존 JWT 있으면 로그인 상태로 처리
+    const token = localStorage.getItem('access_token');
+    if (token) setIsLoggedIn(true);
+  }, []);
 
   return (
-    <DailyGoalProvider>
+    <div className="App">
+      {isLoggedIn ? (
+            <DailyGoalProvider>
       <div style={{ padding: 20 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
@@ -43,6 +53,10 @@ function App() {
         </div>
       </div>
     </DailyGoalProvider>
+      ) : (
+        <Login onLoginSuccess={() => setIsLoggedIn(true)} />
+      )}
+    </div>
   );
 }
 
