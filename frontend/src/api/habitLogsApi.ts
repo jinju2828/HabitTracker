@@ -2,6 +2,23 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3000/habit-logs';
 
+// 🔐 axios 인스턴스 생성
+const api = axios.create({
+  baseURL: 'http://localhost:3000',
+});
+
+// 🔐 요청마다 토큰 자동 추가
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+
+  if (token) {
+    config.headers = config.headers || {};
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
 export interface HabitLog {
   id: number;
   habit_id: number;
@@ -11,18 +28,31 @@ export interface HabitLog {
 
 // 특정 habit의 로그 가져오기
 export const getHabitLogs = async (habitId: number): Promise<HabitLog[]> => {
-  const res = await axios.get(`${BASE_URL}/${habitId}`);
+  const res = await api.get(`/habit-logs/${habitId}`);
   return res.data;
 };
 
 // 로그 생성
-export const createHabitLog = async (habitId: number, date: string, completed = false) => {
-  const res = await axios.post(BASE_URL, { habitId, date, completed });
+export const createHabitLog = async (
+  habitId: number,
+  date: string,
+  completed = false
+) => {
+  const res = await api.post(`/habit-logs`, {
+    habitId,
+    date,
+    completed,
+  });
   return res.data;
 };
 
 // 로그 업데이트
-export const updateHabitLog = async (id: number, completed: boolean) => {
-  const res = await axios.patch(`${BASE_URL}/${id}`, { completed });
+export const updateHabitLog = async (
+  id: number,
+  completed: boolean
+) => {
+  const res = await api.patch(`/habit-logs/${id}`, {
+    completed,
+  });
   return res.data;
 };

@@ -1,12 +1,12 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import type { HabitLog } from "@/utils/types";
-import { BASE_URL } from "@/api/habitApi";
+import { getHabitLogs } from "@/api/habitLogsApi"; // 🔥 이걸 사용
 
-// ✅ Hook에서 쓸 수 있는 fetch 함수 따로 분리
-export const fetchHabitLogs = async (habitId: number): Promise<HabitLog[]> => {
-  const res = await axios.get(`${BASE_URL}/habit-logs/${habitId}`);
-  return res.data; 
+// ✅ Hook에서 쓸 수 있는 fetch 함수
+export const fetchHabitLogs = async (
+  habitId: number
+): Promise<HabitLog[]> => {
+  return await getHabitLogs(habitId); // 🔥 axios 직접 호출 금지
 };
 
 // ✅ 개별 habit 로그 가져오기
@@ -18,7 +18,7 @@ export const useHabitLogs = (habitId: number) => {
     const loadLogs = async () => {
       setLoading(true);
       try {
-        const data = await fetchHabitLogs(habitId);
+        const data = await getHabitLogs(habitId); // 🔥 여기 수정
         setLogs(data);
       } catch (err) {
         console.error("Failed to load habit logs", err);
