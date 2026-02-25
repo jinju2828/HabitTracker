@@ -37,7 +37,7 @@ function App() {
           <h2 style={{ marginTop: 40, textAlign: "center" }}>
             Each Habit Progress
           </h2>
-          <HabitProgressChart refreshKey={allLogs} />
+          <HabitProgressChart allLogs={allLogs} />
 
           <h2 style={{ marginTop: 40, textAlign: "center" }}>
             Total Habit Activity Overview

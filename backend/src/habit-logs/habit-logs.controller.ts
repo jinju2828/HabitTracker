@@ -15,6 +15,7 @@ export class HabitLogsController {
     const userId = req.user['userId']; // JWT에서 userId 가져오기
     const logs = await this.habitLogsService.getLogsByHabit(Number(habitId), Number(userId));
     if (!logs.length) throw new NotFoundException('No logs found for this habit');
+    console.log('habit user', req.user); // JWT에서 user 정보 확인
     return logs;
   }
 

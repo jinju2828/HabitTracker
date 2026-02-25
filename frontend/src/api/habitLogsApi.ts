@@ -54,5 +54,7 @@ export const updateHabitLog = async (
   const res = await api.patch(`/habit-logs/${id}`, {
     completed,
   });
+
+
   return res.data;
 };

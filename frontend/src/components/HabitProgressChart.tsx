@@ -1,73 +1,64 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
-import { HabitChartType } from './HabitChartType'
-import type { Habit, HabitLog } from '../utils/types'
-import { BASE_URL } from '@/api/habitApi'
+import React, { useEffect, useState } from "react";
+import { HabitChartType } from "./HabitChartType";
+import type { Habit, HabitLog } from "../utils/types";
+import { getHabits } from "@/api/habitApi"; // ✅ interceptor 붙은 api 사용
 
-export const HabitProgressChart: React.FC<{ refreshKey: any }> = ({ refreshKey }) => {
+interface Props {
+  allLogs: HabitLog[];
+}
+
+export const HabitProgressChart: React.FC<Props> = ({ allLogs }) => {
   const [habits, setHabits] = useState<Habit[]>([]);
-  const [logs, setLogs] = useState<Record<number, HabitLog[]>>({});
 
   useEffect(() => {
-    axios.get<Habit[]>(`${BASE_URL}/habits`)
-      .then(res => setHabits(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
-  useEffect(() => {
-    if (!habits.length) return;
-
-    const fetchAllLogs = async () => {
-      const next: Record<number, HabitLog[]> = {};
-
-      await Promise.all(
-        habits.map(async (habit) => {
-          const res = await axios.get<HabitLog[]>(`${BASE_URL}/habit-logs/${habit.id}`);
-          const normalized = res.data
-            .map(l => ({ ...l, log_date: l.log_date.slice(0, 10) }))
-            .sort((a, b) => a.log_date.localeCompare(b.log_date));
-
-          next[habit.id] = normalized;
-        })
-      );
-
-      setLogs(next);
+    const loadHabits = async () => {
+      try {
+        const data = await getHabits();
+        setHabits(data);
+      } catch (err) {
+        console.error(err);
+      }
     };
 
-    fetchAllLogs();
-  }, [habits, refreshKey]);
+    loadHabits();
+  }, []);
 
   return (
     <div
-  style={{
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
-    gap: 24,
-  }}
->
-      {habits.map((habit) => (
-        <div
-          key={habit.id}
-          style={{
-            padding: 16,
-            borderRadius: 12,
-            background: '#fafafa',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-            color: '#333',
-          }}
-        >
-          <h3 style={{ marginBottom: 8, marginTop: 0 }}>{habit.name}</h3>
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
+        gap: 24,
+      }}
+    >
+      {habits.map((habit) => {
+        const habitLogs = allLogs
+          .filter((log) => log.habit_id === habit.id)
+          .map((l) => ({
+            date: l.log_date.slice(0, 10),
+            completed: l.completed ? 1 : 0,
+          }))
+          .sort((a, b) => a.date.localeCompare(b.date));
 
-          <HabitChartType
-            habitLogs={
-              logs[habit.id]?.map(l => ({
-                date: l.log_date,
-                completed: l.completed ? 1 : 0,
-              })) ?? []
-            }
-          />
-        </div>
-      ))}
+        return (
+          <div
+            key={habit.id}
+            style={{
+              padding: 16,
+              borderRadius: 12,
+              background: "#fafafa",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+              color: "#333",
+            }}
+          >
+            <h3 style={{ marginBottom: 8, marginTop: 0 }}>
+              {habit.name}
+            </h3>
+
+            <HabitChartType habitLogs={habitLogs} />
+          </div>
+        );
+      })}
     </div>
   );
 };
