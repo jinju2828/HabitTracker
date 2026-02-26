@@ -17,6 +17,11 @@ function App() {
     if (token) setIsLoggedIn(true);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    setIsLoggedIn(false);
+  };
+
   return (
     <div className="App">
       {isLoggedIn ? (
@@ -24,6 +29,12 @@ function App() {
       <div style={{ padding: 20 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
+
+          <div style={{ textAlign: "right" }}>
+            <button onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
 
           <div style={{ maxWidth: 500, margin: "0 auto" }}>
             <DailyGoal allLogs={allLogs} />
