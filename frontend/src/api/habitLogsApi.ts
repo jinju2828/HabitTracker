@@ -19,6 +19,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// 토큰 만료 -> 자동 로그아웃 처리
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("access_token");
+      window.location.reload();
+    }
+    return Promise.reject(err);
+  }
+);
+
 export interface HabitLog {
   id: number;
   habit_id: number;
