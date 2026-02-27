@@ -21,7 +21,8 @@ function App() {
     localStorage.removeItem("access_token");
     setIsLoggedIn(false);
   };
-
+  
+  console.log("App 전체 logs:", allLogs)
   return (
     <div className="App">
       {isLoggedIn ? (
@@ -65,7 +66,10 @@ function App() {
       </div>
     </DailyGoalProvider>
       ) : (
-        <Login onLoginSuccess={() => setIsLoggedIn(true)} />
+        <Login onLoginSuccess={() => {
+          setIsLoggedIn(true)
+          refetch(); 
+        }} />
       )}
     </div>
   );

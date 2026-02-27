@@ -58,6 +58,11 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
 }, [filteredLogs, selectedMonth])
 
 
+console.log('fullChartData', fullChartData)
+console.log("habitLogs:", habitLogs)
+console.log("selectedMonth:", selectedMonth)
+console.log("filteredLogs:", filteredLogs)
+
  return (
   <div style={{ width: '100%', height: 260 }}>
     <div
