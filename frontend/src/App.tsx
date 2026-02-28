@@ -14,7 +14,10 @@ function App() {
   useEffect(() => {
     // 기존 JWT 있으면 로그인 상태로 처리
     const token = localStorage.getItem('access_token');
-    if (token) setIsLoggedIn(true);
+     if (token) {
+      setIsLoggedIn(true);
+      refetch(); // JWT 있으면 자동 fetch
+    }
   }, []);
 
   const handleLogout = () => {
