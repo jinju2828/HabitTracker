@@ -6,6 +6,7 @@ import DailyGoal from "./components/DailyGoal";
 import { HabitProgressChart } from "./components/HabitProgressChart";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
 import Login from "./components/Login";
+import "./styles/App.css";
 
 function App() {
   const { allLogs, loading, refetch } = useAllHabitLogs();
@@ -32,12 +33,15 @@ function App() {
             <DailyGoalProvider>
       <div style={{ padding: 20 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-          <h1 style={{ textAlign: "center" }}>🌿 Habit Tracker</h1>
 
-          <div style={{ textAlign: "right" }}>
-            <button onClick={handleLogout}>
-              Logout
-            </button>
+          <div className="header">
+            <h1 className="title">🌿 Habit Tracker</h1>
+
+            <div className="logout-btn">
+              <button onClick={handleLogout}>
+                Logout
+              </button>
+            </div>
           </div>
 
           <div style={{ maxWidth: 500, margin: "0 auto" }}>

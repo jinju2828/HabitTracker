@@ -40,3 +40,35 @@
 .read-the-docs {
   color: #888;
 }
+
+.header {
+  position: relative;
+  display: flex;
+  justify-content: center; /* 타이틀 가운데 */
+  align-items: center;
+  padding: 20px 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #344e41;
+}
+
+.logout-btn {
+  position: absolute;
+  right: 0;
+  padding: 6px 14px;
+  color: #588157;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.logout-btn:hover {
+  background: #588157;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
