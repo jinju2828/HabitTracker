@@ -37,8 +37,8 @@ function App() {
           <div className="header">
             <h1 className="title">🌿 Habit Tracker</h1>
 
-            <div className="logout-btn">
-              <button onClick={handleLogout}>
+            <div className="header-btn">
+              <button className="logout-btn" onClick={handleLogout}>
                 Logout
               </button>
             </div>

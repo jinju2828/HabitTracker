@@ -39,7 +39,7 @@ export const LineDotChartView: React.FC<Props> = ({ chartData }) => {
           }}
         />
         <Tooltip formatter={(v) => `${v}회`} />
-        <Line dataKey="completed" stroke="#4f46e5" dot={{ r: 4 }} />
+        <Line dataKey="completed" stroke="#4CAF50" dot={{ r: 4 }} />
       </LineChart>
     </ResponsiveContainer>
   );

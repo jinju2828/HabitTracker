@@ -62,7 +62,7 @@ export const HabitForm: React.FC = () => {
           style={{
             height: 36,
             padding: "0 14px",
-            background: "#4f46e5",
+            background: "#4CAF50",
             color: "white",
             borderRadius: 6,
           }}

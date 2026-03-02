@@ -54,7 +54,7 @@ const data = useMemo(() => {
           formatter={(v: any) => `${v} completed`}
         />
 
-        <Bar dataKey="completed" fill="#4f46e5" />
+        <Bar dataKey="completed" fill="#4CAF50" />
       </BarChart>
     </ResponsiveContainer>
   );
