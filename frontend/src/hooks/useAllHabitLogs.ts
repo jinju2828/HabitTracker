@@ -9,11 +9,13 @@ export const useAllHabitLogs = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchLogs = useCallback(async () => {
+    if (habits.length === 0) return;   // 🔥 핵심 추가
+
     setLoading(true);
     try {
       const results = await Promise.all(
         habits.map(async (habit) => {
-          const logs = await fetchHabitLogs(habit.id); // 정확한 백엔드 URL 사용
+          const logs = await fetchHabitLogs(habit.id);
           return logs;
         })
       );
@@ -25,10 +27,9 @@ export const useAllHabitLogs = () => {
     }
   }, [habits]);
 
-  // 최초 fetch
   useEffect(() => {
-    if (habits.length > 0) fetchLogs();
-  }, [habits, fetchLogs]);
+    fetchLogs();   // 🔥 habits 변경되면 항상 실행
+  }, [fetchLogs]);
 
   return { allLogs, loading, refetch: fetchLogs };
 };
