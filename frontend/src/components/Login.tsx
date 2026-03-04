@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import "../styles/Login.css";
 
 interface LoginProps {
-  onLoginSuccess: () => void; // 로그인 성공 시 호출
+  onLoginSuccess: () => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
@@ -18,38 +19,52 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         password,
       });
 
-      // JWT 저장 (localStorage)
       localStorage.setItem('access_token', res.data.access_token);
-
       setError('');
       onLoginSuccess();
     } catch (err: any) {
-      console.error(err);
       setError(err.response?.data?.message || 'Login failed');
     }
   };
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-header">
+          <h1>🌿 Habit Tracker</h1>
+          <p>Build consistency. Track progress.</p>
+        </div>
+
+        <form onSubmit={handleLogin}>
+          <div className="input-group">
+            <input
+              type="email"
+              placeholder=" "
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <label>Email</label>
+          </div>
+
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder=" "
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <label>Password</label>
+          </div>
+
+          <button type="submit" className="login-btn">
+            Sign In
+          </button>
+        </form>
+
+        {error && <p className="error-text">{error}</p>}
+      </div>
     </div>
   );
 };

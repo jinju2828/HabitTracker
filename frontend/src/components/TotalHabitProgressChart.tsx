@@ -112,13 +112,13 @@ export default function TotalHabitProgressChart({ allLogs }: Props) {
           onClick={() => setViewMode("monthly")}
           style={{ padding: "6px 10px", background: viewMode === "monthly" ? "#333" : "#eee", color: viewMode === "monthly" ? "#fff" : "#000" }}
         >
-          월간
+          Monthly
         </button>
         <button
           onClick={() => setViewMode("weekly")}
           style={{ padding: "6px 10px", background: viewMode === "weekly" ? "#333" : "#eee", color: viewMode === "weekly" ? "#fff" : "#000" }}
         >
-          주간
+          Weekly
         </button>
       </div>
 

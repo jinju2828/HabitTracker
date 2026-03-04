@@ -1,0 +1,134 @@
+/* ===== Page Background ===== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle at 20% 20%, #ffd6d6, #ffb2b2 60%);
+  font-family: 'Inter', sans-serif;
+  animation: fadeIn 0.8s ease;
+}
+
+/* ===== Card ===== */
+.login-card {
+  width: 380px;
+  padding: 50px 40px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  box-shadow: 0 25px 60px rgba(255, 120, 120, 0.25);
+  color: #5c2a2a;
+  animation: slideUp 0.8s ease;
+}
+
+/* ===== Header ===== */
+.login-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.login-header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #c9184a;
+}
+
+.login-header p {
+  margin-top: 8px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* ===== Floating Input ===== */
+.input-group {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(200, 50, 80, 0.2);
+  background: rgba(255,255,255,0.8);
+  color: #5c2a2a;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-group label {
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  font-size: 13px;
+  color: rgba(90, 40, 40, 0.7);
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+/* Floating effect */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -8px;
+  left: 8px;
+  font-size: 11px;
+  background: #ffffff;
+  padding: 0 6px;
+  border-radius: 4px;
+}
+
+.input-group input:focus {
+  border-color: #ff4d6d;
+  box-shadow: 0 0 0 3px rgba(255, 77, 109, 0.2);
+}
+
+/* ===== Button ===== */
+.login-btn {
+  width: 100%;
+  padding: 15px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ff4d6d, #ff758f);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(255, 77, 109, 0.4);
+}
+
+.login-btn:active {
+  transform: scale(0.98);
+}
+
+/* ===== Error ===== */
+.error-text {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #b00020;
+  text-align: center;
+}
+
+/* ===== Animations ===== */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
