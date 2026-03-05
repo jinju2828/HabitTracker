@@ -37,9 +37,10 @@ html, body, #root {
   margin: 0;
 }
 
-body {
+/* body {
   background: radial-gradient(circle at 20% 20%, #ffd6d6, #ffb2b2 60%);
-}
+  height: auto;
+} */
 
 h1 {
   font-size: 3.2em;
