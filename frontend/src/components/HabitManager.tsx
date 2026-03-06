@@ -114,7 +114,7 @@ const HabitManager: React.FC<Props> = ({ allLogs, refetchLogs }) => {
   };
 
   return (
-    <div>
+    <div className="habit-manager">
       {/* Add */}
       <form onSubmit={handleAdd} style={{ display: "flex", gap: 8 }}>
         <input
@@ -123,7 +123,7 @@ const HabitManager: React.FC<Props> = ({ allLogs, refetchLogs }) => {
           placeholder="Add new habit"
           style={{ flex: 1 }}
         />
-        <button type="submit">Add</button>
+        <button className="btn-habit-add" type="submit">Add</button>
       </form>
 
       {/* List */}

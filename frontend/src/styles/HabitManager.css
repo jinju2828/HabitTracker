@@ -65,3 +65,9 @@
     color: #000;
 }
 
+.btn-habit-add {
+    background-color: #b2ffb2 !important;
+    color: #000 !important;
+    font-size: 20px !important;
+    padding: 4px 12px !important;
+} 
