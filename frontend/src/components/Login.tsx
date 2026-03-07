@@ -4,9 +4,10 @@ import "../styles/Login.css";
 
 interface LoginProps {
   onLoginSuccess: () => void;
+  goToSignup: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -62,6 +63,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             Sign In
           </button>
         </form>
+
+        <p className="switch-auth">
+          Don't have an account? <span onClick={goToSignup}>Sign up</span>
+        </p>
 
         {error && <p className="error-text">{error}</p>}
       </div>

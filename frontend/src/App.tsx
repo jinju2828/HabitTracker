@@ -6,11 +6,13 @@ import DailyGoal from "./components/DailyGoal";
 import { HabitProgressChart } from "./components/HabitProgressChart";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
 import Login from "./components/Login";
+import Signup from "./components/Signup";
 import "./styles/App.css";
 
 function App() {
   const { allLogs, loading, refetch } = useAllHabitLogs();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [page, setPage] = useState("login");
 
   useEffect(() => {
     // 기존 JWT 있으면 로그인 상태로 처리
@@ -75,11 +77,23 @@ function App() {
           </DailyGoalProvider>
         </div>
       ) : (
-        <Login onLoginSuccess={() => {
-          setIsLoggedIn(true)
-          refetch(); 
-        }} />
-      )}
+         <>
+          {page === "login" && (
+            <Login
+              onLoginSuccess={() => setIsLoggedIn(true)}
+              goToSignup={() => setPage("signup")}
+            />
+          )}
+
+          {page === "signup" && (
+            <Signup
+              onSignupSuccess={() => setPage("login")}
+              goToLogin={() => setPage("login")}
+            />
+          )}
+        </>
+      )
+      }
     </div>
   );
 }

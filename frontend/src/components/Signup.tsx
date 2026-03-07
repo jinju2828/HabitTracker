@@ -4,9 +4,10 @@ import "../styles/Login.css";
 
 interface SignupProps {
   onSignupSuccess: () => void;
+  goToLogin: () => void;
 }
 
-const Signup: React.FC<SignupProps> = ({ onSignupSuccess }) => {
+const Signup: React.FC<SignupProps> = ({ onSignupSuccess, goToLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -98,7 +99,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess }) => {
         {error && <p className="error-text">{error}</p>}
 
         <p className="switch-auth">
-          Already have an account? <span>Sign In</span>
+            Already have an account? <span onClick={goToLogin}>Sign in</span>
         </p>
       </div>
     </div>
