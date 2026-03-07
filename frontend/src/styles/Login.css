@@ -132,3 +132,51 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* ===== Input Icon ===== */
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.input-group input {
+  padding-left: 36px;
+}
+
+/* ===== Spinner ===== */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255,255,255,0.4);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== Switch Auth Link ===== */
+.switch-auth {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.switch-auth span {
+  color: #c9184a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.switch-auth span:hover {
+  text-decoration: underline;
+}
