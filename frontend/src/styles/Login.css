@@ -136,7 +136,7 @@
 /* ===== Input Icon ===== */
 .input-icon {
   position: absolute;
-  left: 12px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 14px;
@@ -144,7 +144,7 @@
 }
 
 .input-group input {
-  padding-left: 36px;
+  padding-left: 12px;
 }
 
 /* ===== Spinner ===== */
