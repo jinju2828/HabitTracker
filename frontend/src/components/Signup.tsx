@@ -25,7 +25,7 @@ const Signup: React.FC<SignupProps> = ({ onSignupSuccess, goToLogin }) => {
     setLoading(true);
 
     try {
-      await axios.post("http://localhost:3000/auth/signup", {
+      await axios.post("http://localhost:3000/auth/register", {
         email,
         password,
       });
