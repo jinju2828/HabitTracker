@@ -13,71 +13,99 @@ function App() {
   const { allLogs, loading, refetch } = useAllHabitLogs();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [page, setPage] = useState("login");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    // 기존 JWT 있으면 로그인 상태로 처리
-    const token = localStorage.getItem('access_token');
-     if (token) {
+    const token = localStorage.getItem("access_token");
+    if (token) {
       setIsLoggedIn(true);
-      refetch(); // JWT 있으면 자동 fetch
+      refetch();
     }
+  }, []);
+
+  // 메뉴 밖 클릭 시 닫기
+  useEffect(() => {
+    const handleClick = () => setMenuOpen(false);
+    window.addEventListener("click", handleClick);
+    return () => window.removeEventListener("click", handleClick);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     setIsLoggedIn(false);
   };
-  
-  console.log("App 전체 logs:", allLogs)
+
   return (
     <div className="App">
       {isLoggedIn ? (
         <div className="habit-tracker">
           <DailyGoalProvider>
-            <div style={{ padding: 20 }}>
-              <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+            <div className="container">
 
-                <div className="header">
-                  <h1 className="title">🌿 Habit Tracker</h1>
+              {/* HEADER */}
+              <div className="header">
+                <h1 className="title">🌿 Habit Tracker</h1>
 
-                  <div className="header-btn">
-                    <button className="logout-btn" onClick={handleLogout}>
+                <div
+                  className={`hamburger ${menuOpen ? "open" : ""}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen(!menuOpen);
+                  }}
+                >
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+
+                {menuOpen && (
+                  <div
+                    className="menu-dropdown"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button className="menu-item">Contact</button>
+                    <button
+                      className="menu-item logout"
+                      onClick={handleLogout}
+                    >
                       Logout
                     </button>
                   </div>
-                </div>
-
-                <div style={{ maxWidth: 500, margin: "0 auto" }}>
-                  <DailyGoal allLogs={allLogs} />
-
-                  <HabitManager
-                    allLogs={allLogs}
-                    refetchLogs={refetch}
-                  />
-                </div>
-
-                <h2 style={{ marginTop: 40, textAlign: "center" }}>
-                  Each Habit Progress
-                </h2>
-                <HabitProgressChart allLogs={allLogs} />
-
-                <h2 style={{ marginTop: 40, textAlign: "center" }}>
-                  Total Habit Activity Overview
-                </h2>
-
-                <div style={{ maxWidth: 640, margin: "0 auto" }}>
-                  {loading ? (
-                    <p>Loading heatmap...</p>
-                  ) : (
-                    <TotalHabitProgressChart allLogs={allLogs} />
-                  )}
-                </div>
+                )}
               </div>
+
+              <div className="content-small">
+                <DailyGoal allLogs={allLogs} />
+
+                <HabitManager
+                  allLogs={allLogs}
+                  refetchLogs={refetch}
+                />
+              </div>
+
+              <h2 className="section-title">
+                Each Habit Progress
+              </h2>
+
+              <HabitProgressChart allLogs={allLogs} />
+
+              <h2 className="section-title">
+                Total Habit Activity Overview
+              </h2>
+
+              <div className="chart-container">
+                {loading ? (
+                  <p>Loading heatmap...</p>
+                ) : (
+                  <TotalHabitProgressChart allLogs={allLogs} />
+                )}
+              </div>
+
             </div>
           </DailyGoalProvider>
         </div>
       ) : (
-         <>
+        <>
           {page === "login" && (
             <Login
               onLoginSuccess={() => setIsLoggedIn(true)}
@@ -92,8 +120,7 @@ function App() {
             />
           )}
         </>
-      )
-      }
+      )}
     </div>
   );
 }
