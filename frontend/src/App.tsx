@@ -28,6 +28,10 @@ function App() {
     setIsLoggedIn(false);
   };
 
+  const handleContact = () => {
+    alert("Contact us at")
+  }
+
   return (
     <div className="App">
       {isLoggedIn ? (
@@ -58,7 +62,7 @@ function App() {
 
               {/* slide menu */}
               <div className={`side-menu ${menuOpen ? "open" : ""}`}>
-                <button className="side-item">Contact</button>
+                <button className="side-item" onClick={handleContact}>Contact</button>
                 <button className="side-item">About</button>
                 <button className="side-item logout" onClick={handleLogout}>
                   Logout
