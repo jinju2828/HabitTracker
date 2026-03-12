@@ -50,6 +50,12 @@
   color: #344e41;
 }
 
+@media screen and (max-width: 600px) {
+  .title {
+    font-size: 20px;
+  }
+}
+
 /* HAMBURGER */
 
 .hamburger {
