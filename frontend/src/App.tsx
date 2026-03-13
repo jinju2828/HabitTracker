@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+
 import { DailyGoalProvider } from "./context/DailyGoalContext";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 import HabitManager from "./components/HabitManager";
@@ -7,6 +9,9 @@ import { HabitProgressChart } from "./components/HabitProgressChart";
 import TotalHabitProgressChart from "./components/TotalHabitProgressChart";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
+import About from "./components/About";
+import Contact from "./components/Contact";
+
 import "./styles/App.css";
 
 function App() {
@@ -27,10 +32,6 @@ function App() {
     localStorage.removeItem("access_token");
     setIsLoggedIn(false);
   };
-
-  const handleContact = () => {
-    alert("Contact us at")
-  }
 
   return (
     <div className="App">
@@ -62,7 +63,7 @@ function App() {
 
               {/* slide menu */}
               <div className={`side-menu ${menuOpen ? "open" : ""}`}>
-                <button className="side-item" onClick={handleContact}>Contact</button>
+                <button className="side-item">Contact</button>
                 <button className="side-item">About</button>
                 <button className="side-item logout" onClick={handleLogout}>
                   Logout
