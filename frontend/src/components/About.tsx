@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function About() {
+  const navigate = useNavigate();
+
   return (
     <div style={{ padding: 40, textAlign: "center" }}>
       <h1>About</h1>
@@ -12,6 +15,10 @@ function About() {
       <p>
         Track your progress, visualize streaks, and build better routines.
       </p>
+
+        <button onClick={() => navigate("/")}>
+        ← Back to Habit Tracker
+        </button>
     </div>
   );
 }
