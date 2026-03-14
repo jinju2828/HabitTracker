@@ -16,8 +16,19 @@ function About() {
         Track your progress, visualize streaks, and build better routines.
       </p>
 
-        <button onClick={() => navigate("/")}>
-        ← Back to Habit Tracker
+        <button 
+          onClick={() => navigate("/")}
+          style={{
+            marginTop: 20,
+            padding: "10px 20px",
+            fontSize: 16,
+            cursor: "pointer",
+            backgroundColor: "#007BFF",
+            color: "#fff",
+            border: "none",
+          }}
+        >
+          ← Back to Habit Tracker
         </button>
     </div>
   );
