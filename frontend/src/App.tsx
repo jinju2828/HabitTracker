@@ -32,6 +32,8 @@ function Dashboard({
     }
   }, []);
 
+  const avatar = localStorage.getItem("avatar") || "🌱";
+
   return (
     <div className="habit-tracker">
       <DailyGoalProvider>
@@ -40,8 +42,8 @@ function Dashboard({
           <div className="header">
             <h1 className="title">🌿 Habit Tracker</h1>
             {name && (
-              <h2 style={{ textAlign: "center", marginBottom: 20 }}>
-                Hello {name} 👋
+              <h2 style={{ textAlign: "center", paddingTop: 48, fontSize: 20 }}>
+                {avatar} Hello {name} 👋
               </h2>
             )}
             <div
