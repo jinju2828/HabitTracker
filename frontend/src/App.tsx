@@ -13,6 +13,7 @@ import About from "./components/About";
 import Contact from "./components/Contact";
 
 import "./styles/App.css";
+import Profile from "./components/Profile";
 
 function Dashboard({
   allLogs,
@@ -22,6 +23,14 @@ function Dashboard({
 }: any) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    const savedName = localStorage.getItem("user_name");
+    if (savedName) {
+      setName(savedName);
+    }
+  }, []);
 
   return (
     <div className="habit-tracker">
@@ -30,7 +39,11 @@ function Dashboard({
 
           <div className="header">
             <h1 className="title">🌿 Habit Tracker</h1>
-
+            {name && (
+              <h2 style={{ textAlign: "center", marginBottom: 20 }}>
+                Hello {name} 👋
+              </h2>
+            )}
             <div
               className={`hamburger ${menuOpen ? "open" : ""}`}
               onClick={() => setMenuOpen(!menuOpen)}
@@ -49,6 +62,15 @@ function Dashboard({
           )}
 
           <div className={`side-menu ${menuOpen ? "open" : ""}`}>
+            <button
+              className="side-item"
+              onClick={() => {
+                navigate("/profile");
+                setMenuOpen(false);
+              }}
+            >
+              Profile
+            </button>
             <button
               className="side-item"
               onClick={() => {
@@ -161,6 +183,7 @@ function AppRoutes() {
 
       <Route path="/contact" element={<Contact />} />
       <Route path="/about" element={<About />} />
+      <Route path="/profile" element={<Profile />} />
     </Routes>
   );
 }
