@@ -1,5 +1,4 @@
 // TotalBarChart.tsx
-import React, { useMemo } from "react";
 import { BarChartView } from "./BarChartView";
 
 export interface ChartItem {

@@ -7,7 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { parseISO, format, isAfter } from "date-fns";
+import { parseISO, format } from "date-fns";
 
 interface Props {
   chartData: { date: string; completed: number }[]; // string 유지

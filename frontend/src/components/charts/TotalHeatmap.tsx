@@ -1,5 +1,5 @@
 // TotalHeatmap.tsx
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { dayjsUTC } from "../../utils/dateUtils"; // ⬅️ 반드시 UTC 버전 사용
 // dayjs 대신 dayjsUTC ONLY
 

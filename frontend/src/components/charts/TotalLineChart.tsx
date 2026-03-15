@@ -1,5 +1,4 @@
 // TotalLineChart.tsx
-import React, { useMemo } from "react";
 import { LineDotChartView } from "./LineDotChartView";
 
 export interface ChartItem {
