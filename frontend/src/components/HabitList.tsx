@@ -22,7 +22,7 @@ export const HabitList: React.FC = () => {
 
     allLogs
       .filter((log) => log.log_date === todayStr)
-      .forEach((log: HabitLog) => {
+      .forEach((log) => {
         map[log.habit_id] = { id: log.id, completed: log.completed };
       });
 
