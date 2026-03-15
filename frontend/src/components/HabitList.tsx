@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { createHabit, updateHabit, deleteHabit } from "@/api/habitApi";
-import { createHabitLog, updateHabitLog, type HabitLog } from "@/api/habitLogsApi";
+import { createHabitLog, updateHabitLog } from "@/api/habitLogsApi";
 import { useHabits } from "@/hooks/useHabits";
 import { useAllHabitLogs } from "@/hooks/useAllHabitLogs";
 import { HabitCard } from "./HabitCard";

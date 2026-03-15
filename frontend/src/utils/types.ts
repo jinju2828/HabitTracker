@@ -5,6 +5,8 @@ export interface Habit {
 }
 
 export interface HabitLog {
+  id: number;
+  habit_id: number;
   log_date: string;
   completed: boolean;
 }
