@@ -28,15 +28,20 @@ interface Database {
   };
 }
 
+// Neon 등 클라우드 Postgres는 SSL 필수
+const isNeon = process.env.DB_HOST?.includes('neon.tech');
+const poolConfig = {
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT || '5432', 10),
+  ...(isNeon && { ssl: { rejectUnauthorized: true } }),
+};
+
 // DB 인스턴스 생성
 export const db = new Kysely<Database>({
   dialect: new PostgresDialect({
-    pool: new Pool({
-      host: process.env.DB_HOST,
-      database: process.env.DB_NAME,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-    }),
+    pool: new Pool(poolConfig),
   }),
 });
