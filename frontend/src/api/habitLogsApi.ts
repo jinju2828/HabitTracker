@@ -1,10 +1,9 @@
 import axios from 'axios';
-
-const BASE_URL = 'http://localhost:3000/habit-logs';
+import { BASE_URL } from './habitApi';
 
 // 🔐 axios 인스턴스 생성
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: BASE_URL,
 });
 
 // 🔐 요청마다 토큰 자동 추가

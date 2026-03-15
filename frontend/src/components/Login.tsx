@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { BASE_URL } from '../api/habitApi';
 import "../styles/Login.css";
 
 interface LoginProps {
@@ -15,7 +16,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3000/auth/login', {
+      const res = await axios.post(`${BASE_URL}/auth/login`, {
         email,
         password,
       });

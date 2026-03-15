@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-export const BASE_URL = 'http://localhost:3000'
+// 배포 시 VITE_API_URL 환경 변수로 백엔드 주소 설정 (예: https://your-backend.onrender.com)
+export const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 // 토큰 가져오기
 function getAuthHeader() {
