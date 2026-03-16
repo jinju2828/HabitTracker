@@ -14,8 +14,11 @@ export class HabitLogsController {
   async getLogs(@Param('habitId') habitId: string, @Req() req: Request) {
     const userId = req.user['userId']; // JWT에서 userId 가져오기
     const logs = await this.habitLogsService.getLogsByHabit(Number(habitId), Number(userId));
-    if (!logs.length) throw new NotFoundException('No logs found for this habit');
-    console.log('habit user', req.user); // JWT에서 user 정보 확인
+    // 프론트에서는 로그가 없을 때도 404보다 빈 배열([])을 기대하므로,
+    // 로그가 없으면 200과 함께 빈 배열을 반환한다.
+    if (!logs.length) {
+      return [];
+    }
     return logs;
   }
 
