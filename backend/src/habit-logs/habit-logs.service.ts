@@ -32,12 +32,34 @@ export class HabitLogsService {
       ? dayjs(date).format('YYYY-MM-DD')
       : dayjs().tz(userTimezone || 'UTC').format('YYYY-MM-DD');
 
-    await db.insertInto('habit_logs').values({
-      habit_id: habitId,
-      user_id: userId,       // 필수
-      log_date: logDate,
-      completed,
-    }).execute();
+    // 같은 (habit_id, user_id, log_date)가 이미 있으면 새로 insert하지 않고 상태만 업데이트
+    const existing = await db
+      .selectFrom('habit_logs')
+      .select(['id'])
+      .where('habit_id', '=', habitId)
+      .where('user_id', '=', userId)
+      .where('log_date', '=', logDate)
+      .executeTakeFirst();
+
+    if (existing) {
+      await db
+        .updateTable('habit_logs')
+        .set({ completed })
+        .where('id', '=', existing.id)
+        .execute();
+
+      return { message: `Log for habit ${habitId} on ${logDate} updated to ${completed}` };
+    }
+
+    await db
+      .insertInto('habit_logs')
+      .values({
+        habit_id: habitId,
+        user_id: userId, // 필수
+        log_date: logDate,
+        completed,
+      })
+      .execute();
 
     return { message: `Log for habit ${habitId} on ${logDate} added!` };
   }

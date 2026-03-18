@@ -21,7 +21,8 @@ export const HabitList: React.FC = () => {
     const map: Record<number, { id: number; completed: boolean }> = {};
 
     allLogs
-      .filter((log) => log.log_date === todayStr)
+      // Postgres DATE가 환경에 따라 'YYYY-MM-DD' 또는 'YYYY-MM-DDT00:00:00.000Z'로 올 수 있어 정규화
+      .filter((log) => String(log.log_date).slice(0, 10) === todayStr)
       .forEach((log) => {
         map[log.habit_id] = { id: log.id, completed: log.completed };
       });
