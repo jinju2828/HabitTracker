@@ -14,7 +14,10 @@ export const HabitList: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayStr = new Date().toLocaleDateString("en-CA");
+
+  console.log("todayStr", todayStr);
+  console.log("logs", allLogs);
 
   // 🔥 오늘 로그 map 만들기
   const todayLogMap = useMemo(() => {

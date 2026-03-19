@@ -20,51 +20,46 @@ export class HabitLogsService {
       .execute();
   }
 
-  // 새 로그 추가
   async createLog(
-  habitId: number,
-  userId: number,
-  date?: string,
-  completed = false,
-) {
-  const logDate = date
-    ? dayjs(date).utc().format('YYYY-MM-DD')
-    : dayjs().utc().format('YYYY-MM-DD');
+    habitId: number,
+    userId: number,
+    date?: string,
+    completed = false,
+  ) {
+    const logDate = date
+      ? date // 🔥 그대로 사용 (절대 변환 금지)
+      : dayjs().utc().format('YYYY-MM-DD');
 
-  const existing = await db
-    .selectFrom('habit_logs')
-    .select(['id'])
-    .where('habit_id', '=', habitId)
-    .where('user_id', '=', userId)
-    .where('log_date', '=', logDate)
-    .executeTakeFirst();
+    const existing = await db
+      .selectFrom('habit_logs')
+      .select(['id'])
+      .where('habit_id', '=', habitId)
+      .where('user_id', '=', userId)
+      .where('log_date', '=', logDate)
+      .executeTakeFirst();
 
-  if (existing) {
+    if (existing) {
+      await db
+        .updateTable('habit_logs')
+        .set({ completed })
+        .where('id', '=', existing.id)
+        .execute();
+
+      return { message: `updated` };
+    }
+
     await db
-      .updateTable('habit_logs')
-      .set({ completed })
-      .where('id', '=', existing.id)
+      .insertInto('habit_logs')
+      .values({
+        habit_id: habitId,
+        user_id: userId,
+        log_date: logDate,
+        completed,
+      })
       .execute();
 
-    return {
-      message: `Log for habit ${habitId} on ${logDate} updated to ${completed}`,
-    };
+    return { message: `created` };
   }
-
-  await db
-    .insertInto('habit_logs')
-    .values({
-      habit_id: habitId,
-      user_id: userId,
-      log_date: logDate,
-      completed,
-    })
-    .execute();
-
-  return {
-    message: `Log for habit ${habitId} on ${logDate} added!`,
-  };
-}
 
   // 로그 업데이트 (체크 상태 변경)
   async updateLog(id: number, completed: boolean) {
