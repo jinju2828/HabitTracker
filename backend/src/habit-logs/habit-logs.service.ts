@@ -22,47 +22,49 @@ export class HabitLogsService {
 
   // 새 로그 추가
   async createLog(
-    habitId: number,
-    userId: number,          // 필수로 userId 추가
-    date?: string,
-    completed = false,
-    userTimezone?: string,
-  ) {
-    const logDate = date
-      ? dayjs(date).format('YYYY-MM-DD')
-      : dayjs().tz(userTimezone || 'UTC').format('YYYY-MM-DD');
+  habitId: number,
+  userId: number,
+  date?: string,
+  completed = false,
+) {
+  const logDate = date
+    ? dayjs(date).utc().format('YYYY-MM-DD')
+    : dayjs().utc().format('YYYY-MM-DD');
 
-    // 같은 (habit_id, user_id, log_date)가 이미 있으면 새로 insert하지 않고 상태만 업데이트
-    const existing = await db
-      .selectFrom('habit_logs')
-      .select(['id'])
-      .where('habit_id', '=', habitId)
-      .where('user_id', '=', userId)
-      .where('log_date', '=', logDate)
-      .executeTakeFirst();
+  const existing = await db
+    .selectFrom('habit_logs')
+    .select(['id'])
+    .where('habit_id', '=', habitId)
+    .where('user_id', '=', userId)
+    .where('log_date', '=', logDate)
+    .executeTakeFirst();
 
-    if (existing) {
-      await db
-        .updateTable('habit_logs')
-        .set({ completed })
-        .where('id', '=', existing.id)
-        .execute();
-
-      return { message: `Log for habit ${habitId} on ${logDate} updated to ${completed}` };
-    }
-
+  if (existing) {
     await db
-      .insertInto('habit_logs')
-      .values({
-        habit_id: habitId,
-        user_id: userId, // 필수
-        log_date: logDate,
-        completed,
-      })
+      .updateTable('habit_logs')
+      .set({ completed })
+      .where('id', '=', existing.id)
       .execute();
 
-    return { message: `Log for habit ${habitId} on ${logDate} added!` };
+    return {
+      message: `Log for habit ${habitId} on ${logDate} updated to ${completed}`,
+    };
   }
+
+  await db
+    .insertInto('habit_logs')
+    .values({
+      habit_id: habitId,
+      user_id: userId,
+      log_date: logDate,
+      completed,
+    })
+    .execute();
+
+  return {
+    message: `Log for habit ${habitId} on ${logDate} added!`,
+  };
+}
 
   // 로그 업데이트 (체크 상태 변경)
   async updateLog(id: number, completed: boolean) {

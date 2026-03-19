@@ -14,7 +14,7 @@ export const HabitList: React.FC = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingName, setEditingName] = useState("");
 
-  const todayStr = new Date().toLocaleDateString("en-CA");
+  const todayStr = new Date().toISOString().slice(0, 10);
 
   // 🔥 오늘 로그 map 만들기
   const todayLogMap = useMemo(() => {
@@ -54,16 +54,19 @@ export const HabitList: React.FC = () => {
     fetchHabits();
   };
 
+  
   // ✅ Toggle
   const handleToggle = async (habitId: number, checked: boolean) => {
-    const todayLog = todayLogMap[habitId];
-    if (todayLog) {
-      await updateHabitLog(todayLog.id, checked);
-    } else {
-      await createHabitLog(habitId, todayStr, checked);
-    }
-    refetch();
-  };
+  const todayLog = todayLogMap[habitId];
+
+  if (todayLog) {
+    await updateHabitLog(todayLog.id, checked);
+  } else {
+    await createHabitLog(habitId, todayStr, checked);
+  }
+
+  refetch();
+};
 
   return (
     <div style={{ maxWidth: 640, margin: "0 auto" }}>

@@ -30,7 +30,6 @@ export class HabitLogsController {
       Number(userId),              // userId 필수
       body.date,
       body.completed ?? false,
-      timezone
     );
   }
 
