@@ -42,10 +42,10 @@ const HabitManager: React.FC<Props> = ({ allLogs, refetchLogs }) => {
   const todayMap = useMemo(() => {
     const map: Record<number, { id: number; completed: boolean }> = {};
     allLogs.forEach((log) => {
-      const date = new Date(log.log_date);
-      const yyyy = date.getFullYear();
-      const mm = String(date.getMonth() + 1).padStart(2, "0");
-      const dd = String(date.getDate()).padStart(2, "0");
+      // const date = new Date(log.log_date);
+      // const yyyy = date.getFullYear();
+      // const mm = String(date.getMonth() + 1).padStart(2, "0");
+      // const dd = String(date.getDate()).padStart(2, "0");
       // const logStr = `${yyyy}-${mm}-${dd}`;
       const logStr = log.log_date.slice(0, 10);
       if (logStr === todayStr) {
