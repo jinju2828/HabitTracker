@@ -46,7 +46,8 @@ const HabitManager: React.FC<Props> = ({ allLogs, refetchLogs }) => {
       const yyyy = date.getFullYear();
       const mm = String(date.getMonth() + 1).padStart(2, "0");
       const dd = String(date.getDate()).padStart(2, "0");
-      const logStr = `${yyyy}-${mm}-${dd}`;
+      // const logStr = `${yyyy}-${mm}-${dd}`;
+      const logStr = log.log_date.slice(0, 10);
       if (logStr === todayStr) {
         map[log.habit_id] = { id: log.id, completed: log.completed };
       }
