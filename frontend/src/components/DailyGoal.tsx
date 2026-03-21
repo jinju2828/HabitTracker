@@ -18,8 +18,9 @@ export default function DailyGoal({ allLogs }: Props) {
   const { habits } = useHabits();
   console.log("DailyGoal rendered with dailyGoal:", dailyGoal);
   console.log("All Logs:", habits.length);
+  const habitsExist = habits.length > 0;
 
-  if (dailyGoal > habits.length) {
+  if (dailyGoal > habits.length && habitsExist) {
     return (
       <div className="daily-goal">
         <InputDailyGoal />
@@ -123,26 +124,29 @@ export default function DailyGoal({ allLogs }: Props) {
 
   return (
     <div className="daily-goal">
-      <InputDailyGoal />
 
-      <p>
-        {todayCompletedCount} / {dailyGoal} completed today.{" "}
-        <div className="progress-text">You've done {progress}% of today's goal!</div>
-        <div className="progress-text"> See your progress below </div>
-      </p>
+     {habitsExist && (
+      <>
+        <InputDailyGoal />
 
-      {/* 🔹 Progress Bar */}
-      <div className="progress-chart">
-        <div className="progress-bar">
-          <div
-            className={`progress-fill ${progress >= 100 ? "done" : ""}`}
-            style={{ width: `${progress}%` }}
-          />
+        <p>
+          {todayCompletedCount} / {dailyGoal} completed today.{" "}
+          <div className="progress-text">You've done {progress}% of today's goal!</div>
+          <div className="progress-text"> See your progress below </div>
+        </p>
+
+        <div className="progress-chart">
+          <div className="progress-bar">
+            <div
+              className={`progress-fill ${progress >= 100 ? "done" : ""}`}
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
 
-      </div>
-
-      {progress >= 100 && <p className="goal-done">🎉 Goal achieved!</p>}
+        {progress >= 100 && <p className="goal-done">🎉 Goal achieved!</p>}
+      </>
+    )}
       
       <StreakCalendar
         completedByDate={completedByDate}
