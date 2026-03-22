@@ -6,8 +6,9 @@ function Contact() {
   return (
     <div style={{ padding: 40, textAlign: "center" }}>
       <h1>Contact</h1>
-      <p>If you have any questions or feedback:</p>
+      <p>If you have any questions or feedback contact us:</p>
       <p>Email: jinju2828@gmail.com</p>
+      <p>Github: https://github.com/jinju2828</p>
       <button 
         onClick={() => navigate("/")}
         style={{
