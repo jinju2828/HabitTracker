@@ -6,13 +6,13 @@ function Profile() {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
-  const [dailyGoal, setDailyGoal] = useState(3);
+  const [dailyGoal, setDailyGoal] = useState(localStorage.getItem("dailyGoal") || 3);
   const [avatar, setAvatar] = useState("🌱");
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
     const savedName = localStorage.getItem("user_name");
-    const savedGoal = localStorage.getItem("daily_goal");
+    const savedGoal = localStorage.getItem("dailyGoal");
     const savedAvatar = localStorage.getItem("avatar");
     const savedTheme = localStorage.getItem("theme");
 
@@ -24,7 +24,7 @@ function Profile() {
 
   const handleSave = () => {
     localStorage.setItem("user_name", name);
-    localStorage.setItem("daily_goal", String(dailyGoal));
+    localStorage.setItem("dailyGoal", String(dailyGoal));
     localStorage.setItem("avatar", avatar);
     localStorage.setItem("theme", theme);
 
