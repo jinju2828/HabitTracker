@@ -42,7 +42,7 @@ function Dashboard({
           <div className="header">
             <h1 className="title">🌿 Habit Tracker</h1>
             {name && (
-              <h2 style={{ textAlign: "center", paddingTop: 48, fontSize: 20 }}>
+              <h2 style={{ textAlign: "center", paddingTop: 60, fontSize: 20 }}>
                 {avatar} Hello {name} 👋
               </h2>
             )}

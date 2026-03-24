@@ -112,6 +112,11 @@ export default function TotalHabitProgressChart({ allLogs }: Props) {
     new Set(allLogs.map((l) => Number(l.log_date.slice(0, 4))))
   ).sort((a, b) => a - b);
 
+  const MONTHS = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
   return (
     <div
       className="total-habit-progress-chart"
@@ -133,7 +138,7 @@ export default function TotalHabitProgressChart({ allLogs }: Props) {
         >
           {availableYears.map((y) => (
             <option key={y} value={y}>
-              {y}년
+              {y}
             </option>
           ))}
         </select>
@@ -145,7 +150,7 @@ export default function TotalHabitProgressChart({ allLogs }: Props) {
         >
           {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
             <option key={m} value={m}>
-              {m}월
+              {MONTHS[m - 1]}
             </option>
           ))}
         </select>
