@@ -1,5 +1,5 @@
 // TotalHeatmap.tsx
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { dayjsUTC } from "../../utils/dateUtils"; // ⬅️ 반드시 UTC 버전 사용
 // dayjs 대신 dayjsUTC ONLY
 
@@ -22,8 +22,28 @@ export default function TotalHeatmap({
   allLogs,
   selectedYear,
   selectedMonth,
-  cellSize = 18,
+  cellSize
 }: Props) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dynamicCellSize, setDynamicCellSize] = useState(cellSize ?? 18);
+
+  useEffect(() => {
+    const update = () => {
+      if (containerRef.current) {
+        const width = containerRef.current.offsetWidth;
+        // 7칸 + gap 6개(각 6px) + padding 16px
+        const computed = Math.floor((width - 16 - 6 * 6) / 7);
+        setDynamicCellSize(Math.max(12, Math.min(computed, 40))); // 12~40px 사이로 클램프
+      }
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  const cs = cellSize ?? dynamicCellSize; 
+
   // UTC 기준 집계
   const dailyCountMap = useMemo(() => {
     const m: Record<string, number> = {};
@@ -62,7 +82,8 @@ export default function TotalHeatmap({
   const getColor = (count: number) => GREEN_PALETTE[clampCountToIndex(count)];
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <div ref={containerRef} style={{ width: "100%" }}> {/* ← ref + width 100% */}
+      <div style={{ display: "flex", justifyContent: "center" }}>
       <div style={{ padding: 8, borderRadius: 6, background: "#fff" }}>
         <div style={{ marginBottom: 8, fontSize: 13, color: "#222" }}>
           {monthLabel}
@@ -72,7 +93,7 @@ export default function TotalHeatmap({
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: `repeat(7, ${cellSize}px)`,
+            gridTemplateColumns: `repeat(7, ${cs}px)`,
             gap: 6,
             marginBottom: 6,
             fontSize: 11,
@@ -81,20 +102,20 @@ export default function TotalHeatmap({
           }}
         >
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
-            <div key={d} style={{ width: cellSize }}>
+            <div key={d} style={{ width: cs }}>
               {d}
             </div>
           ))}
         </div>
 
         {/* Heatmap grid */}
-        <div style={{ display: "grid", gridAutoRows: `${cellSize}px`, gap: 6 }}>
+        <div style={{ display: "grid", gridAutoRows: `${cs}px`, gap: 6 }}>
           {weeks.map((week, wi) => (
             <div
               key={wi}
               style={{
                 display: "grid",
-                gridTemplateColumns: `repeat(7, ${cellSize}px)`,
+                gridTemplateColumns: `repeat(7, ${cs}px)`,
                 gap: 6,
               }}
             >
@@ -116,8 +137,8 @@ export default function TotalHeatmap({
                         : "not in month"
                     }`}
                     style={{
-                      width: cellSize,
-                      height: cellSize,
+                      width: cs,
+                      height: cs,
                       background: color,
                       borderRadius: 4,
                       border: inMonth
@@ -131,6 +152,7 @@ export default function TotalHeatmap({
           ))}
         </div>
       </div>
+    </div>
     </div>
   );
 }
