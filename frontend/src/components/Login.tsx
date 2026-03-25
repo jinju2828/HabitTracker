@@ -12,9 +12,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const res = await axios.post(`${BASE_URL}/auth/login`, {
         email,
@@ -26,7 +28,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
       onLoginSuccess();
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
-    }
+    } finally {
+      setIsLoading(false);
+    } 
   };
 
   return (
@@ -60,8 +64,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
             <label>Password</label>
           </div>
 
-          <button type="submit" className="login-btn">
-            Sign In
+          <button type="submit" className="login-btn" disabled={isLoading}>
+            {isLoading ? (
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                <div className="spinner" />
+                Signing in...
+              </div>
+            ) : (
+              "Sign In"
+            )}
           </button>
         </form>
 
