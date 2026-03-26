@@ -13,10 +13,27 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingStage, setLoadingStage] = useState(0);
+
+  const LOADING_MESSAGES = [
+    { emoji: "🌱", text: "Signing in..." },
+    { emoji: "☕", text: "Waking up the server..." },
+    { emoji: "🐢", text: "It's a free server, bear with us..." },
+    { emoji: "💤", text: "Server was napping, almost there..." },
+    { emoji: "🌿", text: "Still loading... (free tier life 😅)" },
+    { emoji: "🙏", text: "Almost! Thank you for your patience!" },
+  ]
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setLoadingStage(0);
+
+    // 5초마다 메시지 변경
+    const interval = setInterval(() => {
+      setLoadingStage((prev) => Math.min(prev + 1, LOADING_MESSAGES.length - 1));
+    }, 5000);
+
     try {
       const res = await axios.post(`${BASE_URL}/auth/login`, {
         email,
@@ -29,7 +46,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
     } finally {
+      clearInterval(interval);
       setIsLoading(false);
+      setLoadingStage(0);
     } 
   };
 
@@ -68,7 +87,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, goToSignup }) => {
             {isLoading ? (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
                 <div className="spinner" />
-                Signing in...
+                  <span key={loadingStage} className="loading-message">
+                    {LOADING_MESSAGES[loadingStage].emoji} {LOADING_MESSAGES[loadingStage].text}
+                  </span>
               </div>
             ) : (
               "Sign In"
