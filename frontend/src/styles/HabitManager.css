@@ -66,8 +66,18 @@
 }
 
 .btn-habit-add {
-    background-color: #b2ffb2 !important;
-    color: #000 !important;
-    font-size: 20px !important;
-    padding: 4px 12px !important;
+     color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    /* margin: 10px 2px; */
+    cursor: pointer;
+    border-radius: 4px;
+    
+    &:hover{
+        background-color: #4CAF50;
+    }
 } 
