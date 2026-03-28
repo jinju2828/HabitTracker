@@ -119,6 +119,7 @@ const HabitManager: React.FC<Props> = ({ allLogs, refetchLogs }) => {
       {/* Add */}
       <form onSubmit={handleAdd} style={{ display: "flex", gap: 8 }}>
         <input
+          className="add-habit"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           placeholder="Add new habit"
