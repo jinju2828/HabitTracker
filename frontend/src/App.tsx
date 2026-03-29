@@ -109,12 +109,7 @@ function Dashboard({
             />
           </div>
 
-          <h2 className="section-title">Each Habit Progress</h2>
           <HabitProgressChart allLogs={allLogs} />
-
-          <h2 className="section-title">
-            Total Habit Activity Overview
-          </h2>
 
           <div className="chart-container">
             {loading ? (

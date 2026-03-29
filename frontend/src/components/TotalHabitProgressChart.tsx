@@ -118,86 +118,91 @@ export default function TotalHabitProgressChart({ allLogs }: Props) {
   ];
 
   return (
-    <div
-      className="total-habit-progress-chart"
-      style={{ marginTop: 20 }}
-    >
-      {/* Year + Month Selector */}
+    <>
+      <h2 className="section-title">
+        Habit Activity Overview
+      </h2>
       <div
-        style={{
-          display: "flex",
-          gap: 10,
-          alignItems: "center",
-          marginBottom: 12,
-        }}
+        className="total-habit-progress-chart"
+        style={{ marginTop: 20 }}
       >
-        {/* YEAR */}
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(Number(e.target.value))}
-        >
-          {availableYears.map((y) => (
-            <option key={y} value={y}>
-              {y}
-            </option>
-          ))}
-        </select>
-
-        {/* MONTH */}
-        <select
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(Number(e.target.value))}
-        >
-          {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
-            <option key={m} value={m}>
-              {MONTHS[m - 1]}
-            </option>
-          ))}
-        </select>
-
-        {/* View Mode */}
-        <button
-          onClick={() => setViewMode("monthly")}
+        {/* Year + Month Selector */}
+        <div
           style={{
-            padding: "6px 10px",
-            background: viewMode === "monthly" ? "#333" : "#eee",
-            color: viewMode === "monthly" ? "#fff" : "#000",
+            display: "flex",
+            gap: 10,
+            alignItems: "center",
+            marginBottom: 12,
           }}
         >
-          Monthly
-        </button>
+          {/* YEAR */}
+          <select
+            value={selectedYear}
+            onChange={(e) => setSelectedYear(Number(e.target.value))}
+          >
+            {availableYears.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
 
-        <button
-          onClick={() => setViewMode("weekly")}
-          style={{
-            padding: "6px 10px",
-            background: viewMode === "weekly" ? "#333" : "#eee",
-            color: viewMode === "weekly" ? "#fff" : "#000",
-          }}
-        >
-          Weekly
-        </button>
-      </div>
+          {/* MONTH */}
+          <select
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(Number(e.target.value))}
+          >
+            {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
+              <option key={m} value={m}>
+                {MONTHS[m - 1]}
+              </option>
+            ))}
+          </select>
 
-      {/* Charts */}
-      <h3>Total Line Chart</h3>
-      <div style={{ height: 240 }}>
-        <TotalLineChart chartData={chartData} />
-      </div>
+          {/* View Mode */}
+          <button
+            onClick={() => setViewMode("monthly")}
+            style={{
+              padding: "6px 10px",
+              background: viewMode === "monthly" ? "#333" : "#eee",
+              color: viewMode === "monthly" ? "#fff" : "#000",
+            }}
+          >
+            Monthly
+          </button>
 
-      <h3>Total Bar Chart</h3>
-      <div style={{ height: 240 }}>
-        <TotalBarChart chartData={chartData} />
-      </div>
+          <button
+            onClick={() => setViewMode("weekly")}
+            style={{
+              padding: "6px 10px",
+              background: viewMode === "weekly" ? "#333" : "#eee",
+              color: viewMode === "weekly" ? "#fff" : "#000",
+            }}
+          >
+            Weekly
+          </button>
+        </div>
 
-      <h3>Total Heatmap</h3>
-      <div style={{ marginTop: 8 }}>
-        <TotalHeatmap
-          allLogs={heatmapLogs}
-          selectedYear={selectedYear}
-          selectedMonth={selectedMonth}
-        />
+        {/* Charts */}
+        <h3>Total Line Chart</h3>
+        <div style={{ height: 240 }}>
+          <TotalLineChart chartData={chartData} />
+        </div>
+
+        <h3>Total Bar Chart</h3>
+        <div style={{ height: 240 }}>
+          <TotalBarChart chartData={chartData} />
+        </div>
+
+        <h3>Total Heatmap</h3>
+        <div style={{ marginTop: 8 }}>
+          <TotalHeatmap
+            allLogs={heatmapLogs}
+            selectedYear={selectedYear}
+            selectedMonth={selectedMonth}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

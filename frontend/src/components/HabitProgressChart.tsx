@@ -26,7 +26,9 @@ export const HabitProgressChart: React.FC<Props> = ({ allLogs }) => {
   console.log("부모 logs:", allLogs)
 
   return (
-    <div
+    <>
+      <h2 className="section-title">Habit Progress</h2>
+          <div
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(360px, 1fr))",
@@ -62,5 +64,6 @@ export const HabitProgressChart: React.FC<Props> = ({ allLogs }) => {
         );
       })}
     </div>
+    </>
   );
 };
