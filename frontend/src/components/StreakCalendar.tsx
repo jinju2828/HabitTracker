@@ -33,6 +33,10 @@ export default function StreakCalendar({
 
   const startWeekday = firstDay.getDay();
   const totalDays = lastDay.getDate();
+  
+  const isNextMonthFuture =
+  year > today.getFullYear() ||
+  (year === today.getFullYear() && month >= today.getMonth());
 
   const calendarCells: CalendarCell[] = [];
 
@@ -85,7 +89,7 @@ export default function StreakCalendar({
         <div className="month-title">
           {MONTHS[month]} {year}
         </div>
-        <button onClick={goNextMonth}>▶</button>
+        <button onClick={goNextMonth} disabled={isNextMonthFuture}>▶</button>
       </div>
 
       {/* 🔹 Weekdays */}

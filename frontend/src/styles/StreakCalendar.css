@@ -50,6 +50,11 @@
   animation: slideFromLeft 0.35s ease;
 }
 
+.calendar-header button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 /* Grid */
 .calendar-grid {
   display: grid;
