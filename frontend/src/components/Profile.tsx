@@ -73,7 +73,7 @@ function Profile() {
           ))}
         </div>
 
-        <label>Theme</label>
+        <label>Theme (Coming Soon)</label>
 
         <div className="theme-switch">
           <button
@@ -84,6 +84,7 @@ function Profile() {
           </button>
 
           <button
+            disabled={true}
             className={theme === "dark" ? "active" : ""}
             onClick={() => setTheme("dark")}
           >

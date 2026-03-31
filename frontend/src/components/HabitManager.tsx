@@ -122,7 +122,7 @@ const HabitManager: React.FC<Props> = ({ allLogs, refetchLogs }) => {
           className="add-habit"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          placeholder="Add new habit"
+          placeholder="Add New Habit"
           style={{ flex: 1 }}
         />
         <button className="btn-habit-add" type="submit">Add</button>
