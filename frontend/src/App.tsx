@@ -34,6 +34,10 @@ function Dashboard({
 
   const avatar = localStorage.getItem("avatar") || "🌱";
 
+  const hasLogs = allLogs.length > 0;
+
+  // console.log("allLogs", allLogs);
+
   return (
     <div className="habit-tracker">
       <DailyGoalProvider>
@@ -109,7 +113,9 @@ function Dashboard({
             />
           </div>
 
-          <HabitProgressChart allLogs={allLogs} />
+          {hasLogs && (
+            <HabitProgressChart allLogs={allLogs} />
+          )}
 
           <div className="chart-container">
             {loading ? (
