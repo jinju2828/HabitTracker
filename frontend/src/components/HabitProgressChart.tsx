@@ -23,8 +23,6 @@ export const HabitProgressChart: React.FC<Props> = ({ allLogs }) => {
     loadHabits();
   }, []);
 
-  console.log("부모 logs:", allLogs)
-
   return (
     <>
       <h2 className="section-title">Habit Progress</h2>

@@ -14,11 +14,12 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
     format(new Date(), 'yyyy-MM') // 현재 월을 기본값으로
   )
 
-  // 월 목록
+  // 월 목록 (로그가 없어도 현재 월은 항상 선택 가능)
   const months = useMemo(() => {
     const unique = new Set(
       habitLogs.map((log) => format(parseISO(log.date), 'yyyy-MM'))
     )
+    unique.add(format(new Date(), 'yyyy-MM'))
     return Array.from(unique).sort()
   }, [habitLogs])
 
@@ -31,39 +32,46 @@ export const HabitChartType: React.FC<HabitChartTypeProps> = ({ habitLogs }) => 
   }, [habitLogs, selectedMonth])
 
   const fullChartData = useMemo(() => {
-  if (filteredLogs.length === 0) return []
+    // 특정 월 선택: 그 달에 로그가 없어도 해당 월 전체 날짜(빈 값)로 차트 표시
+    if (selectedMonth) {
+      const monthDate = parseISO(`${selectedMonth}-01`)
+      const start = startOfMonth(monthDate)
+      const end = endOfMonth(monthDate)
+      const allDates = eachDayOfInterval({ start, end })
+      const logMap = new Map(
+        filteredLogs.map((l) => [format(parseISO(l.date), 'yyyy-MM-dd'), l])
+      )
+      return allDates.map((d) => {
+        const key = format(d, 'yyyy-MM-dd')
+        const isFuture = d > new Date()
+        if (isFuture) return { date: key, completed: -1 }
+        const log = logMap.get(key)
+        return { date: key, completed: log ? log.completed : 0 }
+      })
+    }
 
-  let start: Date, end: Date
+    // All: 로그가 없으면 표시할 범위가 없음
+    if (filteredLogs.length === 0) return []
 
-  if (selectedMonth) {
-    const monthDate = parseISO(filteredLogs[0].date)
-    start = startOfMonth(monthDate)
-    end = endOfMonth(monthDate)
-  } else {
-    const dates = filteredLogs.map(l => parseISO(l.date))
-    start = new Date(Math.min(...dates.map(d => d.getTime())))
-    end = new Date(Math.max(...dates.map(d => d.getTime())))
-  }
+    const dates = filteredLogs.map((l) => parseISO(l.date))
+    const start = new Date(Math.min(...dates.map((d) => d.getTime())))
+    const end = new Date(Math.max(...dates.map((d) => d.getTime())))
+    const allDates = eachDayOfInterval({ start, end })
+    const logMap = new Map(
+      filteredLogs.map((l) => [format(parseISO(l.date), 'yyyy-MM-dd'), l])
+    )
 
-  const allDates = eachDayOfInterval({ start, end })
-  const logMap = new Map(filteredLogs.map(l => [format(parseISO(l.date), "yyyy-MM-dd"), l]))
-
-  return allDates.map(d => {
-    const key = format(d, "yyyy-MM-dd")
-    const isFuture = d > new Date()
-    if (isFuture) return { date: key, completed: -1 }
-    const log = logMap.get(key)
-    return { date: key, completed: log ? log.completed : 0 }
-  })
-}, [filteredLogs, selectedMonth])
+    return allDates.map((d) => {
+      const key = format(d, 'yyyy-MM-dd')
+      const isFuture = d > new Date()
+      if (isFuture) return { date: key, completed: -1 }
+      const log = logMap.get(key)
+      return { date: key, completed: log ? log.completed : 0 }
+    })
+  }, [filteredLogs, selectedMonth])
 
 
-console.log('fullChartData', fullChartData)
-console.log("habitLogs:", habitLogs)
-console.log("selectedMonth:", selectedMonth)
-console.log("filteredLogs:", filteredLogs)
-
- return (
+  return (
   <div style={{ width: '100%', height: 260 }}>
     <div
       style={{
