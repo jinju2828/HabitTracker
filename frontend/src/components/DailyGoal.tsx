@@ -1,5 +1,5 @@
 import { useHabits } from "@/hooks/useHabits";
-import { useDailyGoal } from "../context/DailyGoalContext";
+import { useDailyGoal } from "../context/UserProfileContext";
 import "../styles/DailyGoal.css";
 import InputDailyGoal from "./InputDailyGoal";
 import StreakCalendar from "./StreakCalendar";
@@ -16,8 +16,6 @@ interface Props {
 export default function DailyGoal({ allLogs }: Props) {
   const { dailyGoal } = useDailyGoal();
   const { habits } = useHabits();
-  console.log("DailyGoal rendered with dailyGoal:", dailyGoal);
-  console.log("All Logs:", habits.length);
   const habitsExist = habits.length > 0;
 
   if (dailyGoal > habits.length && habitsExist) {
@@ -117,8 +115,6 @@ export default function DailyGoal({ allLogs }: Props) {
   };
 
   const longestStreak = calculateLongestStreak();
-
-  console.log('streak:', streak, 'longestStreak:', longestStreak);
 
   const isCompletedToday = todayCompletedCount >= dailyGoal;
 

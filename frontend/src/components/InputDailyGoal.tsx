@@ -1,10 +1,10 @@
-import { useDailyGoal } from '@/context/DailyGoalContext';
+import { useDailyGoal } from '@/context/UserProfileContext';
 import '../styles/InputDailyGoal.css';
 import { useState } from 'react';
 
 export default function InputDailyGoal () {
     const {setDailyGoal} = useDailyGoal();
-    const [value, setValue] = useState<number>(5);
+    const [value, setValue] = useState<number>(1);
 
     const handleSetGoal = (e: React.FormEvent) => {
         e.preventDefault();

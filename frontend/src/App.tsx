@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
-import { DailyGoalProvider } from "./context/DailyGoalContext";
+import { UserProfileProvider, useUserProfile } from "./context/UserProfileContext";
 import { useAllHabitLogs } from "./hooks/useAllHabitLogs";
 import HabitManager from "./components/HabitManager";
 import DailyGoal from "./components/DailyGoal";
@@ -23,16 +23,7 @@ function Dashboard({
 }: any) {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [name, setName] = useState("");
-
-  useEffect(() => {
-    const savedName = localStorage.getItem("user_name");
-    if (savedName) {
-      setName(savedName);
-    }
-  }, []);
-
-  const avatar = localStorage.getItem("avatar") || "🌱";
+  const { displayName, avatar } = useUserProfile();
 
   const hasLogs = allLogs.length > 0;
 
@@ -40,14 +31,13 @@ function Dashboard({
 
   return (
     <div className="habit-tracker">
-      <DailyGoalProvider>
-        <div className="container">
+      <div className="container">
 
           <div className="header">
             <h1 className="title">🌿 Habit Tracker</h1>
-            {name && (
+            {displayName && (
               <h2 style={{ textAlign: "center", paddingTop: 60, fontSize: 20 }}>
-                {avatar} Hello {name} 👋
+                {avatar} Hello {displayName} 👋
               </h2>
             )}
             <div
@@ -126,7 +116,6 @@ function Dashboard({
           </div>
 
         </div>
-      </DailyGoalProvider>
     </div>
   );
 }
@@ -171,23 +160,25 @@ function AppRoutes() {
   }
 
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <Dashboard
-            allLogs={allLogs}
-            loading={loading}
-            refetch={refetch}
-            handleLogout={handleLogout}
-          />
-        }
-      />
+    <UserProfileProvider>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Dashboard
+              allLogs={allLogs}
+              loading={loading}
+              refetch={refetch}
+              handleLogout={handleLogout}
+            />
+          }
+        />
 
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/profile" element={<Profile />} />
-    </Routes>
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </UserProfileProvider>
   );
 }
 

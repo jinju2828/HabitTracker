@@ -1,46 +1,62 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserProfile } from "../context/UserProfileContext";
+import { updateProfile } from "@/api/profileApi";
 import "../styles/Profile.css";
 
 function Profile() {
   const navigate = useNavigate();
+  const {
+    displayName,
+    dailyGoal: ctxDailyGoal,
+    avatar: ctxAvatar,
+    loading,
+    refreshProfile,
+  } = useUserProfile();
 
   const [name, setName] = useState("");
-  const [dailyGoal, setDailyGoal] = useState(localStorage.getItem("dailyGoal") || 3);
+  const [dailyGoal, setDailyGoal] = useState(1);
   const [avatar, setAvatar] = useState("🌱");
   const [theme, setTheme] = useState("light");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const savedName = localStorage.getItem("user_name");
-    const savedGoal = localStorage.getItem("dailyGoal");
-    const savedAvatar = localStorage.getItem("avatar");
     const savedTheme = localStorage.getItem("theme");
-
-    if (savedName) setName(savedName);
-    if (savedGoal) setDailyGoal(Number(savedGoal));
-    if (savedAvatar) setAvatar(savedAvatar);
     if (savedTheme) setTheme(savedTheme);
   }, []);
 
-  const handleSave = () => {
-    localStorage.setItem("user_name", name);
-    localStorage.setItem("dailyGoal", String(dailyGoal));
-    localStorage.setItem("avatar", avatar);
-    localStorage.setItem("theme", theme);
+  useEffect(() => {
+    if (loading) return;
+    setName(displayName);
+    setDailyGoal(ctxDailyGoal);
+    setAvatar(ctxAvatar);
+  }, [loading, displayName, ctxDailyGoal, ctxAvatar]);
 
-    document.body.setAttribute("data-theme", theme);
-
-    navigate("/");
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateProfile({
+        display_name: name,
+        daily_goal: dailyGoal,
+        avatar,
+      });
+      await refreshProfile();
+      localStorage.setItem("theme", theme);
+      document.body.setAttribute("data-theme", theme);
+      navigate("/");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save profile.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const avatars = ["🌱", "🌿", "🌸", "🌻", "🍀", "🌵"];
 
   return (
     <div className="profile-container">
-      {/* <h1>Profile</h1> */}
-
       <div className="profile-card">
-
         <label>Name</label>
         <input
           className="profile-input"
@@ -65,6 +81,7 @@ function Profile() {
           {avatars.map((a) => (
             <button
               key={a}
+              type="button"
               className={`avatar-btn ${avatar === a ? "selected" : ""}`}
               onClick={() => setAvatar(a)}
             >
@@ -77,6 +94,7 @@ function Profile() {
 
         <div className="theme-switch">
           <button
+            type="button"
             className={theme === "light" ? "active" : ""}
             onClick={() => setTheme("light")}
           >
@@ -84,6 +102,7 @@ function Profile() {
           </button>
 
           <button
+            type="button"
             disabled={true}
             className={theme === "dark" ? "active" : ""}
             onClick={() => setTheme("dark")}
@@ -93,15 +112,22 @@ function Profile() {
         </div>
 
         <div className="profile-actions">
-          <button className="save-btn" onClick={handleSave}>
-            Save
+          <button
+            className="save-btn"
+            onClick={handleSave}
+            disabled={saving || loading}
+          >
+            {saving ? "Saving…" : "Save"}
           </button>
 
-          <button className="back-btn" onClick={() => navigate("/")}>
+          <button
+            type="button"
+            className="back-btn"
+            onClick={() => navigate("/")}
+          >
             Cancel
           </button>
         </div>
-
       </div>
     </div>
   );
