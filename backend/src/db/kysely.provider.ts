@@ -12,6 +12,9 @@ interface Database {
     email: string;
     password: string;
     created_at?: string;
+    display_name?: string | null;
+    daily_goal?: number | null;
+    avatar?: string | null;
   };
   habits: {
     id?: number;

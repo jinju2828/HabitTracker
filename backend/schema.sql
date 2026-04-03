@@ -2,10 +2,13 @@
 -- Neon Console → SQL Editor에서 붙여넣고 Run
 
 CREATE TABLE IF NOT EXISTS users (
-  id         SERIAL PRIMARY KEY,
-  email      VARCHAR(255) NOT NULL UNIQUE,
-  password   VARCHAR(255) NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT NOW()
+  id            SERIAL PRIMARY KEY,
+  email         VARCHAR(255) NOT NULL UNIQUE,
+  password      VARCHAR(255) NOT NULL,
+  created_at    TIMESTAMPTZ DEFAULT NOW(),
+  display_name  VARCHAR(255),
+  daily_goal    INTEGER DEFAULT 1,
+  avatar        VARCHAR(32)
 );
 
 CREATE TABLE IF NOT EXISTS habits (
