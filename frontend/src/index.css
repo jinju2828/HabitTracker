@@ -15,6 +15,18 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+[data-theme="dark"] {
+  --bg: #111111;
+  --text: #ffffff;
+  --card: #1e1e1e;
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --text: #000000;
+  --card: #f0f0f0;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -25,11 +37,17 @@ a:hover {
 }
 
 body {
+  background-color: var(--bg);
+  color: var(--text);
   /* margin: 0; */
   /* display: flex; */
   /* place-items: center; */
   /* min-width: 320px;
   min-height: 100vh; */
+}
+
+.profile-card {
+  background-color: var(--card);
 }
 
 html, body, #root {
